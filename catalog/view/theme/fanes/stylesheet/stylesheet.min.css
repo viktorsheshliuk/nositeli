@@ -1,4 +1,7 @@
-﻿/* montserrat-300 - cyrillic_cyrillic-ext_latin */
+﻿:root {
+    --color-orange: #ff7a00;
+}
+/* montserrat-300 - cyrillic_cyrillic-ext_latin */
 @font-face {
   font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
   font-family: 'Montserrat';
@@ -5657,43 +5660,25 @@ textarea {
 }
 
 #go-top {
-
     position: fixed;
-
     bottom: 25px;
-
     right: 30px;
-
     text-align: center;
-
     cursor: pointer;
-
     display: none;
-
-    width: 64px;
-
-    height: 64px;
-
+    width: 40px;
+    height: 40px;
     z-index: 99999;
-
-    border-radius: 2px;
-
+    border-radius: 100%;
+    background-color: #7f8f9b;
+    border: 1px solid #363434;
+    background-image: url('../../../image/up-arrow.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+    transition: all .3s ease;
 }
-
-#go-top::before {
-
-    display: inline-block;
-
-    content: "\f01b";
-
-    color: #424242;
-
-    font-family: FontAwesome;
-
-    line-height: 64px;
-
-    font-size: 64px;
-
+#go-top:hover{
+    background-color: var(--color-orange);
 }
 
 .quantity-block {
