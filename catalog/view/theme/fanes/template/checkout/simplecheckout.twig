@@ -223,10 +223,9 @@
                         
                         {% if steps_count > 1 %}
                         <a class="button btn-primary button_oc btn" data-onclick="nextStep" id="simplecheckout_button_next"><span>{{ button_next }}</span>
-                                <svg style="width:23px; height:16px;"><use xlink:href="catalog/view/image/sprite.svg#button-more-details"></use></svg>
                         </a>
                         {% endif %}
-                        <a class="button btn-primary button_oc btn" {{ block_order ? 'disabled' : ''}} data-onclick="createOrder" id="simplecheckout_button_confirm"><span>{{ button_order }}</span></a>
+                        <a class="button btn-primary btn" {{ block_order ? 'disabled' : ''}} data-onclick="createOrder" id="simplecheckout_button_confirm"><span>{{ button_order }}</span></a>
                     </div>
                     <div class="simplecheckout-button-left">
                         {% if display_back_button %}
@@ -258,37 +257,12 @@
                 {% endif %}
                 {% if not popup and not as_module %}
                     <div class="simplecheckout-button-block buttons">
-                        <div class="simplecheckout-button-right right"><a href="{{ continue }}" class="button btn-primary button_oc btn"><span>{{ button_continue }}</span></a></div>
+                        <div class="simplecheckout-button-right right"><a href="{{ continue }}" class="button btn-primary btn"><span>{{ button_continue }}</span></a></div>
                     </div>
                 {% endif %}
             {% endif %}
         </div>
     </div>
-
-{#
-    <div class="popup popup--570" style="display: none;" id="popup-buy-click-cc">
-            <button class="popup__close" data-fancybox-close>
-              <svg class="icon-close">
-                <use xlink:href="catalog/view/image/sprite.svg#icon-close"></use>
-              </svg>
-            </button>
-            <div class="writeus"><span class="writeus__heading">{{ text_technics_fast_order }}</span>
-                <div class="writeus__form">
-                {{ buyclick_form }}
-                {{ captcha_fo }}
-                    <div class="writeus__action">
-                        <button type="button" class="btn btn--blue js-btn-add-cart-fast-custom quickbuy-send" onclick="cart.add2cartFast($('#popup-buy-click-cc input,#popup-buy-click-cc textarea'));">{{ button_fastorder_sendorder }}</button>
-                        <input name="redirect"  value="1" class="fast-redirect" type="hidden">
-                    </div>
-                    {% if (text_technics_pdata) %} 
-                    <div class="personal-data">{{ text_technics_pdata }}</div>
-                    {% endif %} 
-                </div>
-            </div>
-    </div>
-#}
-
-
 
 {% if not ajax and not popup and not as_module %}
 </div>

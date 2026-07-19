@@ -1,7 +1,8 @@
 .simple-content {
-   /* margin: 0px 5px;*/
    margin: 0;
+   color: #222;
 }
+.simple-content .form-group label{color: #222;}
 .simple-content fieldset {
     text-align: left;
 }
@@ -12,7 +13,7 @@
 .simple-content .name {
     float: none !important;
 }
-#simplecheckout_form_0 .form-control{border-color: #939191}
+#simplecheckout_form_0 .form-control{border-color: #EAEDF7}
 .simple-content input[type=text],
 .simple-content input#customer_telephone,
 .simple-content input[type=email]{height: 40px!important}
@@ -719,13 +720,9 @@ div#simplecheckout_shipping.simplecheckout-block .form-group label, div#simplech
     clear:both;
 }
 .simple-content .checkout-heading {
-    background-color: #f5f5f5;
-   /* border-color: #ddd;*/
-    color: #343434;
-    /*border-top-left-radius: 10px;
-    border-top-right-radius: 10px;*/
-    padding: 10px 15px;
-/*    height: 50px;*/
+    /* color: #343434;
+     */
+    padding: 10px 0;
     font-size: 16px;
 }
 .checkout-heading span {
@@ -868,14 +865,13 @@ div#simplecheckout_form_0 table.simplecheckout-cart tbody tr{
     border-right: 1px solid #E8E8E8;
 }
 #simplecheckout_button_next {
-    background-color: #4CAF50;
+    background-color: #000000;
     color: #fff;
     font-size: 1.4rem;
     font-weight: 500; 
     width: 229px;
     height: 45px;
    /* padding: 13px 20px; */
-
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -1043,8 +1039,8 @@ top: 10px;
     text-transform: none;
     font-weight: 400;
 }
-#simplecheckout_form_0 #simplecheckout_customer .form-horizontal label, #simplecheckout_form_0 #simplecheckout_shipping_address .form-horizontal label{
-    color: #999999;
+#simplecheckout_form_0 #simplecheckout_customer .form-horizontal label, 
+#simplecheckout_form_0 #simplecheckout_shipping_address .form-horizontal label{
     text-align: left;
 }
 #simplecheckout_form_0 #simplecheckout_customer .form-horizontal label span.required, #simplecheckout_form_0 #simplecheckout_shipping .form-horizontal label span.required, #simplecheckout_form_0 #simplecheckout_payment .form-horizontal label span.required, #simplecheckout_form_0 #simplecheckout_shipping_address .form-horizontal label span.required{
@@ -1061,8 +1057,8 @@ top: 10px;
     width: 267px;
 }
 #simplecheckout_form_0 #simplecheckout_customer .form-horizontal .form-group input{
-    border-radius: 0.4rem;
-    color: #343434;
+    border-radius: 0;
+    color: #000;
     width: 228px;
     height: 40px;
     font-size: 16px;
@@ -1072,12 +1068,9 @@ top: 10px;
 #simplecheckout_form_0 #simplecheckout_customer .form-horizontal .form-group input:active, #simplecheckout_form_0 #simplecheckout_customer .form-horizontal .form-group input:focus{
  border: 1px solid #148AE0;
 }
-/*#simplecheckout_form_0 #simplecheckout_customer .form-horizontal .form-group svg{
- width: 16px;
- height: 17px;
-}*/
-#simplecheckout_form_0 #simplecheckout_customer .form-horizontal .form-group input::placeholder, #simplecheckout_form_0 #simplecheckout_shipping .form-horizontal .form-group input::placeholder, #simplecheckout_form_0 #simplecheckout_payment .form-horizontal .form-group input::placeholder{
-    color: #CACACA;
+
+#simplecheckout_form_0 .form-group input::placeholder{
+    color: #757c83;
     font-size: 16px;
 }
 #simplecheckout_form_0 #simplecheckout_customer .form-horizontal .form-group input:nth-child(odd){
@@ -1364,9 +1357,6 @@ div#simplecheckout_form_0 #simplecheckout_summary table.simplecheckout-cart td.n
  #simplecheckout_summary .simplecheckout-cart-total-value{
     margin: 0;
 }
-#simplecheckout_form_0 #simplecheckout_button_next{
-    border-radius: 2.5rem;
-}
 #simplecheckout_form_0 #simplecheckout_button_next:hover{
     border-color: #148AE0;
 }
@@ -1424,7 +1414,7 @@ div#simplecheckout_form_0 #simplecheckout_summary table.simplecheckout-cart td.n
     }
     #simplecheckout_button_next {
         font-size: 12px;
-        width: 188px;
+        width: 100%;
         height: 38px;
     }
     .simplecheckout-button-right {
@@ -1588,18 +1578,7 @@ div#simplecheckout_form_0 #simplecheckout_summary table.simplecheckout-cart td.n
         font-size: 14px;
         line-height: 18px;
     }
-    #simplecheckout_form_0 #simplecheckout_payment .form-horizontal .form-group input#payment_kod_egrpou{
-        width: 114px;
-    }
-    #simplecheckout_form_0 #simplecheckout_payment .form-horizontal .form-group input#payment_field26{
-        width: 136px;
-    }
-    #simplecheckout_form_0 #simplecheckout_payment .form-horizontal .form-group.row-payment_kod_egrpou{
-        width: 116px;
-    }
-    #simplecheckout_form_0 #simplecheckout_payment .form-horizontal .form-group.row-payment_field26{
-        width: 160px;
-    }
+    
     #simplecheckout_form_0 #simplecheckout_shipping input[type="text"], #simplecheckout_form_0 #simplecheckout_payment input[type="text"]{
         font-size: 14px;
         color: #343434;
