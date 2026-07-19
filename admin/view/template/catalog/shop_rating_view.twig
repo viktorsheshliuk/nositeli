@@ -1,0 +1,286 @@
+{{header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-information" data-toggle="tooltip" title="{{button_save}}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{cancel}}" data-toggle="tooltip" title="{{button_cancel}}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                <li><a href="{{breadcrumb.href}}">{{breadcrumb.text}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        {% if error_warning %}
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>{{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %}
+        {% if success %}
+        <div class="alert alert-success"><i class="fa fa-check-circle"></i>{{ success }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-eye"></i>{{ heading_title.rating.rate_id}}</h3>
+            </div>
+            <div class="panel-body">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-shop_rate-answer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-bordered table-hover">
+                            <tbody>
+                                <tr>
+                                    <td class="text-right" width="30%">{{ rating_date}}:</td>
+                                    <td>                                                           
+                                        <div class="input-group date">
+                                            <input name="rating_date_change" value="{{ rating.date_added|date("d.m.y H:i") }}" class="form-control" type="text" required>
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                        <input type="hidden" name="old_rating_date" value="{{ rating.date_added|date("d.m.y H:i") }}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right" width="30%">{{ rating_sender }}:</td>
+                                    <td><b class="{% if rating.customer_id and rating.customer_id != 0 %} text-success {% endif %}">{{ rating.customer_name }}</b></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right" width="30%">{{ rating_sender_email }}:</td>
+                                    <td>{{ rating.customer_email }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-bordered table-hover">
+                            <tbody>
+                            <tr>
+                                <td class="text-right" width="30%">{{ entry_status }}:</td>
+                                <td style="padding: 6px 8px;">
+                                    {% if rating.rate_status == 1 %}
+                                    <button id="change_status-{{rating.rate_id}}" class="btn btn-success btn-xs change_status_button"><i class="fa fa-check-circle fa-fw"></i><span>{{ status_published }}</span></button>
+                                    {% else %}
+                                    <button id="change_status-{{rating.rate_id}}" class="btn btn-danger btn-xs change_status_button"><i class="fa fa-times-circle fa-fw"></i><span>{{ status_unpublished }}</span></button>
+                                    {% endif %}
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-right" width="30%">{{ shop_rating }}:</td>
+                                <td>
+                                    <div class="rate-stars">
+                                        <div class="rate-star big-stars {% if rating.shop_rate >= 1 %} star-change {% endif %}" id="site_rate-1"></div>
+                                        <div class="rate-star big-stars {% if rating.shop_rate >= 2 %} star-change {% endif %}" id="site_rate-2"></div>
+                                        <div class="rate-star big-stars {% if rating.shop_rate >= 3 %} star-change {% endif %}" id="site_rate-3"></div>
+                                        <div class="rate-star big-stars {% if rating.shop_rate >= 4 %} star-change {% endif %}" id="site_rate-4"></div>
+                                        <div class="rate-star big-stars {% if rating.shop_rate == 5 %} star-change {% endif %}" id="site_rate-5"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-right" width="30%">{{site_rating }}:</td>
+                                <td>
+                                    <div class="rate-stars">
+                                        <div class="rate-star big-stars {% if rating.site_rate >= 1 %} star-change {% endif %}" id="site_rate-1"></div>
+                                        <div class="rate-star big-stars {% if rating.site_rate >= 2 %} star-change {% endif %}" id="site_rate-2"></div>
+                                        <div class="rate-star big-stars {% if rating.site_rate >= 3 %} star-change {% endif %}" id="site_rate-3"></div>
+                                        <div class="rate-star big-stars {% if rating.site_rate >= 4 %} star-change {% endif %}" id="site_rate-4"></div>
+                                        <div class="rate-star big-stars {% if rating.site_rate == 5 %} star-change {% endif %}" id="site_rate-5"></div>
+                                    </div>
+
+                                </td>
+                            </tr>
+                            {% for custom in rating.customs %}
+                            <tr>
+                                <td class="text-right" width="30%">{{ custom.title }}:</td>
+                                <td>
+                                    <div class="rate-stars">
+                                        <div class="rate-star big-stars {% if custom.value >= 1 %} star-change {% endif %}" id="site_rate-1"></div>
+                                        <div class="rate-star big-stars {% if custom.value >= 2 %} star-change {% endif %}" id="site_rate-2"></div>
+                                        <div class="rate-star big-stars {% if custom.value >= 3 %} star-change {% endif %}" id="site_rate-3"></div>
+                                        <div class="rate-star big-stars {% if custom.value >= 4 %} star-change {% endif %}" id="site_rate-4"></div>
+                                        <div class="rate-star big-stars {% if custom.value == 5 %} star-change {% endif %}" id="site_rate-5"></div>
+                                    </div>
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="text-center">{{ comment }}<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#editCommentModal" style="margin-left: 20px"><i class="fa fa-pencil-square-o fa-fw"></i>{{ edit }}</button></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><p id="rating_comment">{{rating.comment|nl2br|html_entity_decode }}</p></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="text-center text-success">{{ good }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="text-success" id="rating_good">{{ rating.good|nl2br }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-6">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="text-center text-danger">{{ bad }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="text-danger" id="rating_bad">{{ rating.bad|nl2br }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th colspan="2" class="text-center">{{ answer }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td colspan="2">
+
+                                        <input type="hidden" name="answer_id" value="{% if rating_answer.id %} {{ rating_answer.id }} {% endif %}">
+                                        {% if rating_answer.comment %}
+                                            <textarea  name="answer" id="answer" rows="8" class="form-control">{{ rating_answer.comment|nl2br }}</textarea>
+                                        {% else %}
+                                            <textarea name="answer" id="answer" rows="8" class="form-control"></textarea>
+                                        {% endif %}
+
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal fade" id="editCommentModal" tabindex="-1" role="dialog" aria-labelledby="editCommentModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="editCommentModalLabel">{{ edit}} {{comment }}</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <textarea  name="new_rating_comment" id="new_rating_comment" rows="8" class="form-control" style="resize: vertical">{{rating.comment|html_entity_decode }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="padding: 10px 0 0 0">
+                                        <div class="col-sm-6">
+                                            <label for="">{{ good }}</label>
+                                            <textarea  name="new_rating_good" id="new_rating_good" rows="5" class="form-control" style="resize: vertical">{{ rating.good|html_entity_decode }}</textarea>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="">{{ bad }}</label>
+                                            <textarea  name="new_rating_bad" id="new_rating_bad" rows="5" class="form-control" style="resize: vertical">{{ rating.bad|html_entity_decode }}</textarea>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ button_cancel }}</button>
+                                    <button id="edit_comment_ok" type="button" class="btn btn-primary">OK</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#edit_comment_ok').click(function(){
+            var new_comment = $('#new_rating_comment').val();
+            var new_good = $('#new_rating_good').val();
+            var new_bad = $('#new_rating_bad').val();
+            $('#rating_comment').html(new_comment.replace(/\r\n|\r|\n/g,'<br />'));
+            $('#rating_good').html(new_good.replace(/\r\n|\r|\n/g,'<br />'));
+            $('#rating_bad').html(new_bad.replace(/\r\n|\r|\n/g,'<br />'));
+            $('#editCommentModal').modal('hide');
+        });
+        $('.input-group.date').datetimepicker({
+            format: 'DD.MM.YYYY HH:mm',
+            timepicker: false,
+            icons: {
+                time: 'fa fa-clock-o',
+                date: 'fa fa-calendar',
+                up: 'fa fa-chevron-up',
+                down: 'fa fa-chevron-down',
+                previous: 'fa fa-chevron-left',
+                next: 'fa fa-chevron-right',
+                today: 'fa fa-calendar-check-o',
+                clear: 'fa fa-trash-o',
+                close: 'fa fa-close'
+            }
+        });
+        $('.change_status_button').click(function(){
+            var rating_id = this.id.split('-')[1];
+            var btn = $(this);
+          
+            var url = 'index.php?route=catalog/shop_rating/status&user_token={{ user_token }}';
+           
+            console.log(url);
+            var status_publ = '{{ status_published }}';
+            var status_unpubl = '{{ status_unpublished }}';
+
+            $.post( url, { rate_id: rating_id }, function( data ) {
+                        if(data == "OK"){
+                            if(btn.hasClass('btn-success')){
+                                btn.removeClass('btn-success');
+                                btn.addClass('btn-danger');
+                                btn.find('i').removeClass('fa-check-circle');
+                                btn.find('i').addClass('fa-times-circle');
+                                btn.find('span').text(status_unpubl);
+                            }else{
+                                btn.removeClass('btn-danger');
+                                btn.addClass('btn-success');
+                                btn.find('i').removeClass('fa-times-circle');
+                                btn.find('i').addClass('fa-check-circle');
+                                btn.find('span').text(status_publ);
+                            }
+                        }
+                    }, "json");
+        });
+    });
+
+</script>
+
+{{ footer }}

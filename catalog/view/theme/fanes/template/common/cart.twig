@@ -1,0 +1,78 @@
+<div id="cart"> {# ниже класс adds нужен для всплывающей корзины fanes #}
+    <button id="desktop_cart" class="dropdown-toggle" data-placement="bottom" data-toggle="modal" data-loading-text="{{ text_loading }}">
+    {#<a href="" class=" adds#} {#icon-link dropdown-toggle" data-placement="bottom" data-toggle="modal" data-loading-text="{{ text_loading }}" >#}
+    
+      <span class="desktop_cart_box">
+        <span class="svg">
+          <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_359_289)">
+          <path d="M4.5 19.0827C4.5 19.6131 4.71071 20.1218 5.08579 20.4969C5.46086 20.872 5.96957 21.0827 6.5 21.0827C7.03043 21.0827 7.53914 20.872 7.91421 20.4969C8.28929 20.1218 8.5 19.6131 8.5 19.0827C8.5 18.5522 8.28929 18.0435 7.91421 17.6685C7.53914 17.2934 7.03043 17.0827 6.5 17.0827C5.96957 17.0827 5.46086 17.2934 5.08579 17.6685C4.71071 18.0435 4.5 18.5522 4.5 19.0827Z" stroke="#2A2727" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.5 19.0827C15.5 19.6131 15.7107 20.1218 16.0858 20.4969C16.4609 20.872 16.9696 21.0827 17.5 21.0827C18.0304 21.0827 18.5391 20.872 18.9142 20.4969C19.2893 20.1218 19.5 19.6131 19.5 19.0827C19.5 18.5522 19.2893 18.0435 18.9142 17.6685C18.5391 17.2934 18.0304 17.0827 17.5 17.0827C16.9696 17.0827 16.4609 17.2934 16.0858 17.6685C15.7107 18.0435 15.5 18.5522 15.5 19.0827Z" stroke="#2A2727" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 17.0827H6.5V3.08268H4.5" stroke="#2A2727" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 5.08268L20.5 6.08268L19.5 13.0827H6.5" stroke="#2A2727" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="clip0_359_289"><rect width="24" height="24" fill="white" transform="translate(0.5 0.0826797)"/></clipPath></defs>
+          </svg>
+          <span id="cart-total">{{text_items}}</span>
+      </span>  
+      <span id="text_cart">{{ text_cart }}</span>
+    {# </a> #}
+  </button>
+  <div id="myModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <div class="modal-title">{{text_items}}</div>
+      </div>
+    <ul>
+    {% if products or vouchers %}
+    <li>
+      <table class="table">
+        {% for product in products %}
+        <tr>
+          <td class="text-center">{% if product.thumb %} <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-thumbnail" /></a> {% endif %}</td>
+          <td class="text-left"><a href="{{ product.href }}">{{ product.name }}</a> {% if product.option %}
+            {% for option in product.option %} <br />
+            - <small>{{ option.name }} {{ option.value }}</small> {% endfor %}
+            {% endif %}
+            {% if product.recurring %} <br />
+            - <small>{{ text_recurring }} {{ product.recurring }}</small> {% endif %}</td>
+          <td class="text-right">x {{ product.quantity }}</td>
+          <td class="text-right">{{ product.total }}</td>
+          <td class="text-center"><button type="button" onclick="cart.remove('{{ product.cart_id }}');" title="{{ button_remove }}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i></button></td>
+        </tr>
+        {% endfor %}
+        {% for voucher in vouchers %}
+        <tr>
+          <td class="text-center"></td>
+          <td class="text-left">{{ voucher.description }}</td>
+          <td class="text-right">x&nbsp;1</td>
+          <td class="text-right">{{ voucher.amount }}</td>
+          <td class="text-center text-danger"><button type="button" onclick="voucher.remove('{{ voucher.key }}');" title="{{ button_remove }}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i></button></td>
+        </tr>
+        {% endfor %}
+      </table>
+    </li>
+    <li>
+      <div class="results">
+        <table class="table-result">
+          {% for total in totals %}
+          <tr>
+            <td class="text-left"><strong>{{ total.title }}</strong></td>
+            <td class="text-right">{{ total.text }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+      <div class="cart-btn">
+         <a type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-home" aria-hidden="true"></i> Продолжить покупки</a>
+         <a class="btn btn-primary" href="{{ cart }}"><i class="fa fa-shopping-cart"></i> {{ text_cart }}</a>
+         <a class="btn btn-primary" href="{{ checkout }}"><i class="fa fa-share"></i> {{ text_checkout }}</a>
+      </div>
+    </li>
+    {% else %}
+    <li>
+      <p class="text-center">{{ text_empty }}</p>
+    </li>
+    {% endif %}
+  </ul>
+    </div>
+  </div>
+</div> 
+</div>
+

@@ -1,0 +1,48 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"><i class="fa fa-shopping-cart"></i> {{ heading_title }}</h3>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <td class="text-right">{{ column_order_id }}</td>
+          <td>{{ column_customer }}</td>
+          <td>{{ column_status }}</td>
+          <td>{{ column_date_added }}</td>
+          <td class="text-right">{{ column_total }}</td>
+          <td class="text-right">{{ column_action }}</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% if orders %}
+        {% for order in orders %}
+        <tr>
+          <td class="text-right">{{ order.order_id }}</td>
+          <td>{{ order.customer }}</td>
+         
+            <td>
+                    {% if (order.j_text_color or order.j_backgrond_color) %}
+                      <label style="padding: 5px; border-radius: 4px;
+                        {% if order.j_backgrond_color %}
+                           background: {{ order.j_backgrond_color }};
+                        {% endif %} 
+                        {% if order.j_text_color %}
+                          color: {{ order.j_text_color }};
+                        {% endif %}"> 
+                    <span class="editable" style="cursor:pointer;" id="{{order.order_id}}">{{order.status}}</span>   </label>
+                    {% else %}{{ order.status }}
+                    {% endif %}</td>
+                 
+
+          <td>{{ order.date_added }}</td>
+          <td class="text-right">{{ order.total }}</td>
+          <td class="text-right"><a href="{{ order.view }}" data-toggle="tooltip" title="{{ button_view }}" class="btn btn-info"><i class="fa fa-eye"></i></a></td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+          <td class="text-center" colspan="6">{{ text_no_results }}</td>
+        </tr>
+        {% endif %}
+      </tbody></table></div></div>

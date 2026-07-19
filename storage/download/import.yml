@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<yml_catalog date="2026-02-13 23:55">
+<shop>
+<name>Name</name>
+<company>ООО «БУРАТИНО»</company>
+<url>http://site.ru/</url>
+<currencies>
+<currency id="UAH" rate="1"/>
+</currencies>
+<categories>
+<category id="784">!Архив</category>
+</categories>
+<offers>
+<offer id="929851" selling_type="r" available="true">
+<url>https://chako.ua/catalog/fotoalbomy/albom-gedeon-10kh15-500-sb46500-art169/</url>
+<price>582</price>
+<currencyId>UAH</currencyId>
+<categoryId>784</categoryId>
+<picture>https://chako.ua/upload/iblock/d9d/albom-gedeon-10kh15-500-sb46500-art169.jpg</picture>
+<picture>https://chako.ua/upload/iblock/18b/03.jpg</picture>
+<name>Фотоальбом Gedeon 10х15x500 SB46500 ART169
+</name>
+<description><![CDATA[
+                                            <p></p>
+<h3>Альбом Gedeon 10х15/500 SB46500 ART169</h3>
+<div>
+	 Елегантний фотоальбом в обкладинці із тканини з мінімалістичним принтом. <br>
+	 На 500 фото розміром 10х15 см. <br>
+ <br>
+ <br>
+	<ul>
+		<li>Кількість фотографій: 500 </li>
+		<li>
+		Кількість фотографій на сторінці: 5 </li>
+		<li>
+		Тип альбому: З кишенями </li>
+		<li>
+		Розмір зображення: 10х15 </li>
+		<li>
+		Обкладинка: на гвинтах </li>
+		<li>
+		Тематика: ассорти </li>
+		<li>
+		Тип кріплення: кишеня 10х15 см </li>
+		<li>
+		Колір сторінок: чорний </li>
+		<li>
+		Матеріал обкладинки: тканина </li>
+		<li>
+		Матеріал сторінок: поліпропілен </li>
+		<li>
+		Обкладинка: на гвинтах </li>
+		<li>
+		Місце для підпису: немає</li>
+	</ul>
+</div>
+ <br>
+                                    ]]></description>
+<vendorCode>929851</vendorCode>
+<vendor>Chako</vendor>
+</offer>
+</offers>
+</shop>
+</yml_catalog>

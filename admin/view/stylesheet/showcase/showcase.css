@@ -1,0 +1,125 @@
+input[type='radio'], input[type='checkbox'] {
+    margin: -1px 4px 0 0;
+}
+a, .btn {
+    -webkit-transition: all .2s;
+    -moz-transition: all .2s;
+    -ms-transition: all .2s;
+    -o-transition: all .2s;
+    transition: all .2s;
+}
+a:hover, a:focus, a:visited {
+    outline: 0;
+}
+a.btn-info {
+    text-shadow: 1px 1px #46b8da;
+}
+a.btn-danger {
+    color: #fff;
+    text-shadow: 1px 1px #d43f3a;
+}
+a.btn .hidden-xs {
+    margin-left: 2px;
+}
+.btn-group {
+    margin: 2px 0;
+}
+hr {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+label.btn-danger, label.btn-success {
+    line-height: 1.5;
+    padding: 5px 10px;
+    color: #999;
+    border-color: #ddd;
+    background-color: #f8f8f8;
+    text-shadow: 1px 1px #fff;
+}
+label.btn-success:hover, label.btn-success:focus, label.btn-success:active, label.btn-success.active {
+    color: #fff;
+    border-color: #5cb85c;
+    background-color: #80c780;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    text-shadow: 1px 1px #4cae4c;
+}
+label.btn-success.active:hover {
+    color: #fff;
+    border-color: #459c45;
+    background-color: #51b251;
+}
+label.btn-danger:hover, label.btn-danger:focus, label.btn-danger:active, label.btn-danger.active {
+    color: #fff;
+    border-color: #d9534f;
+    background-color: #df6f6b;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    text-shadow: 1px 1px #d9534f;
+}
+label.btn-danger.active:hover {
+    color: #fff;
+    border-color: #d33833;
+    background-color: #d9534f;
+}
+.form-horizontal .checkbox, .form-horizontal .radio {
+    margin: 9px 0;
+    padding: 0;
+    min-height: 16px;
+}
+.form-horizontal .well .checkbox, .form-horizontal .well .radio {
+    margin: 0 0 5px 0;
+}
+.form-horizontal .checkbox-inline {
+    padding-top: 0;
+}
+.panel-heading .apply {
+    display: inline-block;
+    margin-left: 10px;
+    color: #4cae4c;
+    text-shadow: 1px 1px #fff;
+}
+.fa {
+    margin-right: .15em;
+    vertical-align: middle;
+}
+.form-horizontal input {
+    vertical-align: middle;
+}
+.form-group {
+    min-height: 34px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-bottom: 0;
+}
+.input-group + .input-group {
+    margin-top: 12px;
+}
+.input-group-addon {
+    border: 1px solid #ddd;
+}
+.form-control {
+    font-size: 12px;
+    padding: 6px;
+    border: 1px solid #ddd;
+}
+.form-control:focus {
+    outline: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.well {
+    background-color: #f7f7f7;
+}
+.footer {
+    font-size: 11px;
+    padding: 0 15px;
+    color: #999;
+}
+@media (min-width:768px) {
+    .form-horizontal .control-label {
+        font-weight: normal;
+    }
+}

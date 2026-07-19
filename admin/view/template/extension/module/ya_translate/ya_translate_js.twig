@@ -1,0 +1,252 @@
+var languages = [];
+{% for language in languages %} 
+	languages[{{ language['language_id'] }}] = '{{ language['direction'] }}';
+{% endfor %} 
+$('div[id^=language]').each(function(){
+	var id = $(this).attr('id').replace('language','');
+	if (id != '{{ first_id }}') {
+		$(this).prepend('<div class="pull-right"><button type="button" onclick="yaTraslit(\'{{ first_id }}\', \'' +id + '\')" data-toggle="tooltip" title="translate Content" class="translate-content btn btn-warning"><i class="fa fa-flag-o"></i> ' + languages[id] + '</button></div><div class="clearfix"></div>');	}
+});
+
+if ($('#attribute').length){
+	var buutons = '';
+	{% for language in languages %}
+		{% if language['language_id'] != first_id %}
+		buutons += '<button type="button" onclick="yaTraslitAttr(\'{{ first_id }}\',\'{{ language['language_id'] }}\')" data-toggle="tooltip" title="translate Attribute" class="translate-content btn btn-warning"><i class="fa fa-flag-o"></i> {{ language['direction'] }}</button>';
+		{% endif %} 
+	{% endfor %} 
+	$('#attribute').before('<div class="pull-right">' + buutons + '</div><div class="clearfix"></div>');
+}
+
+function processHide() {
+	$(".bg_load").remove();
+	$(".wrapper").remove();
+}
+function processShow() {
+	var html = '<div class="bg_load"></div>';
+	html += '<div class="wrapper"><div class="inner">';
+	html += '<span>P</span><span>r</span><span>o</span><span>c</span><span>e</span><span>s</span><span>s</span>';
+	html += '</div>';
+	html += '<div class="inner">';
+	html += '<span id="p_id"></span>';
+	html += '</div>';	html += '</div>';
+	$('body').append(html);
+	$(".bg_load").fadeIn("slow");
+	$(".wrapper").fadeIn("slow");
+}
+
+
+function yaTraslitAttr(from,to) {
+	var tr = $('#attribute tbody tr');
+	for (var i=0; i < tr.length; i++) {
+		var textarea = tr.find('textarea');
+		var parameters = {};
+		parameters.text = {};
+		textarea.each(function(){
+			let element = $(this);
+			let name = element.attr('name');
+			let template = 'product_attribute[~][product_attribute_description][!][text]';
+			
+			let result = name.match(/product_attribute\[(\d+)\]\[product_attribute_description\]\[(\d+)\]\[text\]/);
+
+			if (result[2] == {{ first_id }}) {
+				name = template.replace('~',result[1]).replace('!',to);
+				parameters[encodeURIComponent(name)] = element.val();
+			}
+		});
+	}
+	$.ajax({
+		url: '{{ ya_script_translate }}' + '&from=' + from + '&to=' + to,
+		method: 'post',
+		data: parameters,
+		data_type: 'json',
+		beforeSend: function(){processShow();},
+		success: function(json) {
+			if (json['success']) {
+				for(var name_tag in json['text']) {
+					var new_val = json['text'][name_tag];
+					
+					var element_to = $('[name=' + decodeURIComponent(name_tag).replace(/\[/g,'\\[').replace(/\]/g,'\\]') + ']');
+					element_to.val(new_val);
+				}
+				processHide();
+//				$('#confirm-translate').modal().show();
+			}
+		}
+	});	
+}
+ 
+function yaTraslit(from,to) {
+
+    var language_main = from;
+	var name, code, val, name_tag, element_from;
+	
+	var parameters = {};
+	parameters.text = {};
+
+	var language_id = $('#language li.active a').attr('href').replace('#language','');
+	var fields = $('#language' + language_id).find('input[name],textarea[name]');
+	fields.each(function() {
+		element_from = $(this);
+		name = element_from.attr('name');
+
+		name_original = name.replace('['+language_id+']','['+ language_main + ']');
+		if (this.nodeName == 'INPUT') {
+			val = element_from.val();
+			if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+				val = $('[name=' + name_original.replace(/\[/g,'\\[').replace(/\]/g,'\\]') + ']').val();
+			}
+		} else {
+			if (typeof CKEDITOR !== 'undefined' && typeof CKEDITOR.instances[element_from.attr('id')] !== 'undefined') {
+				val = CKEDITOR.instances[element_from.attr('id')].getData();
+				if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+					val = CKEDITOR.instances[element_from.attr('id').replace(language_id,language_main)].getData();
+				}
+			} else if (typeof element_from.summernote === 'function' && element_from.siblings('.note-editor').length) {
+				val = element_from.summernote('code');
+				if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+					val = $('[name=' + name_original.replace(/\[/g,'\\[').replace(/\]/g,'\\]') + ']').summernote('code');
+				}
+			} else if (typeof tinyMCE === 'object' && tinyMCE.get(element_from.attr('id')) !== null) {
+				val = tinyMCE.get(element_from.attr('id')).getContent();
+				if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+					val =  tinyMCE.get(element_from.attr('id').replace(language_id,language_main)).getContent();
+				}
+			} else {
+				val = element_from.val();
+				if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+					val = $('[name=' + name_original.replace(/\[/g,'\\[').replace(/\]/g,'\\]') + ']').val();
+				}
+			}
+		}
+		
+		parameters[encodeURIComponent(name)] = val;
+
+	});
+	$.ajax({
+		url: '{{ ya_script_translate }}' + '&from=' + from + '&to=' + language_id,
+		method: 'post',
+		data: parameters,
+		data_type: 'json',
+		beforeSend: function(){processShow();},
+		success: function(json) {
+			if (json['success']) {
+				for(var name_tag in json['text']) {
+					var new_val = json['text'][name_tag];
+					var element_to = $('#language' + to + ' [name=' + decodeURIComponent(name_tag).replace(/\[/g,'\\[').replace(/\]/g,'\\]') + ']');
+					if (element_to[0].nodeName == 'INPUT') {
+						element_to.val(new_val);
+					} else {
+						if (typeof CKEDITOR !== 'undefined' && typeof CKEDITOR.instances[element_to.attr('id')] !== 'undefined') {
+							CKEDITOR.instances[element_to.attr('id')].setData(new_val);
+						} else if (typeof element_to.summernote === 'function' && element_to.siblings('.note-editor').length) {
+							element_to.summernote('code',new_val);
+						} else if (typeof tinyMCE === 'object' && tinyMCE.get(element_to.attr('id'))  !== null ) {
+							tinyMCE.get(element_to.attr('id')).setContent(new_val);
+						} else {
+							element_to.val(new_val);
+						}
+					}
+				}
+				processHide();
+				$('#confirm-translate').modal().show();
+			} else if (json['error']) {
+				processHide();
+				alert(json['error']['error']);
+			}
+			
+		}
+	});
+}
+
+var customtabs = $('#customtab li a[href]');
+if (customtabs.length) {
+	customtabs.each(function(){
+		var row  = $(this).attr('href').replace('#tab-customtab','');
+		var tab_id = 'div#tab-customtab' + row;
+		$(tab_id + ' .nav.nav-tabs li a').each(function(){
+			var id_ = '#tab-customtab' + row + '-language';
+			var id = $(this).attr('href').replace(id_,'');
+			if (id != '{{ first_id }}') {
+				$($(this).attr('href')).prepend('<div class="pull-right"><button type="button" onclick="yaTraslit_custom(' + row + ', \'{{ first_id }}\', \'' +id + '\')" data-toggle="tooltip" title="translate Content" class="translate-content btn btn-warning"><i class="fa fa-flag-o"></i> ' + languages[id] + '</button></div><div class="clearfix"></div>');
+			}
+		});
+	});
+}
+
+function yaTraslit_custom(row,from,to) {
+
+    var language_main = from;
+	var name, code, val, name_tag, element_from;
+	
+	var parameters = {};
+	parameters.text = {};
+
+	var language_id = $('#clanguage' + row + ' li.active a').attr('href').replace('#tab-customtab' + row +'-language','');
+	var fields = $('#tab-customtab' + row + '-language' + language_id).find('input[name],textarea[name]');
+	fields.each(function() {
+		element_from = $(this);
+		name = element_from.attr('name');
+
+		name_original = name.replace('['+language_id+']','['+ language_main + ']');
+		if (this.nodeName == 'INPUT') {
+			val = element_from.val();
+			if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+				val = $('[name=' + name_original.replace(/\[/g,'\\[').replace(/\]/g,'\\]') + ']').val();
+			}
+		} else {
+			if (typeof CKEDITOR !== 'undefined' && typeof CKEDITOR.instances[element_from.attr('id')] !== 'undefined') {
+				val = CKEDITOR.instances[element_from.attr('id')].getData();
+				if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+					val = CKEDITOR.instances[element_from.attr('id').replace(language_id,language_main)].getData();
+				}
+			} else if (typeof element_from.summernote === 'function' && element_from.siblings('.note-editor').length) {
+				val = element_from.summernote('code');
+				if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+					val = $('[name=' + name_original.replace(/\[/g,'\\[').replace(/\]/g,'\\]') + ']').code();
+				}
+			} else if (typeof tinyMCE === 'object' && tinyMCE.get(element_from.attr('id')) !== null) {
+				val = tinyMCE.get(element_from.attr('id')).getContent();
+				if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+					val =  tinyMCE.get(element_from.attr('id').replace(language_id,language_main)).getContent();
+				}
+
+			} else {
+				val = element_from.val();
+				if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+					val = $('[name=' + name_original.replace(/\[/g,'\\[').replace(/\]/g,'\\]') + ']').val();
+				}
+			}
+		}
+		parameters[encodeURIComponent(name)] = val;
+	});
+	var user_token = getURLVar('user_token');
+	$.ajax({
+		url: '{{ ya_script_translate }}' + '&from=' + from + '&to=' + language_id,
+		method: 'post',
+		data: parameters,
+		data_type: 'json',
+		success: function(json) {
+			if (json['success']) {
+				for(var name_tag in json['text']) {
+					var new_val = json['text'][name_tag];
+					var element_to = $('#tab-customtab' + row + '-language' + to + ' [name=' + decodeURIComponent(name_tag).replace(/\[/g,'\\[').replace(/\]/g,'\\]') + ']');
+					if (element_to[0].nodeName == 'INPUT') {
+						element_to.val(new_val);
+					} else {
+						if (typeof CKEDITOR !== 'undefined' && typeof CKEDITOR.instances[element_to.attr('id')] !== 'undefined') {
+							CKEDITOR.instances[element_to.attr('id')].setData(new_val);
+						} else if (typeof element_to.summernote === 'function' && element_to.siblings('.note-editor').length) {
+							element_to.summernote('code', new_val);
+						} else if (typeof tinyMCE === 'object' && tinyMCE.get(element_to.attr('id'))  !== null ) {
+							tinyMCE.get(element_to.attr('id')).setContent(new_val);
+						} else {
+							element_to.val(new_val);
+						}
+					}
+				}
+				$('#confirm-translate').modal().show();
+			}
+		}
+	});
+}

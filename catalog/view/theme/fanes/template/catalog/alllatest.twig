@@ -1,0 +1,35 @@
+{{ header }}
+
+<div class="content-block">
+    <ul class="breadcrumb">
+    {% for key, breadcrumb in breadcrumbs %}
+    {% if key + 1 < breadcrumbs|length %}
+    	<li>
+    		<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+    	</li>
+    {% else %}
+    	<li> {{ breadcrumb.text }}</li>
+    {% endif %}
+    {% endfor %}
+    </ul>
+
+<div class="content">   {#
+<h1 style="display:none;">Новинки от интернет-магазина Nositeli</h1>
+<h2 style="display:none;">Новые товары в интернет-магазине Nositeli.com.ua</h2>  #}
+  {{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'thumbnails-block small' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'thumbnails-block small' %}
+    {% else %}
+    {% set class = 'thumbnails-block' %}
+    {% endif %}
+  </div>
+     {{ content_top }}
+     
+   
+    {{ column_right }}
+ 
+ {{ content_bottom }}
+ </div> 
+{{ footer }} 

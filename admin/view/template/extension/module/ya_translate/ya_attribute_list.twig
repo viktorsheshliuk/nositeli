@@ -1,0 +1,388 @@
+{{ header }}{{ column_left }} 
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="button" id="view-log" data-toggle="tooltip" title="{{ text_view_log }}" class="btn btn-primary"><i class="fa fa-eye"></i> Log</button>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %} 
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %} 
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="nav navbar-nav navbar-left">
+         {% for nav in navs %} 
+         <a href="{{ nav.href }}" class="btn btn-default navbar-btn {{ nav.active }}">{{ nav.text }}</a>
+         {% endfor %} 
+       </div>
+      </div>
+    </nav>  
+  </div>
+  <div class="container-fluid">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
+      </div>
+      <div class="panel-body">
+      <div class="pull-right form-inline">
+        <label class="control-label" for="language-from">From:&nbsp;</label><select class="form-control" id="language-from">
+          <option value="*">{{ text_select }}</option>
+        {% for lang in languages %} 
+          <option value="{{ lang.language_id }}">{{ lang.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="control-label" for="language-to">To:&nbsp;</label><select class="form-control" id="language-to">
+          <option value="*">{{ text_select }}</option>
+        {% for lang in languages %} 
+          <option value="{{ lang.language_id }}">{{ lang.name }}</option>
+        {% endfor %}</select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" data-toggle="tooltip" title="{{ button_bulk_translate }}" class="btn btn-warning" onclick="bulkTransalte();"><i class="fa fa-flag-o"></i></button>
+        <button type="button" data-toggle="tooltip" title="{{ button_fill_empty }}" class="btn btn-default" onclick="fillEmpty();"><i class="fa fa-paint-brush"></i> {{ button_fill_empty }}</button>
+		
+      </div>
+      </div>
+      <div class="panel-body">
+        <div class="well">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="control-label" for="input-name">{{ entry_name }}</label>
+                <input type="text" name="filter_name" value="{{ filter_name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control" />
+              </div>
+            </div>
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="control-label" for="input-ready">{{ entry_ready }}</label>
+                <select name="filter_ready" id="input-ready" class="form-control">
+                  <option value="*"></option>
+                  {% if filter_ready %}
+                  <option value="1" selected="selected">{{ text_ready }}</option>
+                  {% else %} 
+                  <option value="1">{{ text_ready }}</option>
+                  {% endif %} 
+                  {% if filter_ready == '0' %}
+                  <option value="0" selected="selected">{{ text_not_ready }}</option>
+                  {% else %} 
+                  <option value="0">{{ text_not_ready }}</option>
+                  {% endif %} 
+                </select>
+              </div>
+              <button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-search"></i> {{ button_filter }}</button>
+            </div>
+          </div>
+        </div>
+        <form action="{{ translate }}" method="post" enctype="multipart/form-data" id="form-attribute">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+                  <td class="text-left">{% if (sort == 'name') %} 
+                    <a href="{{ sort_name }}" class="{{ order|lower }}">{{ column_name }}</a>
+                    {% else %} 
+                    <a href="{{ sort_name }}">{{ column_name }}</a>
+                    {% endif %}</td>
+                  <td class="text-right">{{ column_action }}</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% if (attributes) %} 
+                {% for attribute in attributes %} 
+                <tr>
+                  <td class="text-center">{% if attribute.attribute_id in selected %} 
+                    <input type="checkbox" name="selected[]" value="{{ attribute.attribute_id }}" checked="checked" />
+                    {% else %} 
+                    <input type="checkbox" name="selected[]" value="{{ attribute.attribute_id }}" />
+                    {% endif %}</td>
+                  <td class="text-left">{{ attribute.name }} ({{ attribute.total_value }})</td>
+                  <td class="text-right"><button type="button" data-toggle="tooltip" title="{{ button_translate }}" class="btn btn-primary attribute_translate" data-attribute_id="{{ attribute.attribute_id }}"><i class="fa fa-flag-o"></i></button></td>
+                </tr>
+                {% endfor %} 
+                {% else %} 
+                <tr>
+                  <td class="text-center" colspan="4">{{ text_no_results }}</td>
+                </tr>
+                {% endif %} 
+              </tbody>
+            </table>
+          </div>
+        </form>
+        <div class="row">
+          <div class="col-sm-6 text-left">{{ pagination }}</div>
+          <div class="col-sm-6 text-right">{{ results }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="confirm-translate" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                  <h4 class="modal-title" id="myModalLabel">Translate complete</h4>
+              </div>
+              <div class="modal-content" style="padding: 40px 20px;">
+  				<div class="ya">Переведено</div>
+  			</div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+              </div>
+          </div>
+      </div>
+  </div>
+  <script type="text/javascript"><!--
+function getFilter() {
+	var url = '';
+	var filter_name = $('input[name=\'filter_name\']').val();
+
+	if (filter_name) {
+		url += '&filter_name=' + encodeURIComponent(filter_name);
+	}
+
+	var filter_ready = $('select[name=\'filter_ready\']').val();
+
+	if (filter_ready != '*') {
+		url += '&filter_ready=' + encodeURIComponent(filter_ready);
+	}
+
+	var filter_category_id = $('input[name=\'filter_category_id\']').val();
+
+	if (filter_category_id) {
+		url += '&filter_category_id=' + encodeURIComponent(filter_category_id);
+	}
+	return url;
+}
+
+$('#button-filter').on('click', function() {
+	var url = '{{ filter }}';
+	location = url + getFilter();
+});
+//--></script>
+<script>
+//var md5_text = '';
+
+function oneTranslate(select_from,select_to, attribute_id,md5_text){
+	$.ajax({
+		url: '{{ translate }}' + '&from=' + select_from + '&to=' + select_to,
+		method: 'POST',
+		data:'attribute_id=' + attribute_id + '&md5_text=' + md5_text,
+		dataType: 'json',
+		beforeSend:function(){$('#p_id').text(attribute_id)},
+		success: function(json) {
+			if (json.success) {
+				md5_text = json.md5_text;
+				if (md5_text) {
+					oneTranslate(select_from,select_to, attribute_id,md5_text)
+				} else {
+					if (selected.length) {
+						console.log(json.last_id);
+						var attr_id = selected.pop();
+						oneTranslate(select_from,select_to, attr_id,'')
+					} else {
+						$(".bg_load").remove();
+						$(".wrapper").remove();
+						$('#confirm-translate').modal().show();
+					}
+				}
+			} else if (json.error) {
+				$(".bg_load").remove();
+				$(".wrapper").remove();
+				$('#confirm-translate .ya').html(json.error['message']);
+				$('#confirm-translate').modal().show();
+				
+			}
+		}
+	});	
+}
+var selected = [];
+$('.attribute_translate').click(function(){
+	selected = [];
+	var attr_id = $(this).attr('data-attribute_id');
+	selected.push(attr_id);
+	startTranslate();
+});
+
+function bulkTransalte(){
+	selected = [];
+	var data = $('[name="selected[]"]:checked');
+	data.each(function(){ selected.push($(this).val());});
+	startTranslate();
+}
+
+function fillEmpty(){
+	var select_from = $('#language-from').val();
+	var select_to = $('#language-to').val();
+	if  (select_to == '*' || select_from == '*' || select_from == select_to) {
+		noThing();
+		return;
+	}
+	$.ajax({
+		url: '{{ attributeFill }}',
+		method: 'POST',
+		data: 'from=' + select_from + '&to=' + select_to,
+		dataType : 'json',
+		beforeSend: function(){
+			var html = '<div class="bg_load"></div>';
+			html += '<div class="wrapper"><div class="inner">';
+			html += '<span>W</span><span>a</span><span>i</span><span>t</span><span>.</span><span>.</span><span>.</span>';
+			html += '</div>';
+			html += '<div class="inner">';
+			html += '<span id="p_id"></span>';
+			html += '</div>';
+			html += '</div>';
+			$('body').append(html);
+			$(".bg_load").fadeIn("slow");
+			$(".wrapper").fadeIn("slow");
+
+		},
+		error: function(xhr) {
+			alert('Error: '+ xhr.status + ' ' + xhr.statusText);
+		},				
+		complete: function(xhr){
+			$(".bg_load").remove();
+			$(".wrapper").remove();
+		},
+		success: function(){
+		}
+	});
+}
+
+function noThing(){
+		var html = '<div class="bg_load"></div>';
+		html += '<div class="wrapper"><div class="inner">';
+		html += '<span>No</span><span>&nbsp;</span><span>th</span><span>ing</span>';
+		html += '</div></div>';
+		$('body').append(html);
+		$(".bg_load").fadeIn("slow");
+		$(".wrapper").fadeIn("slow");
+		setTimeout(function(){$(".bg_load").remove();$(".wrapper").remove();},1000);
+
+}
+
+function startTranslate() {
+	var select_from = $('#language-from').val();
+	var select_to = $('#language-to').val();
+	
+	if  (select_to == '*' || select_from == '*' || select_from == select_to || selected.length < 1) {
+		noThing()
+		return;
+	}	
+	var attribute_id = selected.pop();
+	var html = '<div class="bg_load"></div>';
+	html += '<div class="wrapper"><div class="inner">';
+	html += '<span>P</span><span>r</span><span>o</span><span>c</span><span>e</span><span>s</span><span>s</span>';
+	html += '</div>';
+	html += '<div class="inner">';
+	html += '<span id="p_id"></span>';
+	html += '</div>';
+	html += '</div>';
+	$('body').append(html);
+	$(".bg_load").fadeIn("slow");
+	$(".wrapper").fadeIn("slow");
+
+	oneTranslate(select_from,select_to, attribute_id,'');
+}
+
+//--></script></div>
+<style>
+.bg_load {position: fixed;left: 0px;top: 0px;width: 100%;height: 100%;background: #EEE;display :none}
+.wrapper {
+    font-size: 20px;
+    width: 8em;
+    height: 8em;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-top: -100px;
+    margin-left: -100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1em dashed rgba(138,189,195,0.5);
+    box-shadow: 
+        inset 0 0 2em rgba(255,255,255,0.3),
+        0 0 0 0.7em rgba(255,255,255,0.3);
+    animation: rota 3.5s linear infinite;
+    color: #444;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0 .04em rgba(255,255,255,0.9);
+    line-height: 6em;
+    display :none
+}
+
+.wrapper:before,.wrapper:after {content: "";position: absolute; z-index: -1; border-radius: inherit; box-shadow: inset 0 0 2em rgba(255,255,255,0.3); border: 1em dashed;}
+
+.wrapper:before {border-color: rgba(138,189,195,0.2);top: 0; right: 0; bottom: 0; left: 0;}
+.wrapper:after {border-color: rgba(138,189,195,0.4);top: 1em; right: 1em; bottom: 1em; left: 1em; }
+.wrapper .inner {width: 100%; height: 100%; animation: rota 3.5s linear reverse infinite;}
+.wrapper span {display: inline-block;animation: placeholder 1.5s ease-out infinite;}
+
+.wrapper span:nth-child(1)  { animation-name: loading-1;  }
+.wrapper span:nth-child(2)  { animation-name: loading-2;  }
+.wrapper span:nth-child(3)  { animation-name: loading-3;  }
+.wrapper span:nth-child(4)  { animation-name: loading-4;  }
+.wrapper span:nth-child(5)  { animation-name: loading-5;  }
+.wrapper span:nth-child(6)  { animation-name: loading-6;  }
+.wrapper span:nth-child(7)  { animation-name: loading-7;  }
+.wrapper span:nth-child(8)  { animation-name: loading-8;  }
+
+@keyframes rota {to { transform: rotate(360deg); {{ '}}' }}
+@keyframes loading-1 {12.5% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-2 {25% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-3 {37.5% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-4 {50% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-5 {62.5% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-6 {75% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-7 {87.5% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-8 {100% { opacity: 0.3; {{ '}}' }}
+</style>
+<script>
+ $(document).ready(function(){
+	$('#language-from,#language-to').change(function() {
+		var elem = $(this);
+		localStorage.setItem(elem.attr('id'), elem.val());
+	});
+	var getFrom =  localStorage.getItem('language-from');
+	if (!getFrom) getFrom='*';
+	var getTo =    localStorage.getItem('language-to');
+	if (!getTo) getTo='*';
+	$('#language-from').val(getFrom).change();
+	$('#language-to').val(getTo).change();
+ });
+ 
+</script>
+<script>
+$('#view-log').click(function(){
+    $.ajax({
+        url:'{{ viewLog}}',
+        success:function(html){
+            if (html){
+                $('#log-view').remove();
+                $('body').append(html);
+                $('#log-view').modal('show');
+            }
+        }
+    })
+});
+function clearlog(){
+    $.ajax({
+        url:'{{ clearLog }}',
+        success:function(html){
+            if (html=='ok'){
+                $('#log-view textarea').val('');
+            }
+        }
+    });
+}
+</script>
+
+{{ footer }}

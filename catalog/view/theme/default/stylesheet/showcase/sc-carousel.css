@@ -1,0 +1,162 @@
+/*
+ * ShowCase v2.1.5
+ * Copyright 2016, iDiY
+ * Support: info@idiy.club
+ */
+
+.sc-carousel {
+    position: relative;
+    z-index: 1;
+    display: none;
+    width: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+.sc-carousel .scc-stage {
+    position: relative;
+    -ms-touch-action: pan-Y;
+}
+.sc-carousel .scc-stage:after {
+    line-height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
+    height: 0;
+    content: '.';
+}
+.sc-carousel .scc-stage-outer {
+    position: relative;
+    overflow: hidden;
+    -webkit-transform: translate3d(0, 0, 0);
+       -moz-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+}
+.sc-carousel .scc-item {
+    position: relative;
+    float: left;
+    min-height: 1px;
+    -webkit-transform: translate3d(0, 0, 0);
+       -moz-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+.sc-carousel .scc-nav.disabled, .sc-carousel .scc-dots.disabled {
+    display: none;
+}
+.sc-carousel .scc-nav .scc-prev, .sc-carousel .scc-nav .scc-next, .sc-carousel .scc-dot {
+    cursor: pointer;
+    cursor: hand;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+     -khtml-user-select: none;
+}
+.sc-carousel.scc-loaded {
+    display: block;
+}
+.sc-carousel.scc-loading {
+    display: block;
+    opacity: 0;
+}
+.sc-carousel.scc-hidden {
+    opacity: 0;
+}
+.sc-carousel.scc-refresh .scc-item {
+    display: none;
+}
+.sc-carousel.scc-drag .scc-item {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.sc-carousel.scc-grab {
+    cursor: move;
+    cursor: -webkit-grab;
+    cursor: -o-grab;
+    cursor: -ms-grab;
+    cursor: grab;
+}
+.sc-carousel.scc-rtl {
+    direction: rtl;
+}
+.sc-carousel.scc-rtl .scc-item {
+    float: right;
+}
+.no-js .sc-carousel {
+    display: block;
+}
+
+/*  Carousel Theme  */
+.sc-theme .scc-nav div {
+    line-height: 0;
+    position: absolute;
+    top: 50%;
+    margin-top: -42px;
+    padding: 20px 10px;
+    opacity: 0;
+    color: #999;
+    -webkit-transition: all .3s ease;
+       -moz-transition: all .3s ease;
+        -ms-transition: all .3s ease;
+         -o-transition: all .3s ease;
+            transition: all .3s ease;
+}
+.sc-theme:hover .scc-nav div {
+    opacity: .9;
+}
+.sc-theme:hover .scc-nav div.disabled {
+    opacity: 0;
+}
+.sc-theme .scc-nav div i {
+    font-size: 24px;
+}
+.sc-theme .scc-prev {
+    left: 0;
+}
+.sc-theme .scc-next {
+    right: 0;
+}
+.sc-theme .scc-nav [class*='scc-']:hover {
+    color: #23a1d1;
+}
+.sc-theme .scc-nav .disabled {
+    cursor: default;
+    opacity: 0;
+}
+.sc-main .sc-theme .scc-dots {
+    position: absolute;
+    top: -14px;
+    right: 0;
+}
+.sc-theme .scc-dots {
+    line-height: 1;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+}
+.sc-theme .scc-dots .scc-dot {
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+}
+.sc-theme .scc-dots .scc-dot span {
+    display: block;
+    width: 7px;
+    height: 7px;
+    margin: 3px;
+    -webkit-transition: opacity .3s ease;
+       -moz-transition: opacity .3s ease;
+        -ms-transition: opacity .3s ease;
+         -o-transition: opacity .3s ease;
+            transition: opacity .3s ease;
+    -webkit-border-radius: 50%;
+       -moz-border-radius: 50%;
+            border-radius: 50%;
+    background: #d6d6d6;
+    -webkit-backface-visibility: visible;
+}
+.sc-theme .scc-dots .scc-dot.active span, .sc-theme .scc-dots .scc-dot:hover span {
+    background: #23a1d1;
+}

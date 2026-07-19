@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>ShowCase</name>
+    <version>2.1.5</version>
+    <code>showcase215</code>
+    <author>iDiY</author>
+    <link>http://www.opencart.com/index.php?route=extension/extension&amp;filter_username=i.diy</link>
+    <file path="admin/model/catalog/category.php">
+        <operation>
+            <search><![CDATA[
+            $category_id = $this->db->getLastId();
+            ]]></search>
+            <add position="after"><![CDATA[
+            if (isset($data['sc_image'])) {
+                $this->db->query("UPDATE " . DB_PREFIX . "category SET sc_image = '" . $this->db->escape($data['sc_image']) . "' WHERE category_id = '" . (int)$category_id . "'");
+            }
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[
+            public function editCategory($category_id, $data) {
+            ]]></search>
+            <add position="after"><![CDATA[
+            if (isset($data['sc_image'])) {
+                $this->db->query("UPDATE " . DB_PREFIX . "category SET sc_image = '" . $this->db->escape($data['sc_image']) . "' WHERE category_id = '" . (int)$category_id . "'");
+            }
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[description = '" . $this->db->escape($value['description']) . "']]></search>
+            <add position="replace"><![CDATA[description = '" . $this->db->escape($value['description']) . "', sc_name = '" . $this->db->escape($value['sc_name']) . "', sc_description = '" . $this->db->escape($value['sc_description']) . "']]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[
+            'name'             => $result['name'],
+            ]]></search>
+            <add position="after">
+                <![CDATA['sc_name'          => $result['sc_name'],
+            'sc_description'   => $result['sc_description'],]]></add>
+        </operation>
+    </file>
+    <file path="admin/controller/catalog/category.php">
+        <operation>
+            <search><![CDATA[
+            $data['tab_design'] = $this->language->get('tab_design');
+            ]]></search>
+            <add position="before"><![CDATA[
+            $data['tab_showcase'] = $this->language->get('tab_showcase');
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[
+            $this->load->model('tool/image');
+            ]]></search>
+            <add position="before"><![CDATA[
+            if (isset($this->request->post['sc_image'])) {
+                $data['sc_image'] = $this->request->post['sc_image'];
+            } elseif (!empty($category_info)) {
+                $data['sc_image'] = $category_info['sc_image'];
+            } else {
+                $data['sc_image'] = '';
+            }
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[
+            $this->load->model('tool/image');
+            ]]></search>
+            <add position="after"><![CDATA[
+            if (isset($this->request->post['sc_image']) && is_file(DIR_IMAGE . $this->request->post['sc_image'])) {
+                $data['sc_thumb'] = $this->model_tool_image->resize($this->request->post['sc_image'], 100, 100);
+            } elseif (!empty($category_info) && is_file(DIR_IMAGE . $category_info['sc_image'])) {
+                $data['sc_thumb'] = $this->model_tool_image->resize($category_info['sc_image'], 100, 100);
+            } else {
+                $data['sc_thumb'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+            }
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/language/*/catalog/category.php">
+        <operation>
+            <search><![CDATA[
+            // Help
+            ]]></search>
+            <add position="before"><![CDATA[
+            // Tab
+            $_['tab_showcase']            = 'ShowCase';
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/language/russian/catalog/category.php">
+        <operation error="skip">
+            <search><![CDATA[
+            $_['tab_showcase']            = 'ShowCase';
+            ]]></search>
+            <add position="replace"><![CDATA[
+            $_['tab_showcase']            = 'Витрина';
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/view/template/catalog/category_form.tpl">
+        <operation>
+            <search><![CDATA[
+            <li><a href="#tab-design" data-toggle="tab"><?php echo $tab_design; ?></a></li>
+            ]]></search>
+            <add position="before"><![CDATA[
+            <li><a href="#tab-showcase" data-toggle="tab"><?php echo $tab_showcase; ?></a></li>
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[
+            <div class="tab-pane" id="tab-design">
+            ]]></search>
+            <add position="before"><![CDATA[
+            <div class="tab-pane" id="tab-showcase">
+              <ul class="nav nav-tabs" id="sc-language">
+                <?php foreach ($languages as $language) { ?>
+                <li><a href="#sc-language-<?php echo $language['language_id']; ?>" data-toggle="tab"><img src="view/image/flags/<?php echo $language['image']; ?>" title="<?php echo $language['name']; ?>" /> <?php echo $language['name']; ?></a></li>
+                <?php } ?>
+              </ul>
+              <div class="tab-content">
+                <?php foreach ($languages as $language) { ?>
+                <div class="tab-pane" id="sc-language-<?php echo $language['language_id']; ?>">
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label" for="input-sc-name-<?php echo $language['language_id']; ?>"><?php echo $entry_name; ?></label>
+                    <div class="col-sm-10">
+                      <input type="text" name="category_description[<?php echo $language['language_id']; ?>][sc_name]" value="<?php echo isset($category_description[$language['language_id']]) ? $category_description[$language['language_id']]['sc_name'] : ''; ?>" placeholder="<?php echo $entry_name; ?>" id="input-sc-name-<?php echo $language['language_id']; ?>" class="form-control" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label" for="input-sc-description-<?php echo $language['language_id']; ?>"><?php echo $entry_description; ?></label>
+                    <div class="col-sm-10">
+                      <textarea name="category_description[<?php echo $language['language_id']; ?>][sc_description]" rows="5" placeholder="<?php echo $entry_description; ?>" id="input-sc-description-<?php echo $language['language_id']; ?>" class="form-control"><?php echo isset($category_description[$language['language_id']]) ? $category_description[$language['language_id']]['sc_description'] : ''; ?></textarea>
+                    </div>
+                  </div>
+                </div>
+                <?php } ?>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label"><?php echo $entry_image; ?></label>
+                <div class="col-sm-10"><a href="" id="thumb-sc-image" data-toggle="image" class="img-thumbnail"><img src="<?php echo $sc_thumb; ?>" alt="" title="" data-placeholder="<?php echo $placeholder; ?>" /></a>
+                  <input type="hidden" name="sc_image" value="<?php echo $sc_image; ?>" id="input-sc-image" />
+                </div>
+              </div>
+            </div>
+            <script type="text/javascript"><!--
+            $('#sc-language a:first').tab('show');
+            //--></script>
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/model/catalog/product.php">
+        <operation>
+            <search><![CDATA[
+            'p.date_added'
+            ]]></search>
+            <add position="before"><![CDATA[
+            'p.viewed',
+            ]]></add>
+        </operation>
+    </file>
+</modification>

@@ -1,0 +1,202 @@
+{{ header }}{{ column_left }} 
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %} 
+        <li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+        {% endfor %} 
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if (error_warning is defined and error_warning) %} 
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }} 
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %} 
+    {% if (success is defined and success) %} 
+    <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }} 
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %} 
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="well">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="control-label" for="input-text">{{ entry_text }}</label>
+                <input type="text" name="filter_text" value="{{ filter_text }}" placeholder="{{ entry_text }}" id="input-text" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label class="control-label" for="input-name">{{ entry_name }}</label>
+                <input type="text" name="filter_name" value="{{ filter_name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control" />
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="control-label" for="input-group_name">{{ entry_group_name }}</label>
+                <input type="text" name="filter_group_name" value="{{ filter_group_name }}" placeholder="{{ entry_group_name }}" id="input-group_name" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label class="control-label">{{ entry_language_id }}</label>
+				 <select name="filter_language_id" class="form-control" />
+					{% for language in languages %} 
+						<option value="{{ language['language_id'] }}" {{ filter_language_id == language['language_id']?'selected="selected"':'' }}>{{ language['name'] }}</option>
+					{% endfor %} 
+				 </select>
+              </div>
+            </div>
+            <div class="col-sm-4">
+				<button type="button" onclick="filter();" class="btn btn-default"><i class="fa fa-filter"></i> Filter</button>
+            </div>
+		  </div>
+		</div>
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <td class="text-left">Group name</td>
+                  <td class="text-left">Attribute name</td>
+                  <td class="text-left">
+				  {% if (sort == 'pa.text') %} 
+                    <a href="{{ sort_text }}" class="{{ order|lower }}">{{ column_text }}</a>
+                    {% else %} 
+                    <a href="{{ sort_text }}">{{ column_text }}</a>
+                    {% endif %}</td>
+					<td>{{ column_total }}</td>
+					<td>{{ column_language }}</td>
+                </tr>
+              </thead>
+			   
+              <tbody>
+                {% if (attributes) %} 
+                {% for attribute in attributes %} 
+                <tr>
+                  <td class="text-left">{{ attribute['group_name'] }}</td>
+                  <td class="text-left">{{ attribute['name'] }}</td>
+                  <td class="text-left val-text"  data-old_text="{{ attribute['old_text'] }}">{{ attribute['text'] }}</td>
+                  <td class="text-left">{{ attribute['total'] }}</td>
+                  <td class="text-left">{{ attribute['language_id'] }}</td>
+                </tr>
+                {% endfor %} 
+                {% else %} 
+                <tr>
+                  <td class="text-center">{{ text_no_results }}</td>
+                </tr>
+                {% endif %} 
+              </tbody>
+            </table>
+          </div>
+        <div class="row">
+          <div class="col-sm-6 text-left">{{ pagination }}</div>
+          <div class="col-sm-6 text-right">{{ results }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function filter() {
+	var url = 'index.php?route=extension/module/attribute_edit&user_token={{ user_token }}';
+	
+	var filter_text=$('input[name=filter_text]').val();
+	if (filter_text) {
+		url += '&filter_text=' + encodeURIComponent(filter_text);
+	}
+	var filter_name=$('input[name=filter_name]').val();
+	if (filter_name) {
+		url += '&filter_name=' + encodeURIComponent(filter_name);
+	}
+	var filter_group_name=$('input[name=filter_group_name]').val();
+	if (filter_group_name) {
+		url += '&filter_group_name=' + encodeURIComponent(filter_group_name);
+	}
+	var filter_language_id = $('select[name=filter_language_id]').val();
+	if (filter_language_id) {
+		url += '&filter_language_id=' + encodeURIComponent(filter_language_id);
+	}
+	location = url;
+}
+</script>
+<script>
+	$('.val-text').addClass('editCell').attr('data-field','text').each(function(){
+		var old_text = $(this).attr('data-old_text');
+		var text = $(this).html();
+		$(this).html('<div class="editDiv" data-old_text="' + encodeURIComponent(old_text) + '">' + text + '</div>');
+	});
+
+    $('body').on('click', '#ctrls_holder a', function(e) {
+        e.preventDefault();
+        if ($(this).hasClass('cancelEdit')) {
+        	$(this).closest('td').find('.editDiv').show();
+            $('#ctrls_holder').remove();
+            $('.editTextArea').remove();
+        }
+        
+        if ($(this).hasClass('saveEdit')) {
+        	$(this).addClass('link-disabled').blur().html('<i class="fa fa-spinner fa-spin">&nbsp;</i>');
+        	saveValue($('.editTextArea'));
+        }
+    });
+
+	$('.editCell').on('keyup', '.editTextArea', function(e) {
+		if ((e.keyCode == 10 || e.keyCode == 13) && e.ctrlKey) {
+			$('.saveEdit').trigger('click');
+		}
+		if( e.which === 27 ){
+			$('.cancelEdit').click();
+		}
+	});
+
+	$('tr').on('click', '.editCell', function(){
+		var $editDiv = $(this).find('.editDiv');
+		if ( $editDiv.is(':visible') ) {
+			$('.editTextArea').remove(); 	
+			$('.editDiv').show();	
+			var text = decodeURIComponent($(this).find('.editDiv').html());
+			$textarea = $('<textarea name="editing" class="form-control editTextArea">'+ text +'</textarea>');
+	        $(this).append($textarea);
+	        $editDiv.hide();
+	        showCtrls($textarea);
+			$textarea.focus();
+        }
+	});
+
+function saveValue($textarea) {
+  	var params = {
+		old_text : decodeURIComponent($textarea.siblings('.editDiv').attr('data-old_text')),
+   		text : $textarea.val()
+   	}
+	var url = 'index.php?route=extension/module/attribute_edit/edit&language_id=' + {{ filter_language_id }} + '&user_token={{ user_token }}';
+	var $editDiv = $('.editTextArea').siblings('.editDiv');
+   	$.ajax({
+		url: url,
+		method:'POST',
+		data: params,
+		success : function(html) {
+			$('#ctrls_holder').remove();
+            $('.editTextArea').remove();
+			$editDiv.show();
+			$editDiv.html(params.text);
+			$editDiv.attr('data-old_text',params.text);
+		}
+	});
+}
+
+function showCtrls($textarea) {
+	$('#ctrls_holder').remove();
+	var $ctrls = $('<div id="ctrls_holder" style="text-align:right"></div>')
+	var $ctrlOk = $('<a href="#" class="saveEdit btn btn-primary btn-xs"><i class="fa fa-check"></i></a>');
+	var $ctrlCancel = $('<a href="#" class="cancelEdit btn btn-default btn-xs"><i class="fa fa-times"></i></a>');
+	$ctrls.append($ctrlOk).append($ctrlCancel);
+	$textarea.before($ctrls);
+}
+</script>
+
+{{ footer }} 

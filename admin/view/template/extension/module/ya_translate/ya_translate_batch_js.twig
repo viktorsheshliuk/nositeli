@@ -1,0 +1,108 @@
+var languages = [];
+{% for language in languages %} 
+	languages[{{ language['language_id'] }}] = '{{ language['direction'] }}';
+{% endfor %} 
+$('div[id^=language]').each(function(){
+	var id = $(this).attr('id').replace('language','');
+	if (id != '{{ first_id }}') {
+		$(this).prepend('<div class="pull-right"><button type="button" onclick="yaTraslit(\'{{ first_id }}\', \'' +id + '\')" data-toggle="tooltip" title="translate Content" class="translate-content btn btn-warning"><i class="fa fa-flag-o"></i> ' + languages[id] + '</button></div><div class="clearfix"></div>');	}
+});
+
+function processHide() {
+	$(".bg_load").remove();
+	$(".wrapper").remove();
+}
+function processShow() {
+	var html = '<div class="bg_load"></div>';
+	html += '<div class="wrapper"><div class="inner">';
+	html += '<span>P</span><span>r</span><span>o</span><span>c</span><span>e</span><span>s</span><span>s</span>';
+	html += '</div>';
+	html += '<div class="inner">';
+	html += '<span id="p_id"></span>';
+	html += '</div>';	html += '</div>';
+	$('body').append(html);
+	$(".bg_load").fadeIn("slow");
+	$(".wrapper").fadeIn("slow");
+}
+ 
+function yaTraslit(from,to) {
+
+    var language_main = from;
+	var name, code, val, name_tag, element_from;
+	
+	var parameters = {};
+	parameters.text = {};
+
+	var language_id = $('form[id*=form-description] ul.nav.nav-tabs li.active a').attr('href').replace('#language','');
+	var fields = $('#language' + language_id).find('input[name],textarea[name]');
+	fields.each(function() {
+		element_from = $(this);
+		name = element_from.attr('name');
+
+		name_original = name.replace('['+language_id+']','['+ language_main + ']');
+		if (this.nodeName == 'INPUT') {
+			val = element_from.val();
+			if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+				val = $('[name=' + name_original.replace(/\[/g,'\\[').replace(/\]/g,'\\]') + ']').val();
+			}
+		} else {
+			var tempory_id = name_original.replace(/[\[\]]/g,'_').replace(/__/g,'_').replace(/_$/,'');
+			if (typeof CKEDITOR !== 'undefined' && typeof CKEDITOR.instances[tempory_id] !== 'undefined') {
+				val = CKEDITOR.instances[tempory_id].getData();
+				if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+					val = CKEDITOR.instances[tempory_id.replace(language_id,language_main)].getData();
+				}
+			} else if (typeof element_from.summernote === 'function' && element_from.siblings('.note-editor').length) {
+				val = element_from.summernote('code');
+				if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+					val = $('[name=' + name_original.replace(/\[/g,'\\[').replace(/\]/g,'\\]') + ']').summernote('code');
+				}
+			} else if (typeof tinyMCE === 'object' && tinyMCE.get(element_from.attr('id')) !== null) {
+				val = tinyMCE.get(element_from.attr('id')).getContent();
+				if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+					val =  tinyMCE.get(element_from.attr('id').replace(language_id,language_main)).getContent();
+				}
+			} else {
+				val = element_from.val();
+				if (!$('<div>'+val+'</div>').text().replace(/\s/g,'')) {
+					val = $('[name=' + name_original.replace(/\[/g,'\\[').replace(/\]/g,'\\]') + ']').val();
+				}
+			}
+		}
+		
+		parameters[encodeURIComponent(name)] = val;
+
+	});
+	$.ajax({
+		url: '{{ ya_script_translate }}' + '&from=' + from + '&to=' + language_id,
+		method: 'post',
+		data: parameters,
+		data_type: 'json',
+		beforeSend: function(){processShow();},
+		success: function(json) {
+			if (json['success']) {
+				for(var name_tag in json['text']) {
+					var new_val = json['text'][name_tag];
+					var name_original = decodeURIComponent(name_tag).replace(/\[/g,'\\[').replace(/\]/g,'\\]');
+					var element_to = $('#language' + to + ' [name=' + name_original + ']');
+					if (element_to[0].nodeName == 'INPUT') {
+						element_to.val(new_val);
+					} else {
+						var tempory_id = decodeURIComponent(name_tag).replace(/[\[\]]/g,'_').replace(/__/g,'_').replace(/_$/,'');
+						if (typeof CKEDITOR !== 'undefined' && typeof CKEDITOR.instances[tempory_id] !== 'undefined') {
+							CKEDITOR.instances[tempory_id].setData(new_val);
+						} else if (typeof element_to.summernote === 'function' && element_to.siblings('.note-editor').length) {
+							element_to.summernote('code',new_val);
+						} else if (typeof tinyMCE === 'object' && tinyMCE.get(element_to.attr('id'))  !== null ) {
+							tinyMCE.get(element_to.attr('id')).setContent(new_val);
+						} else {
+							element_to.val(new_val);
+						}
+					}
+				}
+				processHide();
+				// $('#confirm-translate').modal().show();
+			}
+		}
+	});
+}

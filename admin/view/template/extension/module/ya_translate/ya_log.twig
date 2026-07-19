@@ -1,0 +1,18 @@
+<div id="log-view" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title"><i class="fa fa-ban"></i> {{ heading_log }}</h4>
+      </div>
+      <div class="modal-body">
+		<textarea readonly="readnoly" rows="20" class="form-control">{{ log }}</textarea>
+        <div class="modal-footer">
+          <button type="button" onclick="clearlog()" class="btn btn-primary"><i class="fa fa-trash"></i>{{ button_clear }}</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">{{ text_close }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

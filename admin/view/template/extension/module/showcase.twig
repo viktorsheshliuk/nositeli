@@ -1,0 +1,1131 @@
+{{header}}{{column_left}}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        {% if apply_btn %}
+        <a onclick="$('#apply').val('1'); $('#form-showcase').submit();" class="btn btn-success" data-toggle="tooltip" title="{{button_apply}}" role="button"><i class="fa fa-check"></i> <span class="hidden-sm">{{button_apply}}</span></a>
+        {% endif %}
+        <button type="submit" form="form-showcase" data-toggle="tooltip" title="{{button_save}}" class="btn btn-primary"><i class="fa fa-save"></i> <span class="hidden-sm">{{button_save}}</span></button>
+        <a href="{{cancel}}" data-toggle="tooltip" title="{{button_cancel}}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{heading_title}}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{breadcrumb.href}}">{{breadcrumb.text}}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>{{error_warning}}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil-square-o"></i>
+        {{text_edit}}
+        {% if name %}
+        "{{name}}"
+        {% endif %}
+        </h3>
+        {% if success %}
+        <div class="sc-apply text-success pull-right"><i class="fa fa-check"></i>{{success}}</div>
+        {% endif %}
+        {% if error_name %}
+        <div class="text-danger pull-right">{{error_name}}</div>
+        {% endif %}
+      </div>
+      <div class="panel-body">
+        <form action="{{action}}" method="post" enctype="multipart/form-data" id="form-showcase" class="form-horizontal">
+          <ul id="settingTab" class="nav nav-tabs" role="tablist">
+            <li class="active"><a href="#scSetting" role="tab" data-toggle="tab">{{tab_sc_setting}}</a></li>
+            <li><a href="#moduleSetting" role="tab" data-toggle="tab">{{tab_module_setting}}</a></li>
+          </ul>
+          <div class="tab-content">
+            <div id="scSetting" class="tab-pane active">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">{{entry_title}}</label>
+                    <div class="col-sm-8">
+                      {% for language in languages %}
+                      <div class="input-group"> <span class="input-group-addon">
+                      <img src="language/{{ language.code }}/{{ language.code }}.png" title="{{language.name}}" /></span>
+                        <input type="text" name="showcase[{{language.language_id}}][title]" value="{{ showcase[language.language_id].title }}" class="form-control" />
+                      </div>
+                      <br />
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <hr />
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">{{entry_items}}</label>
+                    <div class="col-sm-3">
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="showcase[type]" value="tree"
+                           {% if showcase.type == '' or showcase.type == 'tree' %}
+                           checked="checked" 
+                           {% endif %}
+                             onchange="if($(this).prop('checked')) {$('#categories,#tree-categories').show();$('#brands').hide();}" />
+                          {{text_categories}}</label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="showcase[type]" value="brands" 
+                          {% if showcase.type and showcase.type == 'brands' %}
+                          checked="checked"
+                          {% endif %} 
+                          onchange="if($(this).prop('checked')) {$('#categories').hide();$('#brands').show();}" />
+                          {{text_brands}}</label>
+                      </div>
+                    </div>
+                    <div class="col-sm-5">
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="showcase[type]" value="parent" 
+                          {% if showcase.type and showcase.type == 'parent' %}
+                          checked="checked"
+                          {% endif %} 
+                          onchange="if($(this).prop('checked')) {$('#categories').show();$('#brands,#tree-categories').hide();}" />
+                          {{text_parent}}</label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="showcase[type]" value="current" 
+                          {% if showcase.type and showcase.type == 'current' %}
+                           checked="checked"
+                           {% endif %} 
+                          onchange="if($(this).prop('checked')) {$('#categories').show();$('#brands,#tree-categories').hide();}" />
+                          {{text_current}}</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="categories" 
+                  {% if showcase.type and showcase.type == 'brands' %}
+                  style="display:none;"
+                  {% endif %}
+                  class="sc-items">
+                    <div id="tree-categories" 
+                    {% if not showcase.type or showcase.type == 'tree' %}
+                    {% else %}
+                    style="display:none;"
+                    {% endif %}
+                    >
+                      <hr />
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_cat}}</label>
+                        <div class="col-sm-8">
+                          <div class="radio">
+                            <label>
+                              <input type="radio" name="showcase[allcat]" value="1" 
+                              {% if showcase.allcat %}
+                               checked="checked"
+                               {% endif %} 
+                              onchange="if($(this).prop('checked')) {$('#featured-categories').hide();}" />
+                              {{text_allcat}}</label>
+                          </div>
+                          <div class="radio">
+                            <label>
+                              <input type="radio" name="showcase[allcat]" value="0" 
+                              {% if not showcase.allcat %} 
+                              checked="checked"
+                              {% endif %} 
+                              onchange="if($(this).prop('checked')) {$('#featured-categories').show();}" />
+                              {{text_fcat}}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div id="featured-categories" 
+                      {% if showcase.allcat  %}
+                       style="display:none;"
+                      {% endif %}
+                      >
+                        <div class="form-group">
+                          <div class="col-sm-8 col-sm-offset-4">
+                            <input type="text" name="showcase[fcat]" value="" placeholder="{{text_fcat}}" id="input-fcat" class="form-control" />
+                            <div id="showcase-fcat" class="well well-sm" style="height: 150px; overflow: auto; margin-bottom: 0;">
+                              {% for category in categories %}
+                              <div id="showcase-fcat{{category.category_id}}"><i class="fa fa-minus-circle"></i>{{category.name}}
+                                <input type="hidden" name="showcase[fcat][]" value="{{category.category_id}}" />
+                              </div>
+                             {% endfor %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr />
+                    <div class="form-group">
+                      <div class="col-sm-8 col-sm-offset-4">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="showcase[count_status]" value="1" 
+                            {% if showcase.count_status %}  checked="checked" {% endif %} />
+                            {{text_count}}</label>
+                        </div>
+                      </div>
+                    </div>
+                    <hr />
+                  </div>
+                  <div id="brands" 
+                  {% if showcase.type and showcase.type == 'brands' %}
+                  style="display:none;"
+                  {% endif %}
+                  class="sc-items">
+                    <hr />
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label">{{entry_brands}}</label>
+                      <div class="col-sm-8">
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="showcase[allbrands]" value="1" 
+                            {% if showcase.allbrands %} 
+                            checked="checked"
+                            {% endif %}
+                            onchange="if($(this).prop('checked')) {$('#featured-brands').hide();}" />
+                            {{text_allbrands}}</label>
+                        </div>
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="showcase[allbrands]" value="0" 
+                            {% if not showcase.allbrands  %} 
+                            checked="checked"
+                            {% endif %} 
+                            onchange="if($(this).prop('checked')) {$('#featured-brands').show();}" />
+                            {{text_fbrands}}</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="featured-brands" 
+                    {% if showcase.allbrands %}
+                     style="display:none;"
+                     {% endif %}
+                    >
+                      <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-4">
+                          <input type="text" name="showcase[fbrand]" value="" placeholder="{{text_fbrands}}" id="input-fbrand" class="form-control" />
+                          <div id="showcase-fbrand" class="well well-sm" style="height: 150px; overflow: auto; margin-bottom: 0;">
+                            {% for brand in brands %}
+                            <div id="showcase-fbrand{{brand.brand_id}}"><i class="fa fa-minus-circle"></i>{{brand.name}}
+                              <input type="hidden" name="showcase[fbrand][]" value="{{brand.brand_id}}" />
+                            </div>
+                            {% endfor %}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr />
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">{{entry_products_byitem}}</label>
+                    <div class="col-sm-8">
+                      <div class="btn-group btn-group-justified" data-toggle="buttons">
+                        <label class="btn btn-success">
+                          <input type="radio" name="showcase[products_by_item]" value="1" 
+                          {%if showcase.products_by_item %}
+                          checked="checked"
+                          {% endif %} 
+                          onchange="if($(this).prop('checked')) {$('#products-config').show();}" />
+                          {{text_enabled}}</label>
+                        <label class="btn btn-danger">
+                          <input type="radio" name="showcase[products_by_item]" value="0" 
+                          {% if not showcase.products_by_item %} 
+                           checked="checked"
+                           {% endif %}
+                          onchange="if($(this).prop('checked')) {$('#products-config').hide();}" />
+                          {{text_disabled}}</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="products-config" 
+                  {% if showcase.products_by_item !='' %}
+                  {% else %}
+                  style="display:none;"
+                  {% endif %} 
+                  >
+                    <hr />
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label">{{entry_sort_order}}</label>
+                      <div class="col-sm-8">
+                        <select name="showcase[products_sort]" class="form-control">
+                          {% for sort in sorts %}
+                          {% if showcase.products_sort and sort.value == showcase.products_sort %}
+                          <option value="{{sort.value}}" selected="selected">{{sort.name}}</option>
+                         {% else %}
+                          <option value="{{sort.value}}">{{sort.name}}</option>
+                          {% endif %}
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <hr />
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label">{{entry_products_limit}}</label>
+                      <div class="col-sm-8">
+                        <input type="text" name="showcase[products_limit]"
+                        {% if showcase.products_limit %}
+                        value="{{showcase.products_limit}}"
+                        {% endif %} 
+                        class="form-control" />
+                      </div>
+                    </div>
+                    <hr />
+                    <div class="form-group">
+                      <div class="col-sm-4 col-sm-offset-4">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="showcase[price]" value="1" 
+                            {% if showcase.price %}
+                             checked="checked"
+                             {% endif %}
+                             />
+                            {{text_price}}</label>
+                        </div>
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="showcase[rating]" value="1" 
+                            {% if showcase.rating %}
+                            checked="checked" 
+                            {% endif %}
+                            />
+                            {{text_rating}}</label>
+                        </div>
+                      </div>
+                      <div class="col-sm-4">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="showcase[cart]" value="1"
+                            {% if showcase.cart %}
+                            checked="checked"
+                             {% endif %} 
+                            />
+                            {{text_cart}}</label>
+                        </div>
+                      </div>
+                    </div>
+                    <hr />
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label">{{entry_cart}}</label>
+                      <div class="col-sm-4">
+                        <input type="text" name="showcase[cart_icon]" 
+                        {% if showcase.cart_icon %}
+                        value="{{showcase.cart_icon}}"
+                        {% else %}
+                        value='<i class="fa fa-shopping-cart"></i>'
+                         {% endif %}
+                         class="form-control text-center" />
+                      </div>
+                      <div class="col-sm-4">
+                        <input type="text" name="showcase[cart_class]"
+                        {% if showcase.cart_class !='' %}
+                         value="{{showcase.cart_class}} 
+                         {% else %}
+                         value="btn btn-default btn-block"
+                         {% endif %}
+                          class="form-control text-center" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <div class="col-sm-11 col-sm-offset-1">
+                      <ul class="nav nav-tabs" role="tablist" style="margin-bottom: 10px;">
+                        <li class="active"><a href="#items" data-toggle="tab">{{tab_items}}</a></li>
+                        <li><a href="#subitems" data-toggle="tab">{{tab_subitems}}</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="items">
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_itemrow}}</label>
+                        <div class="col-sm-4">
+                          <div class="input-group"> <span class="input-group-addon">{{text_xs}}</span>
+                            <input type="text" name="showcase[items_xs]" value="{% if showcase.items_xs !='' %}{{showcase.items_xs}}{% else %}1{% endif %}" class="form-control text-center" />
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="input-group"> <span class="input-group-addon">{{text_sm}}</span>
+                            <input type="text" name="showcase[items_sm]" value="{% if showcase.items_sm !='' %}{{showcase.items_sm}}{% else %}2{% endif %}" class="form-control text-center" />
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-4">
+                          <div class="row">
+                            <div class="col-sm-6">
+                              <div class="input-group"> <span class="input-group-addon">{{text_md}}</span>
+                                <input type="text" name="showcase[items_md]" value="{% if showcase.items_md !='' %}{{showcase.items_md}}{% else %}3{% endif %}" class="form-control text-center" />
+                              </div>
+                            </div>
+                            <div class="col-sm-6">
+                              <div class="input-group"> <span class="input-group-addon">{{text_lg}}</span>
+                                <input type="text" name="showcase[items_lg]" value="{% if showcase.items_lg !='' %}{{showcase.items_lg}}{% else %}4{% endif %}" class="form-control text-center" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_margin}}</label>
+                        <div class="col-sm-4">
+                          <input type="text" name="showcase[item_margin]" value="{% if showcase.item_margin %}{{showcase.item_margin}}{% else %}20{% endif %}" class="form-control text-center" />
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_image}}</label>
+                        <div class="col-sm-8">
+                          <div class="btn-group btn-group-justified" data-toggle="buttons">
+                            <label class="btn btn-success">
+                              <input type="radio" name="showcase[item_image]" value="1" {% if showcase.item_image %} checked="checked" {% endif %} />
+                              {{text_enabled}}</label>
+                              <label class="btn btn-danger">
+                                <input type="radio" name="showcase[item_image]" value="0" {% if not showcase.item_image %} checked="checked" {% endif %} />
+                                {{text_disabled}}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_size}}</label>
+                        <div class="col-sm-4">
+                          <input type="text" name="showcase[item_width]" value="{% if showcase.item_width !='' %}{{showcase.item_width}}{% else %}200{% endif %}" class="form-control text-center" />
+                        </div>
+                        <div class="col-sm-4">
+                          <input type="text" name="showcase[item_height]" value="{% if showcase.item_height !='' %}{{showcase.item_height}}{% else %}200{% endif %}" class="form-control text-center" />
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_image_pos}}</label>
+                        <div class="col-sm-8">
+                          <div class="btn-group btn-group-justified" data-toggle="buttons">
+                            <label class="btn btn-success">
+                              <input type="radio" name="showcase[item_img_pos]" value="left" 
+                              {% if showcase.item_img_pos and showcase.item_img_pos == 'left' %}
+                              checked="checked"
+                              {% endif %}
+                               />
+                              {{text_left}}</label>
+                              <label class="btn btn-success">
+                                <input type="radio" name="showcase[item_img_pos]" value="right" 
+                                {% if showcase.item_img_pos and showcase.item_img_pos == 'right' %}
+                                checked="checked"
+                                {% endif %}
+                                 />
+                                {{text_right}}</label>
+                              <label class="btn btn-success">
+                                <input type="radio" name="showcase[item_img_pos]" value="top" 
+                                {% if showcase.item_img_pos =='' or showcase.item_img_pos == 'top' %}
+                                checked="checked"
+                                {% endif %}
+                                 />
+                                {{text_top}}</label>
+                              <label class="btn btn-success">
+                                <input type="radio" name="showcase[item_img_pos]" value="bottom" 
+                                {% if showcase.item_img_pos and showcase.item_img_pos == 'bottom' %}
+                                checked="checked"
+                                {% endif %} />
+                                {{text_bottom}}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <div class="col-sm-4 col-sm-offset-4">
+                          <div class="checkbox">
+                            <label>
+                              <input type="checkbox" name="showcase[item_heading]" value="1"
+                              {% if showcase.item_heading %}
+                              checked="checked"
+                              {% endif %} />
+                              {{text_heading}}</label>
+                          </div>
+                          <div class="checkbox">
+                            <label>
+                              <input type="checkbox" name="showcase[item_desc]" value="1" 
+                              {% if showcase.item_desc %}
+                              checked="checked"
+                              {% endif %} />
+                              {{text_description}}</label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <input type="checkbox" name="showcase[item_btn]" value="1" 
+                              {% if showcase.item_btn %}
+                              checked="checked"
+                              {% endif %} />
+                              {{text_btn}}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_btn}}</label>
+                        <div class="col-sm-4">
+                          <input type="text" name="showcase[item_btn_text]" value="{% if showcase.item_btn_text !='' %}{{showcase.item_btn_text}}{% else %}{{text_more_btn}}{% endif %}" class="form-control text-center" />
+                        </div>
+                        <div class="col-sm-4">
+                          <input type="text" name="showcase[btn_class]" value="{% if showcase.btn_class !='' %}{{showcase.btn_class}}{% else %}btn btn-default btn-block{% endif %}" class="form-control text-center" />
+                        </div>
+                      </div>
+                      <br />
+                      <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-4">
+                          <h4>{{entry_carousel}}</h4>
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_items_carousel}}</label>
+                        <div class="col-sm-8">
+                          <div class="btn-group btn-group-justified" data-toggle="buttons">
+                            <label class="btn btn-success">
+                              <input type="radio" name="showcase[items_carousel]" value="1" 
+                              {% if showcase.items_carousel %}
+                               checked="checked"
+                               {% endif %} />
+                              {{text_enabled}}</label>
+                              <label class="btn btn-danger">
+                                <input type="radio" name="showcase[items_carousel]" value="0" 
+                                {% if not showcase.items_carousel %}
+                                checked="checked"
+                                {% endif %} />
+                                {{text_disabled}}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <div class="col-sm-4 col-sm-offset-4">
+                          <div class="checkbox">
+                            <label>
+                              <input type="checkbox" name="showcase[items_mousewheel]" value="1" 
+                              {% if showcase.items_mousewheel %}
+                              checked="checked"
+                              {% endif %} />
+                            {{entry_mousewheel}}</label>
+                          </div>
+                          <div class="checkbox">
+                            <label>
+                              <input type="checkbox" name="showcase[items_drag]" value="1" 
+                              {% if showcase.items_drag %}
+                               checked="checked"
+                               {% endif %} />
+                              {{entry_drag}}</label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <input type="checkbox" name="showcase[items_dots]" value="1" 
+                              {% if showcase.items_dots %}
+                               checked="checked"
+                               {% endif %} />
+                              {{entry_dots}}</label>
+                          </div>
+                          <div class="checkbox">
+                            <label>
+                              <input type="checkbox" name="showcase[items_nav]" value="1" 
+                              {% if showcase.items_nav %}
+                               checked="checked"
+                               {% endif %} />
+                              {{entry_nav}}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_autoplay}}</label>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <input type="checkbox" name="showcase[autoplay]" value="1" 
+                              {% if showcase.autoplay %}
+                               checked="checked"
+                               {% endif %} />
+                              {{text_autoplay}}</label>
+                          </div>
+                        </div>
+                        <div class="col-sm-2">
+                          <input type="text" name="showcase[autoplay_speed]" value="{% if showcase.autoplay_speed !='' %}{{showcase.autoplay_speed}}{% else %}500{% endif %}" class="form-control text-center" />
+                        </div>
+                        <div class="col-sm-2">
+                          <input type="text" name="showcase[autoplay_timeout]" value="{% if showcase.autoplay_timeout !='' %}{{showcase.autoplay_timeout}}{% else %}5000{% endif %}" class="form-control text-center" />
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_nav_text}}</label>
+                        <div class="col-sm-4">
+                          <input type="text" name="showcase[items_prev_nav]" value="{% if showcase.items_prev_nav !='' %}{{showcase.items_prev_nav}}{% else %}<i class='fa fa-chevron-left'></i>{% endif %}" class="form-control text-center" />
+                        </div>
+                        <div class="col-sm-4">
+                          <input type="text" name="showcase[items_next_nav]" value="{% if showcase.items_next_nav !='' %}{{showcase.items_next_nav}}{% else %}<i class='fa fa-chevron-right'></i>{% endif %}" class="form-control text-center" />
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_nav_speed}}</label>
+                        <div class="col-sm-4">
+                          <input type="text" name="showcase[items_nav_speed]" value="{% if showcase.items_nav_speed !='' %}{{showcase.items_nav_speed}}{% else %}250{% endif %}" class="form-control text-center" />
+                        </div>
+                      </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="subitems">
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_subitems}}</label>
+                        <div class="col-sm-8">
+                          <div class="btn-group btn-group-justified" data-toggle="buttons">
+                            <label class="btn btn-success">
+                              <input type="radio" name="showcase[subitems_status]" value="1" 
+                              {% if showcase.subitems_status %}
+                              checked="checked"
+                              {% endif %} />
+                              {{text_enabled}}</label>
+                              <label class="btn btn-danger">
+                                <input type="radio" name="showcase[subitems_status]" value="0" 
+                                {% if showcase.subitems_status =='' %}
+                                checked="checked"
+                                {% endif %} />
+                                {{text_disabled}}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_subitems_limit}}</label>
+                        <div class="col-sm-4">
+                          <input type="text" name="showcase[subitem_limit]" value="{% if showcase.subitem_limit %}{{showcase.subitem_limit}}{% endif %}" class="form-control text-center" />
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">{{entry_subitems_pos}}</label>
+                        <div class="col-sm-8">
+                          <div class="btn-group btn-group-justified" data-toggle="buttons">
+                            <label class="btn btn-success">
+                              <input type="radio" name="showcase[subitems_pos]" value="inside" onchange="if($(this).prop('checked')) {$('#inside').show();$('#outside').hide();}" 
+                              {% if showcase.subitems_pos and showcase.subitems_pos == 'inside' %}
+                              checked="checked" 
+                              {% endif %} />
+                              {{text_inside}}</label>
+                              <label class="btn btn-success">
+                                <input type="radio" name="showcase[subitems_pos]" value="outside" onchange="if($(this).prop('checked')) {$('#inside').hide();$('#outside').show();}" 
+                                {% if showcase.subitems_pos =='' or  showcase.subitems_pos == 'outside' %}
+                                checked="checked"
+                                {% endif %} />
+                                {{text_outside}}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                      <div id="inside" {% if showcase.subitems_pos and showcase.subitems_pos == 'inside' %}{% else %}style="display:none;"{% endif %}>
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">{{entry_subitems_view}}</label>
+                          <div class="col-sm-8">
+                            <div class="btn-group btn-group-justified" data-toggle="buttons">
+                              <label class="btn btn-success">
+                                <input type="radio" name="showcase[sublist]" value="1" onchange="if($(this).prop('checked')) {$('#subcolumn').hide();}" 
+                                {% if showcase.sublist %}
+                                checked="checked"
+                                {% endif %} />
+                                {{text_list}}</label>
+                                <label class="btn btn-success">
+                                  <input type="radio" name="showcase[sublist]" value="0" onchange="if($(this).prop('checked')) {$('#subcolumn').show();}" 
+                                  {% if showcase.sublist =='' %}
+                                  checked="checked"
+                                  {% endif %} />
+                                  {{text_column}}</label>
+                            </div>
+                          </div>
+                        </div>
+                        <div id="subcolumn" {% if showcase.sublist !='' %} style="display:none;"{% endif %}>
+                          <div class="form-group">
+                            <label class="col-sm-4 control-label">{{entry_column}}</label>
+                            <div class="col-sm-4">
+                              <input type="text" name="showcase[column]" value="{% if showcase.column !='' %}{{showcase.column}}{% else %}2{% endif %}" class="form-control text-center" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div id="outside" {% if showcase.subitems_pos == '' or showcase.subitems_pos == 'outside' %}{% else %} style="display:none;"{% endif %}>
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">{{entry_subitemrow}}</label>
+                          <div class="col-sm-4">
+                            <div class="input-group"> <span class="input-group-addon">{{text_xs}}</span>
+                              <input type="text" name="showcase[subitems_xs]" value="{% if showcase.subitems_xs !='' %}{{showcase.subitems_xs}}{% else %}1{% endif %}" class="form-control text-center" />
+                            </div>
+                          </div>
+                          <div class="col-sm-4">
+                            <div class="input-group"> <span class="input-group-addon">{{text_sm}}</span>
+                              <input type="text" name="showcase[subitems_sm]" value="{% if showcase.subitems_sm !='' %}{{showcase.subitems_sm}}{% else %}2{% endif %}" class="form-control text-center" />
+                            </div>
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                          <div class="col-sm-8 col-sm-offset-4">
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <div class="input-group"> <span class="input-group-addon">{{text_md}}</span>
+                                  <input type="text" name="showcase[subitems_md]" value="{% if showcase.subitems_md !='' %}{{showcase.subitems_md}}{% else %}3{% endif %}" class="form-control text-center" />
+                                </div>
+                              </div>
+                              <div class="col-sm-6">
+                                <div class="input-group"> <span class="input-group-addon">{{text_lg}}</span>
+                                  <input type="text" name="showcase[subitems_lg]" value="{% if showcase.subitems_lg !='' %}{{showcase.subitems_lg}}{% else %}4{% endif %}" class="form-control text-center" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">{{entry_margin}}</label>
+                          <div class="col-sm-4">
+                            <input type="text" name="showcase[subitem_margin]" value="{% if showcase.subitem_margin %}{{showcase.subitem_margin}}{% else %}20{% endif %}" class="form-control text-center" />
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">{{entry_image}}</label>
+                          <div class="col-sm-8">
+                            <div class="btn-group btn-group-justified" data-toggle="buttons">
+                              <label class="btn btn-success">
+                                <input type="radio" name="showcase[subitem_image]" value="1" 
+                                {% if showcase.subitem_image %}
+                                checked="checked"
+                                {% endif %} />
+                                {{text_enabled}}</label>
+                                <label class="btn btn-danger">
+                                  <input type="radio" name="showcase[subitem_image]" value="0" 
+                                  {% if showcase.subitem_image =='' %} 
+                                  checked="checked"
+                                  {% endif %} />
+                                  {{text_disabled}}</label>
+                            </div>
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">{{entry_size}}</label>
+                          <div class="col-sm-4">
+                            <input type="text" name="showcase[subitem_width]" value="{% if showcase.subitem_width !='' %}{{showcase.subitem_width}}{% else %}200{% endif %}" class="form-control text-center" />
+                          </div>
+                          <div class="col-sm-4">
+                            <input type="text" name="showcase[subitem_height]" value="{% if showcase.subitem_height !='' %}{{showcase.subitem_height}}{% else %}200{% endif %}" class="form-control text-center" />
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">{{entry_image_pos}}</label>
+                          <div class="col-sm-8">
+                            <div class="btn-group btn-group-justified" data-toggle="buttons">
+                              <label class="btn btn-success">
+                                <input type="radio" name="showcase[subitem_img_pos]" value="left" {% if showcase.subitem_img_pos and showcase.subitem_img_pos == 'left' %} checked="checked" {% endif %} />
+                                {{text_left}}</label>
+                                <label class="btn btn-success">
+                                  <input type="radio" name="showcase[subitem_img_pos]" value="right" {% if showcase.subitem_img_pos and showcase.subitem_img_pos == 'right' %} checked="checked" {% endif %} />
+                                  {{text_right}}</label>
+                                <label class="btn btn-success">
+                                  <input type="radio" name="showcase[subitem_img_pos]" value="top" {% if showcase.subitem_img_pos =='' or showcase.subitem_img_pos == 'top' %} checked="checked" {% endif %} />
+                                  {{text_top}}</label>
+                                <label class="btn btn-success">
+                                  <input type="radio" name="showcase[subitem_img_pos]" value="bottom" {% if showcase.subitem_img_pos and showcase.subitem_img_pos == 'bottom' %} checked="checked" {% endif %} />
+                                  {{text_bottom}}</label>
+                            </div>
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                          <div class="col-sm-4 col-sm-offset-4">
+                            <div class="checkbox">
+                              <label>
+                                <input type="checkbox" name="showcase[subitem_heading]" value="1" 
+                                {% if showcase.subitem_heading %}
+                                checked="checked"
+                                {% endif %} />
+                                {{text_heading}}</label>
+                            </div>
+                            <div class="checkbox">
+                              <label>
+                                <input type="checkbox" name="showcase[subitem_desc]" value="1" 
+                                {% if showcase.subitem_desc %}
+                                checked="checked"
+                                {% endif %} />
+                                {{text_description}}</label>
+                            </div>
+                          </div>
+                          <div class="col-sm-4">
+                            <div class="checkbox">
+                              <label>
+                                <input type="checkbox" name="showcase[subitem_btn]" value="1" 
+                                {% if showcase.subitem_btn %}
+                                checked="checked"
+                                {% endif %} />
+                                {{text_btn}}</label>
+                            </div>
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">{{entry_btn}}</label>
+                          <div class="col-sm-4">
+                            <input type="text" name="showcase[subitem_btn_text]" value="{% if showcase.subitem_btn_text !='' %}{{showcase.subitem_btn_text}}{% else %}{{text_more_btn}}{% endif %}" class="form-control text-center" />
+                          </div>
+                          <div class="col-sm-4">
+                            <input type="text" name="showcase[subbtn_class]" value="{% if showcase.subbtn_class !='' %}{{showcase.subbtn_class}}{% else %} btn btn-default btn-block {% endif %}" class="form-control text-center" />
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                          <div class="col-sm-8 col-sm-offset-4">
+                            <div class="checkbox">
+                              <label>
+                                <input type="checkbox" name="showcase[description_status]" value="1" 
+                               {% if showcase.description_status %}
+                                checked="checked"
+                                {% endif %} />
+                                {{entry_parent_desc}}</label>
+                            </div>
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">{{entry_desc_limit}}</label>
+                          <div class="col-sm-4">
+                            <input type="text" name="showcase[description_limit]" value="{% if showcase.description_limit !='' %}{{showcase.description_limit}}{% endif %}" class="form-control text-center" />
+                          </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                          <div class="col-sm-8 col-sm-offset-4">
+                            <h4>{{entry_carousel}}</h4>
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">{{entry_subitems_carousel}}</label>
+                          <div class="col-sm-8">
+                            <div class="btn-group btn-group-justified" data-toggle="buttons">
+                              <label class="btn btn-success">
+                                <input type="radio" name="showcase[subitems_carousel]" value="1" 
+                                {% if showcase.subitems_carousel %}
+                                checked="checked"
+                                {% endif %} />
+                                {{text_enabled}}</label>
+                              <label class="btn btn-danger">
+                                <input type="radio" name="showcase[subitems_carousel]" value="0" 
+                                {% if showcase.subitems_carousel =='' %}
+                                 checked="checked"
+                                 {% endif %} />
+                                {{text_disabled}}</label>
+                            </div>
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                          <div class="col-sm-4 col-sm-offset-4">
+                            <div class="checkbox">
+                              <label>
+                                <input type="checkbox" name="showcase[subitems_mousewheel]" value="1" 
+                                {% if showcas.subitems_mousewheel %}
+                                checked="checked"
+                                {% endif %} />
+                                {{entry_mousewheel}}</label>
+                            </div>
+                            <div class="checkbox">
+                              <label>
+                                <input type="checkbox" name="showcase[subitems_drag]" value="1" 
+                                {% if showcase.subitems_drag %}
+                                checked="checked"
+                                {% endif %}/>
+                                {{entry_drag}}</label>
+                            </div>
+                          </div>
+                          <div class="col-sm-4">
+                            <div class="checkbox">
+                              <label>
+                                <input type="checkbox" name="showcase[subitems_dots]" value="1" 
+                                {% if showcase.subitems_dots %}
+                                checked="checked"
+                                {% endif %} />
+                                {{entry_dots}}</label>
+                            </div>
+                            <div class="checkbox">
+                              <label>
+                                <input type="checkbox" name="showcase[subitems_nav]" value="1" 
+                                {% if showcase.subitems_nav %}
+                                checked="checked"
+                                {% endif %} />
+                                {{entry_nav}}</label>
+                            </div>
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">{{entry_nav_text}}</label>
+                          <div class="col-sm-4">
+                            <input type="text" name="showcase[subitems_prev_nav]" value="{% if showcase.subitems_prev_nav !='' %}{{showcase.subitems_prev_nav}}{% else %}<i class='fa fa-chevron-left'></i>{% endif %}" class="form-control text-center" />
+                          </div>
+                          <div class="col-sm-4">
+                            <input type="text" name="showcase[subitems_next_nav]" value="{% if showcase.subitems_next_nav !='' %}{{showcase.subitems_next_nav}}{% else %}<i class='fa fa-chevron-right'></i>{% endif %}" class="form-control text-center" />
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">{{entry_nav_speed}}</label>
+                          <div class="col-sm-4">
+                            <input type="text" name="showcase[subitems_nav_speed]" value="{% if showcase.subitems_nav_speed !='' %}{{showcase.subitems_nav_speed}}{% else %}250{% endif %}" class="form-control text-center" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="moduleSetting" class="tab-pane">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group required">
+                    <label class="col-sm-4 control-label" for="input-name">{{entry_name}}</label>
+                    <div class="col-sm-8">
+                      <input type="text" name="name" value="{{name}}" id="input-name" class="form-control" />
+                      {% if error_name %}
+                      <div class="text-danger">{{error_name}}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                  <hr />
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">{{entry_status}}</label>
+                    <div class="col-sm-8">
+                      <div class="btn-group btn-group-justified" data-toggle="buttons">
+                        <label class="btn btn-success">
+                          <input type="radio" name="status" value="1" 
+                          {% if status %} 
+                          checked="checked" 
+                          {% endif %} />
+                          {{text_enabled}}</label>
+                        <label class="btn btn-danger">
+                          <input type="radio" name="status" value="0" 
+                          {% if not status  %}
+                           checked="checked" 
+                           {% endif %} />
+                          {{text_disabled}}</label>
+                      </div>
+                    </div>
+                  </div>
+                  <hr />
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">{{entry_sc_class}}</label>
+                    <div class="col-sm-8">
+                      <input type="text" name="showcase[sc_class]" 
+                      {% if showcase.sc_class !='' %}
+                      value="{{showcase.sc_class}}" class="form-control" />
+                      {% else %}
+                        value="showcase" class="form-control" />
+                      {% endif %}
+                    </div>
+                  </div>
+                  <hr />
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">{{entry_store}}</label>
+                    <div class="col-sm-8">
+                      <div class="well well-sm" style="height: 150px; overflow: auto; margin-bottom: 0;">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="showcase[store_id][]" value="0"  
+                            {% if showcase.store_id and showcase.store_id|first == '0' %}
+                            checked="checked"
+                            {% endif %}
+                            />
+                            {{default_store}}</label>
+                        </div>
+                        {% for store in stores %}
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="showcase[store_id][]" value="{{store.store_id}}" <?php echo isset($showcase['store_id']) && in_array($store['store_id'], $showcase['store_id']) ? 'checked="checked" ' : ''; ?> />
+                            {{store.name}}</label>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">{{entry_location}}</label>
+                    <div class="col-sm-8">
+                      <input type="text" name="showcase[fcid]" value="" placeholder="{{text_cat_autocomplete}}" class="form-control" />
+                      <div id="showcase-location" class="well well-sm" style="height: 131px; overflow: auto; margin-bottom: 0;">
+                        <div class="checkbox" style="border-bottom: 1px dashed #CCC; padding-bottom: 9px;">
+                          <label>
+                            <input type="checkbox" name="showcase[location]" value="1" 
+                            {% if showcase.location %} 
+                            checked="checked"
+                            {% endif %}
+                             />
+                            {{text_allcat}}</label>
+                        </div>
+                        {% for location in locations %}
+                        <div id="showcase-location{{location.category_id}}"><i class="fa fa-minus-circle"></i>{{location.name}}
+                          <input type="hidden" name="showcase[fcid][]" value="{{location.category_id}}" />
+                        </div>
+                          {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">{{entry_customers}}</label>
+                    <div class="col-sm-8">
+                      <div class="well well-sm" style="height: 150px; overflow: auto; margin-bottom: 0;">
+                        <div class="checkbox" style="border-bottom: 1px dashed #CCC; padding-bottom: 9px;">
+                          <label>
+                            <input type="checkbox" name="showcase[all_customers]" value="1"
+                             {% if showcase.all_customers %}
+                             checked="checked"
+                             {% endif %}
+                             />
+                            {{text_all_customers}}</label>
+                        </div>
+                        {% for customer_group in customer_groups %}
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="showcase[customer_group_id][]" value="{{customer_group.customer_group_id}}" 
+                       {#     <?php echo isset($showcase['customer_group_id']) && in_array($customer_group['customer_group_id'], $showcase['customer_group_id']) ? 'checked="checked" ' : ''; ?> #}
+                      {% if showcase.customer_group_id %}
+                        {% for gr in showcase.customer_group_id %}
+                          {% if customer_group.customer_group_id == gr %}
+                            checked="checked"
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                        /> 
+                            {{customer_group.name}}</label>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="apply" id="apply" value="0" />
+        </form>
+      </div>
+    </div>
+    <div class="footer">
+      <ul class="list-inline pull-right">
+        <li><a href="mailto:filex@ukr.net">{{text_support}}</a></li>
+        <li><a href="{{text_author_link}}" onclick="return !window.open(this.href)">{{text_more}}</a></li>
+      </ul>
+      <p>2020 © {{text_author}} <a href="{{text_author_link}}" onclick="return !window.open(this.href)">Filex</a>. {{heading_title}}{{version}}</p>
+    </div>
+  </div>
+<script type="text/javascript"><!--
+$('.sc-apply').delay(5000).fadeOut(300);
+$('input[name=\'showcase[fcat]\']').autocomplete({
+  source: function(request, response) {
+    $.ajax({
+      url: 'index.php?route=catalog/category/autocomplete&user_token={{user_token}}&filter_name=' +  encodeURIComponent(request),
+      dataType: 'json',
+      success: function(json) {
+        response($.map(json, function(item) {
+          return {
+            label: item['name'],
+            value: item['category_id']
+          }
+        }));
+      }
+    });
+  },
+  select: function(item) {
+    $('input[name=\'showcase[fcat]\']').val('');
+    
+    $('#showcase-fcat' + item['value']).remove();
+    
+    $('#showcase-fcat').append('<div id="showcase-fcat' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="showcase[fcat][]" value="' + item['value'] + '" /></div>');  
+  }
+});
+  
+$('#showcase-fcat').delegate('.fa-minus-circle', 'click', function() {
+  $(this).parent().remove();
+});
+
+$('input[name=\'showcase[fbrand]\']').autocomplete({
+  source: function(request, response) {
+    $.ajax({
+      url: 'index.php?route=catalog/manufacturer/autocomplete&user_token={{user_token}}&filter_name=' +  encodeURIComponent(request),
+      dataType: 'json',
+      success: function(json) {
+        response($.map(json, function(item) {
+          return {
+            label: item['name'],
+            value: item['manufacturer_id']
+          }
+        }));
+      }
+    });
+  },
+  select: function(item) {
+    $('input[name=\'showcase[fbrand]\']').val('');
+    
+    $('#showcase-fbrand' + item['value']).remove();
+    
+    $('#showcase-fbrand').append('<div id="showcase-fbrand' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="showcase[fbrand][]" value="' + item['value'] + '" /></div>');  
+  }
+});
+
+$('#showcase-fbrand').delegate('.fa-minus-circle', 'click', function() {
+  $(this).parent().remove();
+});
+
+$('input[name=\'showcase[fcid]\']').autocomplete({
+  source: function(request, response) {
+    $.ajax({
+      url: 'index.php?route=catalog/category/autocomplete&user_token={{user_token}}&filter_name=' +  encodeURIComponent(request),
+      dataType: 'json',
+      success: function(json) {
+        response($.map(json, function(item) {
+          return {
+            label: item['name'],
+            value: item['category_id']
+          }
+        }));
+      }
+    });
+  },
+  select: function(item) {
+    $('input[name=\'showcase[fcid]\']').val('');
+    
+    $('#showcase-location' + item['value']).remove();
+    
+    $('#showcase-location').append('<div id="showcase-location' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="showcase[fcid][]" value="' + item['value'] + '" /></div>');
+  }
+});
+
+$('#showcase-location').delegate('.fa-minus-circle', 'click', function() {
+  $(this).parent().remove();
+});
+
+$('label.btn input').each(function() {
+  if ($(this).prop('checked')) {
+    $(this).parent('.btn').addClass('active');
+  };
+});
+//--></script>
+</div>
+{{footer}}

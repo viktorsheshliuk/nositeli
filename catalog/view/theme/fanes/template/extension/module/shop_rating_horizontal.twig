@@ -1,0 +1,58 @@
+<div class="last-shop-ratings horizontal">
+    <div class="block_header">
+        <h4><span>{{ heading_title }}</span></h4>
+    </div>
+    <div class="block_content">
+        <div class="shop_summary_rating">
+            <div class="shop_summary_general">
+                <div class="shop_summary_general_title">{{ text_summary }}</div>
+                <div class="shop_summary_general_rating">{{ general.summ }}</div>
+                <div class="summary-rate-star-show">
+                    <div class="summary-rate-star-show star-change" style="width:{{general.summ_perc}}%"></div>
+                </div>
+                <div class="shop_summary_general_desc">{{ text_count }}{{general.count}}</div>
+            </div>
+        </div>
+
+        <div class="block_content_wrapper" id="ratings_carousel" class="owl-carousel">
+        {% for rating in ratings %}
+            <div class="last-rating-item item">
+                <div class="last-rating-item-header">
+                    <div class="rate-author">
+                        {{rating.author }}
+                    </div>
+                    {% if show_rating %}
+                    <div class="rate-stars">
+                        <div class="rate-star-show small-stars {% if rating.shop_rating >= 1 %} star-change {% endif %}"></div>
+                        <div class="rate-star-show small-stars {% if rating.shop_rating >= 2 %} star-change {% endif %}"></div>
+                        <div class="rate-star-show small-stars {% if rating.shop_rating >= 3 %} star-change {% endif %}"></div>
+                        <div class="rate-star-show small-stars {% if rating.shop_rating >= 4 %} star-change {% endif %}"></div>
+                        <div class="rate-star-show small-stars {% if rating.shop_rating == 5 %} star-change {% endif %}"></div>
+                    </div>
+                   {% endif %}
+                    <div style="clear: both"></div>
+                </div>
+                <div class="last-rating-item-comment">{{ rating.comment }}</div>
+            </div>
+        {% endfor %}
+        </div>
+        <div style="clear: both"></div>
+    </div>
+    <div class="last-rating-link">
+        <a class="" href="{{ href_read_more }}">{{ text_read_more }}</a>
+    </div>
+
+</div>
+<script><!--
+    $('#ratings_carousel').owlCarousel({
+        items: 2,
+        itemsDesktop: [1199,2],
+        itemsDesktopSmall: [979,2],
+        itemsTablet: [768,2],
+
+        autoPlay: 6000,
+        navigation: true,
+        navigationText: ['<i class="fa fa-chevron-left fa-5x"></i>', '<i class="fa fa-chevron-right fa-5x"></i>'],
+        pagination: false
+    });
+    --></script>

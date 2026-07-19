@@ -1,0 +1,21 @@
+<div class="simplecheckout-block" id="simplecheckout_shipping_address" {{ hide ? 'data-hide="true"' : '' }} {{ display_error and has_error ? 'data-error="true"' : '' }}>
+  {% if display_header %}
+    <div class="checkout-heading panel-heading"><span>{{ text_checkout_shipping_address }}</span>
+
+    <img class="icon-arrow-down" src="/catalog/view/image/strelka.jpg">
+
+    </div>
+  {% endif %}
+  <div class="simplecheckout-block-content">
+    {% for row in rows %}
+      {{ row }}
+    {% endfor %}
+    {% for row in hidden_rows %}
+      {{ row }}
+    {% endfor %}
+  </div>
+</div>
+<script>
+ $('#simplecheckout_shipping_address:has(select)').addClass('not_empty');
+ $('#simplecheckout_shipping_address:has(input[type="text"])').addClass('not_empty');
+</script>

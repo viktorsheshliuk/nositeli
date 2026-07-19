@@ -1,0 +1,48 @@
+.rate_separator{
+
+    border-top: 1px solid #e5e5e5;
+
+    height: 10px;
+
+}
+
+.rate-star{
+
+    width: 8px;
+
+    height: 7px;
+
+    background: url("../image/shop_rate/rate-stars.png") top center no-repeat;
+
+    background-size: 100%;
+
+    display: inline-block;
+
+}
+
+.rate-star.big-stars{
+
+    width: 13px;
+
+    height: 12px;
+
+}
+
+.rate-star.star-change{
+
+    background-position: bottom;
+
+}
+
+.rates_table_email{
+
+    font-size: 12px;
+
+    color: #a7a7a7;
+
+}
+@media (max-width: 768px){
+    div#content div.panel-body{
+       overflow: auto; 
+    }
+}

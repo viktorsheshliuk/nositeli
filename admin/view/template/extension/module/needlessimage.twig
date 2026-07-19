@@ -1,0 +1,297 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                {% if license_error == null  %}
+                    <button  onclick=" beforeSaveForm();" type="submit" name="action" value="save" form="form" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button>
+                    <button  onclick=" beforeSaveForm();" type="submit" name="action" value="save_and_close" form="form" data-toggle="tooltip" title="{{ button_save_and_close }}" class="btn btn-default"><i class="fa fa-save"></i> {{ button_save_and_close }}</button>
+                {% else %}
+                    <a href="{{ recheck }}" data-toggle="tooltip" title="{{ button_recheck }}"class="btn btn-primary" /><i class="fa fa-check"></i> {{ button_recheck }}</a>
+                {% endif %}
+                <a href="{{ close }}" data-toggle="tooltip" title="{{ button_close }}" class="btn btn-default"><i class="fa fa-close"></i> {{ button_close }}</a>
+            </div>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        {% if error_warning %}
+            <div class="alert alert-danger">
+                <i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        {% if success is defined and success %}
+            <div class="alert alert-success">
+                <i class="fa fa-check-circle"></i>
+                {{ success }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-heading ui-helper-clearfix" >
+                <img style="float:left" src="view/image/logo.png" alt=""/>
+                <h1>{{ heading_title_raw }} {{ text_module_version }}</h1>
+            </div>
+            <div class="panel-body">
+
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab-params" data-toggle="tab">{{ tab_params }}</a></li>
+                    {% if license_error == null  %}
+                        <li><a href="#tab-logs" data-toggle="tab">{{ tab_logs }}</a></li>
+                    {% endif %}
+                    <li><a href="#tab-support" data-toggle="tab">{{ tab_support }}</a></li>
+                    <li><a href="#tab-license" data-toggle="tab">{{ tab_license }}</a></li>
+                </ul>
+
+                <form action="{{ clean }}" method="post" enctype="multipart/form-data" id="form-clean">
+                    <input type="hidden" name="dummy" value="0" />
+                </form>
+              
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab-params">
+                        {% if license_error == null  %}
+                            <div class="col-sm-6">
+                                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form">
+                                    <input type="hidden" name="neoseo_needless_image_debug"  id='debug_hidden'/>
+                                    <table id="directory" class="list table">
+                                        <thead>
+                                        <tr>
+                                            <td class="left">{{ entry_directory }}</td>
+                                            <td class="left">{{ entry_recursive }}</td>
+                                            <td></td>
+                                        </tr>
+                                        </thead>
+                                        {% set directory_num_rows = 0 %}
+                                        {% for directory_row, directory in directories %}
+                                            {% set directory_num_rows = loop.index %}
+                                            <tbody id="directory-row{{ directory_row }}">
+                                            <tr>
+                                                <td class="left">
+                                                    <select class="form-control" name="directory[{{ directory_row }}][path]">
+                                                        <option value="">{{ text_select_dir }}</option>
+                                                        {% for directory_fs in directories_fs %}
+                                                            <option value="{{ directory_fs }}"{% if directory_fs == directory.path %} selected="selected" {% endif %}>{{ directory_fs }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </td>
+                                                <td class="left">
+                                                    <select class='form-control' name="directory[{{ directory_row }}][recursive]">
+                                                        <option value="0">{{ text_no }}</option>
+                                                        <option value="1"{% if directory.recursive %} selected="selected" {% endif %}>{{ text_yes }}</option>
+                                                    </select>
+                                                </td>
+                                                <td class="left">
+                                                    <a onclick="$('#directory-row{{ directory_row }}').remove();" class="btn btn-danger" ><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        {% endfor %}
+                                        <tfoot>
+                                        <tr>
+                                            <td colspan="3" class="text-right">
+                                                <a onclick="addDirectory();" class="btn btn-primary" ><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;{{ button_add_dir }}</a>
+                                                <a onclick="analyze();" class="btn btn-primary"><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;{{ button_analyze }}</a>
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </form>
+                            </div>
+                            <div class="col-sm-6">
+                                <div id="analyze"></div>
+                            </div>
+
+                        {% else %}
+
+                            {{ license_error }}
+
+                        {% endif %}
+
+                    </div>
+
+                    {% if license_error == null  %}
+                        <div class="tab-pane" id="tab-logs" >
+                            {{ widgets.debug_download_logs('debug', {0: text_disabled, 1: text_enabled}, clear, download, button_clear_log, button_download_log)  }}
+                            <textarea class="form-control" style="width: 100%; height: 300px; padding: 5px; border: 1px solid #CCCCCC; background: #FFFFFF; overflow: scroll;">{{ logs }}</textarea>
+                        </div>
+                    {% endif %}
+
+                    <div class="tab-pane" id="tab-support">
+                        {{ mail_support }}
+                    </div>
+
+                    <div class="tab-pane" id="tab-license">
+                        {{ module_licence }}
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{ footer }}
+<script type="text/javascript"><!--
+    var directory_row = {% if directory_num_rows is defined %}{{ directory_num_rows }}{% else %}0{% endif %};
+    function beforeSaveForm(){
+        var value=$('#neoseo_needless_image_debug').val();
+        $('#debug_hidden').val(value);
+    }
+
+    function addDirectory() {
+        var html = '';
+
+        html  = '<tbody id="directory-row' + directory_row + '">';
+        html += '	<tr>';
+        html += '		<td class="left">';
+        html += '			<select class="form-control" name="directory[' + directory_row + '][path]" id="directory' + directory_row + '">';
+        html += '				<option value="">{{ text_select_dir }}</option>';
+        {% for directory_fs in directories_fs %}
+        html += '				<option value="{{ directory_fs|e('js') }}">{{ directory_fs|e('js') }}</option>';
+        {% endfor %}
+        html += '			</select>';
+        html += '		</td>';
+        html += '		<td class="left">';
+        html += '			<select class="form-control" name="directory[' + directory_row + '][recursive]">';
+        html += '				<option value="0">{{ text_no }}</option>';
+        html += '				<option value="1">{{ text_yes }}</option>';
+        html += '			</select>';
+        html += '		</td>';
+        html += '		<td class="left">';
+        html += '			<a onclick="$(\'#directory-row' + directory_row + '\').remove();" class="btn btn-danger" ><i class="fa fa-trash-o" aria-hidden="true"></i></a>';
+        html += '		</td>';
+        html += '	</tr>';
+        html += '</tbody>';
+
+        $('#directory tfoot').before(html);
+
+        directory_row++;
+    }
+
+    function analyze() {
+        var post_data = $('#form').serialize();
+        var html = '';
+        var inner_html = '';
+
+        $("#form select[name*='[path]']").each(function(index){
+            html += '<div id="analyze-head-' + index + '"' + ($(this).val() == '' ? ' style="display:none;"' : '') + '>';
+            html += '		<h4>' + $(this).val() + ($("#form select[name*='[" + index + "][recursive]']").val() == 1 ? ' <span style="font-weight:normal;">(+ {{ entry_recursive|lower }})</span>' : '') + '</h4>';
+            html += '</div>';
+            html += '<div class="form-group" id="analyze-body-' + index + '"' + ($(this).val() == '' ? ' style="display:none;"' : '') + '>';
+            html += '		<td class="center" style="text-align:center;"><img src="view/image/loading.gif" class="loading"></td>';
+            html += '</div>';
+        });
+
+        $('#analyze').html(html);
+
+        $.ajax({
+            url: 'index.php?route=extension/module/needlessimage/analyze&user_token={{ user_token }}',
+            type: 'post',
+            data: post_data,
+            dataType: 'json',
+            success: function(json) {
+                if (json) {
+                    var dir_length = json.length;
+
+                    for (var i = 0; i < dir_length; i++) {
+                        files_length = json[i].length;
+                        if (files_length) {
+                            inner_html  = prepareCheckboxesForm(json[i], i);
+                        } else {
+                            inner_html = '<div class="alert alert-info" style="text-align:center;">{{ text_no_files_to_delete }}</div>'
+                        }
+
+                        $('#analyze-body-' + i).html(inner_html);
+                    }
+                } else {
+                    $('#analyze').html('<div class="alert alert-block" style="text-align:center;">{{ error_error }}</div>');
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+
+    function deleteFiles(index) {
+        var post_data = $('#form-delete-' + index).serialize();
+        var html = '';
+
+        $('#analyze-body-' + index).html('<img src="view/image/loading.gif" class="loading">');
+
+        $.ajax({
+            url: 'index.php?route=extension/module/needlessimage/delete&user_token={{ user_token }}',
+            type: 'post',
+            data: post_data,
+            dataType: 'json',
+            success: function(json) {
+                if (json.data.length) {
+                    html = prepareCheckboxesForm(json.data, index, json.message);
+                } else {
+                    html = '<div">' + json.message + '</div>';
+                }
+
+                $('#analyze-body-' + index).html(html);
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+
+    function prepareCheckboxesList(checkboxes) {
+        var output = '';
+        var odd = 'odd';
+
+        for (var i = 0; i < checkboxes.length; i++) {
+            odd = odd == 'odd' ? 'even' : 'odd';
+            output += '		<div class="' + odd + '">';
+            output += '			<input name="delete[]" type="checkbox" value="' + checkboxes[i]['path'] + '"> ' + checkboxes[i]['name'];
+            output += '		</div>';
+        }
+
+        return output;
+    }
+
+    function prepareCheckboxesForm(data, index, message) {
+
+        var output = '';
+
+        if (typeof message === 'undefined') {
+            message = '';
+        }
+
+        output += '<form id="form-delete-' + index + '" action="{{ action_delete }}" method="post" enctype="multipart/form-data" class="left">';
+        output += message;
+        output += '	<input type="hidden" value="' + $("#form select[name*='[" + index + "][path]']").val() + '" name="path">';
+        output += '	<input type="hidden" value="' + $("#form select[name*='[" + index + "][recursive]']").val() + '" name="recursive">';
+        output += '	<div class="well well-sm" style="min-height:150px;max-height:300px;overflow:auto;">';
+        output += prepareCheckboxesList(data);
+        output += '	</div>';
+        output += '	<div class="clearfix">';
+        output += '		<div class="pull-left">';
+        output += '		    <a class="btn btn-default" onclick="selectAll(\'#form-delete-' + index + '\');"  >{{ button_select_all }}</a>';
+        output += '		    <a class="btn btn-default" onclick="unselectAll(\'#form-delete-' + index + '\');" >{{ button_unselect_all }}</a>';
+        output += '		</div>';
+        output += '		<div class="pull-right">';
+        output += '         <a onclick="deleteFiles(' + index + ');" class="btn btn-danger" ><i class="fa fa-trash-o" aria-hidden="true"></i>&nbsp;{{ button_delete_selected }}</a> ';
+        output += '		</div>';
+        output += '</div>';
+        output += '</form>';
+
+        return output;
+    }
+
+    function selectAll(form_id) {
+        $(form_id).find(':checkbox').prop('checked', true);
+    }
+
+    function unselectAll(form_id) {
+        $(form_id).find(':checkbox').prop('checked', false);
+    }
+//--></script> 

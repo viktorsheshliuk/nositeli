@@ -1,0 +1,492 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-information" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+            <h1>{{ heading_title }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                <li><a href=" {{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+               {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        {% if error_warning %}
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>{{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %}
+
+        {% if success %}
+        <div class="alert alert-success"><i class="fa fa-check-circle"></i>{{ success }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %}
+
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#rates" aria-controls="home" role="tab" data-toggle="tab">
+                    <i class="fa fa-star"></i>
+                    {{ rates_block_title }}
+                </a>
+            </li>
+            <li role="presentation">
+                <a href="#settings" aria-controls="profile" role="tab" data-toggle="tab">
+                    <i class="fa fa-cogs"></i>
+                    {{ settings_block_title }}
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="rates">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-star"></i>{{ rates_block_title }}</h3>
+                    </div>
+                    <div class="panel-body">
+
+                        <table class="table table-bordered table-hover" style="min-width: 900px">
+                            <thead>
+                            <tr>
+                                <th>{{ date }}</th>
+                                <th>{{ name }}</th>
+                                <th width="70px">{{ shop }}</th>
+                                <th width="75px">{{ site }}</th>
+                                <th>{{ comment }}</th>
+                                <th>{{ good }}</th>
+                                <th>{{ bad }}</th>
+                                <th>Вкл/Выкл</th>
+                                <th>Удалить</th>
+                                <th>Действие</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for rating in ratings %}
+                                                                           
+                                <tr>
+                                    <td class="text-center">{{ rating.date_added|date("d.m.y H:i") }}</td>
+                                    <td class="">
+                                        <div>
+                                            <b class="{% if rating.customer_id and rating.customer_id != 0 %} text-primary {% endif %}">
+                                                {{ rating.customer_name }}
+                                            </b>
+                                            {% if rating_answers.rating.rate_id %}
+                                            <span class="label label-success">{{ answered }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="rates_table_email">{{ rating.customer_email }}</div>
+                                    </td>
+                                    <td class="">
+                                        <div class="rate-stars">
+                                            <div class="rate-star {% if rating.shop_rate >= 1 %} star-change{% endif %}" id="site_rate-1"></div>
+                                            <div class="rate-star {% if rating.shop_rate >= 2 %} star-change{% endif %}" id="site_rate-2"></div>
+                                            <div class="rate-star {% if rating.shop_rate >= 3 %} star-change{% endif %}" id="site_rate-3"></div>
+                                            <div class="rate-star {% if rating.shop_rate >= 4 %} star-change{% endif %}" id="site_rate-4"></div>
+                                            <div class="rate-star {% if rating.shop_rate == 5 %} star-change{% endif %}" id="site_rate-5"></div>
+                                        </div>
+                                    </td>
+                                    <td class="">
+                                        <div class="rate-stars">
+                                            <div class="rate-star {% if rating.site_rate >= 1 %} star-change{% endif %}" id="site_rate-1"></div>
+                                            <div class="rate-star {% if rating.site_rate >= 2 %} star-change{% endif %}" id="site_rate-2"></div>
+                                            <div class="rate-star {% if rating.site_rate >= 3 %} star-change{% endif %}" id="site_rate-3"></div>
+                                            <div class="rate-star {% if rating.site_rate >= 4 %} star-change{% endif %}" id="site_rate-4"></div>
+                                            <div class="rate-star {% if rating.site_rate == 5 %} star-change{% endif %}" id="site_rate-5"></div>    
+                                        </div>
+
+                                    </td>
+                                    <td class="">{{ rating.comment|html_entity_decode|striptags|slice(0,200) }}</td>
+                                    <td class="text-success">{{ rating.good|html_entity_decode|striptags|slice(0,200) }}</td>
+                                    <td class="text-danger">{{ rating.bad|html_entity_decode|striptags|slice(0,200) }}</td>
+                                    <td class="">
+                                        {% if rating.rate_status == 1 %}
+                                        <button id="change_status-{{rating.rate_id}}" class="btn btn-success change_status_button"><i class="fa fa-check-circle"></i></button>
+                                        {% else %}
+                                        <button id="change_status-{{rating.rate_id}}" class="btn btn-danger change_status_button"><i class="fa fa-times-circle"></i></button>
+                                        {% endif %}
+                                        &nbsp;&nbsp;
+                                    </td>    
+                                    <td>
+                                        <a data-original-title="Delete" href="{{delete_link}}&rating_id={{rating.rate_id}}" data-toggle="tooltip" title="" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                                    </td>
+
+                                    <td>
+                                        <a data-original-title="View" href="{{view_rate_link}}&rating_id={{rating.rate_id}}" data-toggle="tooltip" title="" class="btn btn-info"><i class="fa fa-eye"></i></a>
+                                    </td>
+
+                                </tr>
+                           {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="settings">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-cogs"></i>{{ settings_block_title }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-shop_rate" class="">
+                            <div class="col-md-6">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                    <tr>
+                                        <td class="text-right">
+                                            <label class="control-label" for="input-moderate">{{ entry_moderate }}</label><br>
+                                            <i>( {{ entry_moderate_desc }})</i>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="checkbox" name="shop_rating_moderate" value="1" {% if shop_rating_moderate %} checked {% endif %}>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right">
+                                            <label class="control-label" for="input-authorized">{{ entry_authorized }}</label><br>
+                                            <i>({{ entry_authorized_desc }})</i>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="checkbox" name="shop_rating_authorized" value="1" {% if shop_rating_authorized %} checked {% endif %}>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right">
+                                            <label class="control-label" for="input-shop_rating">{{ entry_summary }}</label><br>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="checkbox" name="shop_rating_summary" value="1" {% if shop_rating_summary %} checked {% endif %}>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right">
+                                            <label class="control-label" for="input-shop_rating">{{ entry_shop_rating }}</label><br>
+                                            <i>({{ entry_shop_rating_desc }})</i>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="checkbox" name="shop_rating_shop_rating" value="1" {% if shop_rating_shop_rating %} checked {% endif %}>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right">
+                                            <label class="control-label" for="input-site_rating">{{ entry_site_rating }}</label><br>
+                                            <i>({{ entry_site_rating_desc }})</i>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="checkbox" name="shop_rating_site_rating" value="1" {% if shop_rating_site_rating %} checked {% endif %}>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right">
+                                            <label class="control-label" for="input-good_bad">{{ entry_good_bad }}</label>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="checkbox" name="shop_rating_good_bad" value="1" {% if shop_rating_good_bad %} checked {% endif %}>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-bordered">
+                                    <tbody>
+
+                                    <tr>
+                                        <td class="text-right"><label class="control-label" for="input-status">{{ entry_status }}</label></td>
+                                        <td>
+                                            <select name="shop_rating_status" id="input-status" class="form-control">
+                                                {% if shop_rating_status %}
+                                                <option value="1" selected="selected">{{ text_enabled }}</option>
+                                                <option value="0">{{ text_disabled }}</option>
+                                                {% else %}
+                                                <option value="1">{{ text_enabled }}</option>
+                                                <option value="0" selected="selected">{{ text_disabled }}</option>
+                                                {% endif%}
+                                            </select>
+                                            <input type="hidden" name="shop_rating_installed" value="{{ installed }}">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right"><label class="control-label" for="input-status">{{ entry_email }}</label></td>
+                                        <td>
+                                            <input type="text" class="form-control" name="shop_rating_email" value="{{ shop_rating_email }}">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right"><label class="control-label" for="input-status">{{ entry_notify }}</label></td>
+                                        <td>
+                                            <input type="checkbox" class="form-control" name="shop_rating_notify" {% if shop_rating_notify %} checked {% endif %}>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right"><label class="control-label" for="input-status">{{ entry_count }}</label></td>
+                                        <td>
+                                            <input type="text" class="form-control" name="shop_rating_count" value="{{ shop_rating_count }}">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right"><label class="control-label" for="input-shop_rating_request_status">{{ entry_request_mail_status }}</label></td>
+                                        <td>
+                                            <select name="shop_rating_request_status" id="input-shop_rating_request_status" class="form-control">
+
+                                                {% if shop_rating_request_status == 0 %}
+                                                    <option value="0" selected="selected">{{ text_disabled_not_sent }}</option>
+                                                {% else %}
+                                                <option value="0">{{ text_disabled_not_sent }}</option>
+                                                {% endif %}
+
+                                                {% for order_status in order_statuses %}
+                                                {% if order_status.order_status_id == shop_rating_request_status %}
+                                                <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
+                                                {% else %}
+                                                <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
+                                                {% endif %}
+                                                {% endfor %} 
+
+                                            </select>
+                                        </td>
+                                    </tr>
+
+
+                                    </tbody>
+                                </table>
+                                <table id="custom-types" class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="2">Дополнительные типы оценок</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Заголовок</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="text-left">
+                                            <input id="add-custom-type-input" type="text" class="form-control">
+                                        </td>
+                                        <td style="width: 100px">
+                                            <a id="add-custom-type" class="btn btn-success"><i class="fa fa-plus"></i></a>
+                                        </td>
+                                    </tr>
+                                    {% for type in custom_types %}
+                                    <tr id="custom-tr-{{type.id}}">
+                                        <td class="text-left">
+                                            <input id="custom-type-input-{{type.id}}" type="text" class="form-control" value="{{type.title}}">
+                                        </td>
+                                        <td style="width: 100px">
+                                            <a title="{% if type.status == '1' %} Enabled {% else %} Disabled {% endif %}" class="btn btn-{% if type.status == '1' %}info{% else %}default{% endif %} pull-left custom-change-status" id="custom-change-status-{{type.id}}">
+                                                <i class="fa fa-power-off"></i>
+                                            </a>
+                                            <a title="Remove" class="btn btn-danger pull-right custom-remove" id="custom-remove-{{type.id}}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+
+                                        </td>
+                                    </tr>
+                                   {% endfor %}
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th colspan="2">Текст запроса на отзыв</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td class="text-right">
+                                                <label class="control-label" for="input-status">{{ entry_request_subject }}</label>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control" name="shop_rating_request_subject" value="{{ shop_rating_request_subject }}">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left" style="width: 250px">
+                                                <label class="control-label">{{ tokens_label }}</label>
+                                                <p>[store_name] - {{ store_name }}</p>
+                                                <p>[store_name_link] - {{ store_name_link }}</p>
+                                                <p>[customer_name] - {{ customer_name }}</p>
+                                                <p>[ratings_link] - {{ ratings_link }}</p>
+                                                <div style="margin-top: 30px"><i>({{ tokens_desc }})</i></div>
+                                            </td>
+                                            <td colspan="">
+                                                <textarea name="shop_rating_request_text" id="input-shop_rating_request_text" class="form-control">
+                                                    {% if shop_rating_request_text %}
+                                                      {{ shop_rating_request_text }}
+                                                    {% endif %}
+                                                </textarea>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="view/javascript/summernote/summernote.js"></script>
+<link href="view/javascript/summernote/summernote.css" rel="stylesheet" />
+<script type="text/javascript" src="view/javascript/summernote/opencart.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $('.custom-change-status').click(function(){
+            var id = this.id.split('-')[3];
+            var btn = $(this);
+            var url = '{{ create_custom_type_url }}';
+            $.post( url, { action: 'status', custom_id: id }, function( data ) {
+                if(data['status'] == 'success'){
+                    var btn = $('#custom-change-status-'+data['id']);
+                    if(btn.hasClass('btn-info')){
+                        btn.removeClass('btn-info');
+                        btn.addClass('btn-default');
+                    }else{
+                        btn.removeClass('btn-default');
+                        btn.addClass('btn-info');
+                    }
+                }
+            }, "json");
+        });
+        $('.custom-remove').click(function(){
+            var id = this.id.split('-')[2];
+            var btn = $(this);
+            var url = '{{ create_custom_type_url }}';
+            $.post( url, { action: 'remove', custom_id: +id }, function( data ) {
+                if(data['status'] == 'success'){
+                    if (confirm("{{remove_custom_type}}"))
+                    {
+                        $('tr#custom-tr-'+id).remove();
+                    }
+                }
+            }, "json");
+        });
+        $('.change_status_button').click(function(){
+            var rating_id = this.id.split('-')[1];
+            var btn = $(this);
+            var url = 'index.php?route=catalog/shop_rating/status&user_token={{ user_token }}';
+
+
+            $.post( url, { rate_id: rating_id }, function( data ) {
+                        if(data == "OK"){
+                            if(btn.hasClass('btn-success')){
+                                btn.removeClass('btn-success');
+                                btn.addClass('btn-danger');
+                                btn.find('i').removeClass('fa-check-circle');
+                                btn.find('i').addClass('fa-times-circle');
+                            }else{
+                                btn.removeClass('btn-danger');
+                                btn.addClass('btn-success');
+                                btn.find('i').removeClass('fa-times-circle');
+                                btn.find('i').addClass('fa-check-circle');
+                            }
+                        }
+                    }, "json");
+        });
+
+        $('#add-custom-type').click(function(){
+            var type_title = $('#add-custom-type-input');
+            if(type_title.val()){
+                var url = '{{ create_custom_type_url }}';
+                $.post( url, { action: 'create', new_custom_title: type_title.val() }, function( data ) {
+                    if(data){
+                        var params = {
+                            id: data['id'],
+                            title: data['title']
+                        };
+                        createRow(params);
+
+                    }
+                }, "json");
+                function createRow(params){
+                    $('#custom-types').find('tbody').append(
+                            $('<tr/>', {
+                                id: 'custom-tr-'+params.id
+                            }).append([
+                                $('<td/>').append(
+                                        $('<input>', {
+                                            id: 'custom-type-input-t'+params.id,
+                                            type:'text',
+                                            class: 'form-control',
+                                            value: params.title,
+                                            keypress: function(){
+                                                //$('#custom-change-remove').addClass('hidden');
+                                                //$('#custom-change-save').removeClass('hidden');
+                                            }
+                                        })
+                                ),
+                                $('<td/>').append([
+                                    $('<a/>', {
+                                        id: 'custom-change-status-'+params.id,
+                                        class: 'btn btn-default pull-left custom-change-status',
+                                        title: 'Disabled',
+                                        click: function(){
+                                            var url = '{{ create_custom_type_url }}';
+                                            $.post( url, { action: 'status', custom_id: +params.id }, function( data ) {
+                                                if(data['status'] == 'success'){
+                                                    var btn = $('#custom-change-status-'+data['id']);
+                                                    if(btn.hasClass('btn-info')){
+                                                        btn.removeClass('btn-info');
+                                                        btn.addClass('btn-default');
+                                                    }else{
+                                                        btn.removeClass('btn-default');
+                                                        btn.addClass('btn-info');
+                                                    }
+                                                }
+                                            }, "json");
+
+                                        }
+                                    }).append(
+                                            $('<i/>',{class: 'fa fa-power-off'})
+                                    ),
+                                    $('<a/>', {
+                                        id: 'custom-remove-'+params.id,
+                                        class: 'btn btn-danger pull-right custom-remove',
+                                        title: 'Remove',
+                                        click: function(){
+                                            var url = '{{ create_custom_type_url }}';
+                                            $.post( url, { action: 'remove', custom_id: +params.id }, function( data ) {
+                                                if(data['status'] == 'success'){
+                                                    if (confirm("{{ remove_custom_type }}"))
+                                                    {
+                                                        $('tr#custom-tr-'+params.id).remove();
+                                                    }
+                                                }
+                                            }, "json");
+                                        }
+
+                                    }).append(
+                                            $('<i/>',{class: 'fa fa-trash'})
+                                    )
+                                ])
+                            ])
+                    );
+
+                }
+                type_title.val('');
+            }
+        });
+    });
+
+</script>
+<script type="text/javascript">
+        $('textarea#input-shop_rating_request_text').summernote({
+            height: 300
+        });
+</script>
+
+
+{{ footer }}

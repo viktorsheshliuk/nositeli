@@ -1,0 +1,38 @@
+<div class="table-responsive">
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+      <td class="text-left">{{ column_name }}</td>
+      <td class="text-left">{{ column_values }}</td>
+    </tr>
+  </thead>
+  <tbody>
+    {% if options %}
+    {% for option in options %}
+    <tr>
+      <td class="text-center">{% if option['option_id'] in selected %}
+        <input type="checkbox" name="selected[]" value="{{ option['option_id'] }}" checked="checked" />
+        {% else %}
+        <input type="checkbox" name="selected[]" value="{{ option['option_id'] }}" />
+        {% endif %}</td>
+      <td class="text-left">{{ option['name'] }}</td>
+      <td class="text-left">{{ option['values'] }}</td>
+    </tr>
+    {% endfor %}
+    {% else %}
+    <tr>
+      <td class="text-center" colspan="4">{{ text_no_results }}</td>
+    </tr>
+    {% endif %}
+  </tbody>
+</table>
+<div class="buttons">
+  <div class="pull-left">
+    <div class="alert alert-warning hidden"></div>
+  </div>
+  <div class="pull-right">
+	<input type="button" value="{{ button_next }}" id="button-select-options" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
+  </div>
+</div>
+</div>

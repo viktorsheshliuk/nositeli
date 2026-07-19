@@ -1,0 +1,72 @@
+{% if languages|length > 1 %} 
+<script src="{{ ya_script }}" type="text/javascript"></script>
+<div class="modal fade" id="confirm-translate" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">?</button>
+                <h4 class="modal-title" id="myModalLabel">Translate complete</h4>
+            </div>
+            <div class="modal-content" style="padding: 40px 20px;">
+				<div class="ya">{{ yandex_copyright }}</div>
+			</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+.bg_load {position: fixed;left: 0px;top: 0px;width: 100%;height: 100%;background: #EEE;display :none}
+.wrapper {
+    font-size: 20px;
+    width: 8em;
+    height: 8em;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-top: -100px;
+    margin-left: -100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1em dashed rgba(138,189,195,0.5);
+    box-shadow: 
+        inset 0 0 2em rgba(255,255,255,0.3),
+        0 0 0 0.7em rgba(255,255,255,0.3);
+    animation: rota 3.5s linear infinite;
+    color: #444;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0 .04em rgba(255,255,255,0.9);
+    line-height: 6em;
+    display :none
+}
+
+.wrapper:before,.wrapper:after {content: "";position: absolute; z-index: -1; border-radius: inherit; box-shadow: inset 0 0 2em rgba(255,255,255,0.3); border: 1em dashed;}
+
+.wrapper:before {border-color: rgba(138,189,195,0.2);top: 0; right: 0; bottom: 0; left: 0;}
+.wrapper:after {border-color: rgba(138,189,195,0.4);top: 1em; right: 1em; bottom: 1em; left: 1em; }
+.wrapper .inner {width: 100%; height: 100%; animation: rota 3.5s linear reverse infinite;}
+.wrapper span {display: inline-block;animation: placeholder 1.5s ease-out infinite;}
+
+.wrapper span:nth-child(1)  { animation-name: loading-1;  }
+.wrapper span:nth-child(2)  { animation-name: loading-2;  }
+.wrapper span:nth-child(3)  { animation-name: loading-3;  }
+.wrapper span:nth-child(4)  { animation-name: loading-4;  }
+.wrapper span:nth-child(5)  { animation-name: loading-5;  }
+.wrapper span:nth-child(6)  { animation-name: loading-6;  }
+.wrapper span:nth-child(7)  { animation-name: loading-7;  }
+.wrapper span:nth-child(8)  { animation-name: loading-8;  }
+
+@keyframes rota {to { transform: rotate(360deg); {{ '}}' }}
+@keyframes loading-1 {12.5% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-2 {25% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-3 {37.5% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-4 {50% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-5 {62.5% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-6 {75% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-7 {87.5% { opacity: 0.3; {{ '}}' }}
+@keyframes loading-8 {100% { opacity: 0.3; {{ '}}' }}
+</style>
+
+{% endif %}

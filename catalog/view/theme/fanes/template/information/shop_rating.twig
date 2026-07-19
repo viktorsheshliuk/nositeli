@@ -1,0 +1,429 @@
+{{ header }}
+<div class="container">
+    <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+    </ul>
+        <div class="row">{{ column_left }}
+            {% if column_left and column_right %}
+                {% set class = 'col-sm-6' %}
+            {% else %} 
+                {% if column_left or column_right %}
+                {% set class = 'col-sm-9' %}
+                {% else %}
+                    {% set class = 'col-sm-12' %}
+                {% endif %}
+            {% endif %}    
+            <div id="content" class="{{ class }}">{{ content_top }}
+                {% if success != '' %}
+                    <div class="alert alert-success"><i class="fa fa-check-circle"></i>{{ success }}</div>
+                {% endif %}
+
+                {% if error_name %}
+                <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>{{ error_name }}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                {% endif %}
+
+                {% if error_email %}
+                <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>{{ error_email }}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                {% endif %}
+                {% if error_comment %}
+                <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>{{ error_comment }}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+               {% endif %}
+                {% if error_captcha %}
+                <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>{{ error_captcha }}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                {% endif %}
+
+            <h1>{{ heading_title }}</h1>
+            
+                    {% if shop_rating_authorized %}
+                        {% if customer_id and customer_id != 0 %}
+                            {% set show_form = true %}
+                        {% else %}
+                            {% set show_form = false %}
+                        {% endif %}
+
+                    {% else %}  {% set show_form = true %}
+                    {% endif %}
+
+                <div class="shop_summary_rating">
+                    {% if shop_rating_summary %}
+                    <div class="shop_summary_general">
+                        <div class="shop_summary_general_title">{{ text_summary }}</div>
+                        <div class="shop_summary_general_rating">{{ general.summ }}</div>
+                        <div class="summary-rate-star-show">
+                            <div class="summary-rate-star-show star-change" style="width: {{ general.summ_perc }}% "></div>
+                        </div>
+                        <div class="shop_summary_general_desc">{{text_count}}{{ general.count }}</div>
+                    </div>
+                    <div class="shop_summary_detail">
+                        <div class="shop_summary_detail_line">
+                            <span class="star">5</span>
+                             {% set aa = 100 * general.5 / general.count %}
+                            <span class="percent_line" style="width: {{ aa|round }}px"></span>
+                            <span>{{general.5}}x</span>
+                        </div>
+                        <div class="shop_summary_detail_line">
+                            <span class="star">4</span>
+                            {% set aa = 100 * general.4 / general.count %}
+                            <span class="percent_line" style="width: {{ aa|round }}px"></span>
+                            <span>{{ general.4 }}x</span>
+                        </div>
+                        <div class="shop_summary_detail_line">
+                            <span class="star">3</span>
+                             {% set aa = 100 * general.3 / general.count %}
+                            <span class="percent_line" style="width: {{ aa|round }}px"></span>
+                            <span>{{ general.3 }}x</span>
+                        </div>
+                        <div class="shop_summary_detail_line">
+                            <span class="star">2</span>
+                             {% set aa = 100 * general.2 / general.count %}
+                            <span class="percent_line" style="width: {{ aa|round }}px"></span>
+                            <span>{{ general.2 }}x</span>
+                        </div>
+                        <div class="shop_summary_detail_line">
+                            <span class="star">1</span>
+                             {% set aa = 100 * general.1 / general.count %}
+                            <span class="percent_line" style="width: {{ aa|round }}px"></span>
+                            <span>{{ general.1 }}x</span>
+                        </div>
+                    </div>
+                    <div class="shop_summary_add_rating">
+                        {% if show_form %}
+                            <button class="rating_btn add_rating-button" data-remodal-target="ratingModal">{{ send_rating }}</button>
+                        {% else %}
+                            {{ text_login }}
+                        {% endif %}
+                    </div>
+                    <div style="clear: both"></div>
+                    {% else %}
+
+                    {% if show_form %}
+                        <button class="rating_btn add_rating-button" data-remodal-target="ratingModal">{{ send_rating }}</button>
+                    {% else %}
+                        {{ text_login }}
+                    {% endif %}
+                    {% endif %}
+                </div>
+
+                <div class="shop_rates_list">
+{% for rating in ratings %} 
+                    <div class="ratings-item">
+                        <div class="ratings-item-header">
+                            <div class="rating-sender">
+                                <b>{{ rating.customer_name }}</b>
+                                {% if rating.customer_id and rating.customer_id != 0 %}
+                                   <span>({{ registered_customer_text }})</span>
+                                {% endif %}
+                            </div>
+                            <div class="rating-date">{{ rating.date_added|date("d.m.Y H:i") }}</div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="rates-line">
+                            <div class="ratings-item-rates" {% if rating.customs %}style="width: 47%; float:left"; {% endif %}>
+                            {% if shop_rating_shop_rating %}
+                            <div class="ratings-item-rates-item shop-rates" {% if rating.customs %}style="width: 100%"; {% endif %}>
+                            <div class="rates-title">{{ entry_rate }}</div>
+                            <div class="rate-stars">
+                                <div class="rate-star-show {% if rating.shop_rate >= 1 %}star-change{% endif %}"></div>
+                                <div class="rate-star-show {% if rating.shop_rate >= 2 %}star-change{% endif %}"></div>
+                                <div class="rate-star-show {% if rating.shop_rate >= 3 %}star-change{% endif %}"></div>
+                                <div class="rate-star-show {% if rating.shop_rate >= 4 %}star-change{% endif %}"></div>
+                                <div class="rate-star-show {% if rating.shop_rate == 5 %}star-change{% endif %}"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if shop_rating_site_rating %}
+                        <div class="ratings-item-rates-item shop-rates" {% if rating.customs %}style="width: 100%" {% endif %} >
+                            <div class="rates-title">{{ entry_site_rate }}</div>
+                                <div class="rate-stars">
+                                    <div class="rate-star-show {% if rating.site_rate >= 1 %} star-change{% endif %}"></div>
+                                    <div class="rate-star-show {% if rating.site_rate >= 2 %} star-change{% endif %}"></div>
+                                    <div class="rate-star-show {% if rating.site_rate >= 3 %} star-change{% endif %}"></div>
+                                    <div class="rate-star-show {% if rating.site_rate >= 4 %} star-change{% endif %}"></div>
+                                    <div class="rate-star-show {% if rating.site_rate == 5 %} star-change{% endif %}"></div>
+                                </div>
+                            </div>
+                         {% endif %}
+                    <div class="clearfix"></div>
+                </div>
+                {%  if rating.customs %}
+                <div class="ratings-item-rates" style="width: 47%; float: right; margin-top: 15px">
+                    {% for custom_rate in rating.customs %}
+                    <div class="ratings-item-rates-item custom-rate">
+                        <div class="rates-title">{{ custom_rate.title }}</div>
+                        <div class="rate-stars">
+                            <div class="rate-star-show small-stars {% if custom_rate.value >= 1 %} star-change {% endif %}"></div>
+                            <div class="rate-star-show small-stars {% if custom_rate.value >= 2 %} star-change {% endif %}"></div>
+                            <div class="rate-star-show small-stars {% if custom_rate.value >= 3 %} star-change {% endif %}"></div>
+                            <div class="rate-star-show small-stars {% if custom_rate.value >= 4 %} star-change {% endif %}"></div>
+                            <div class="rate-star-show small-stars {% if custom_rate.value == 5 %} star-change {% endif %}"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div class="clearfix"></div>
+                </div>
+               {% endif %}
+                <div class="clearfix"></div>
+            </div>
+            <div class="ratings-item-comment">{{ rating.comment|nl2br }}</div>
+            {% if shop_rating_good_bad %}
+            <div class="ratings-item-good-bad">
+                <div class="good">
+                    <ul>
+                         {% set goodonce = rating.good|nl2br|split('\n') %}
+                        {% for good_item in goodonce %}
+                        {% if good_item != '' %}
+                            <li>{{ good_item }}</li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+
+                </div>
+                <div class="bad">
+
+                    <ul>
+                        {% set badonce = rating.bad|nl2br|split('\n') %}
+                        {% for bad_item in badonce %}
+                        {% if bad_item != '' %}
+                            <li>{{ bad_item }}</li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            {% endif %}   
+            {%  if rating_answers[rating['rate_id']] and rating_answers[rating['rate_id']] != '' %}
+            <div class="ratings-item-answer">
+                <div class="ratings-item-answer-title">{{ answer }}</div>
+                <div class="ratings-item-answer-content"><p>{{ rating_answers[rating['rate_id']]|nl2br }}</p></div>
+
+            </div>
+            {% endif %}
+
+        </div>
+
+
+{% endfor %}
+
+    </div>
+    <div class="shop_rates_pagination">
+        <div class="pagination">{{ pagination }}</div>
+    </div>
+
+
+    {% if show_form %}
+    <div class="remodal newShoprRating" data-remodal-id="ratingModal" role="dialog" aria-labelledby="ratingModalTitle" aria-describedby="ratingModalDesc">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" class="newShopRatingForm">
+            <button data-remodal-action="close" class="remodal-close" aria-label="Close"></button>
+            <div>
+                <h2 id="ratingModalTitle">{{ send_rating }}</h2>
+                <div id="ratingModalDesc">
+                    <div class="grid grid-2">
+                        <div class="col">
+                            <label class="rating-form-label" for="input-name">{{ entry_name }}</label>
+                            <div class="">
+                                <input type="text" name="name" value="{{ name }}" id="input-name" class="form-control" required/>
+                                {% if error_name %}
+                                <div class="text-danger">{{ error_name }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label class="rating-form-label" for="input-email">{{ entry_email }}</label>
+                            <div class="">
+                                <input type="text" name="email" value="{{ email }}" id="input-email" class="form-control" required/>
+                                {% if error_email %}
+                                    <div class="text-danger">{{ error_email }}</div>
+                                {% endif %}
+                                <div class="field_desc">{{ text_email_desc }}</div>
+                            </div>
+                        </div>
+                        <div style="clear: both"></div>
+
+                    </div>
+                    <div class="rate_separator"></div>
+                    <div class="grid grid-2">
+                        {% if not form_custom_types %}
+                        {% if shop_rating_shop_rating %}
+
+                        <div class="col">
+                            <label class="rating-form-label" for="shop_rate-input">{{ entry_rate }}</label>
+                            <div class="hidden">
+                                <input name="shop_rate-input" type="hidden" value="0">
+                            </div>
+                            <div class="rate-stars">
+                                <div class="rate-star" id="shop_rate-1"></div>
+                                <div class="rate-star" id="shop_rate-2"></div>
+                                <div class="rate-star" id="shop_rate-3"></div>
+                                <div class="rate-star" id="shop_rate-4"></div>
+                                <div class="rate-star" id="shop_rate-5"></div>
+                            </div>
+                        </div>
+                       {% endif %}
+                        {% if shop_rating_site_rating %}
+
+                        <div class="col">
+                            <label class="rating-form-label" for="site_rate-input">{{ entry_site_rate }}</label>
+                            <div class="">
+                                <input name="site_rate-input" type="hidden" value="0">
+                            </div>
+                            <div class="rate-stars">
+                                <div class="rate-star" id="site_rate-1"></div>
+                                <div class="rate-star" id="site_rate-2"></div>
+                                <div class="rate-star" id="site_rate-3"></div>
+                                <div class="rate-star" id="site_rate-4"></div>
+                                <div class="rate-star" id="site_rate-5"></div>
+                            </div>
+                        </div>
+                       {% endif %}
+                        {% else %}
+                        <div class="col">
+                            {% if shop_rating_shop_rating %}
+                            <label class="rating-form-label" for="shop_rate-input">{{ entry_rate }}</label>
+                            <div class="hidden">
+                                <input name="shop_rate-input" type="hidden" value="0">
+                            </div>
+                            <div class="rate-stars">
+                                <div class="rate-star" id="shop_rate-1"></div>
+                                <div class="rate-star" id="shop_rate-2"></div>
+                                <div class="rate-star" id="shop_rate-3"></div>
+                                <div class="rate-star" id="shop_rate-4"></div>
+                                <div class="rate-star" id="shop_rate-5"></div>
+                            </div>
+                            {% endif %}
+                            {% if shop_rating_site_rating %}
+                            <label class="rating-form-label" for="site_rate-input">{{ entry_site_rate }}</label>
+                            <div class="">
+                                <input name="site_rate-input" type="hidden" value="0">
+                            </div>
+                            <div class="rate-stars">
+                                <div class="rate-star" id="site_rate-1"></div>
+                                <div class="rate-star" id="site_rate-2"></div>
+                                <div class="rate-star" id="site_rate-3"></div>
+                                <div class="rate-star" id="site_rate-4"></div>
+                                <div class="rate-star" id="site_rate-5"></div>
+                            </div>
+                            {% endif %}
+                        </div>
+                       {% endif %}
+                        {% if form_custom_types %}
+                        <div class="col">
+                            {% for custom in form_custom_types %}
+                            <div class="grid grid-2">
+                                <div class="col-mb">
+                                    <label class="rating-form-label custom-types" for="site_rate-input">{{ custom.title }}</label>
+                                    <input name="custom_{{custom.id}}_rate-input" type="hidden" value="0">
+                                </div>
+                                <div class="col-mb">
+                                    <div class="rate-stars custom-types">
+                                        <div class="rate-star small-stars" id="custom_{{custom.id}}_rate-1"></div>
+                                        <div class="rate-star small-stars" id="custom_{{custom.id}}_rate-2"></div>
+                                        <div class="rate-star small-stars" id="custom_{{custom.id}}_rate-3"></div>
+                                        <div class="rate-star small-stars" id="custom_{{custom.id}}_rate-4"></div>
+                                        <div class="rate-star small-stars" id="custom_{{custom.id}}_rate-5"></div>
+                                    </div>
+                                </div>
+                                <div style="clear: both"></div>
+                            </div>
+                          {% endfor %}
+                        </div>
+                       {% endif %}
+                    </div>
+                    <div style="clear: both"></div>
+                    <div class="rate_separator"></div>
+                    <div class="grid" style="margin-bottom: 20px">
+                        <div class="col">
+                            <label class=" control-label" for="input-comment">{{ entry_comment }}</label>
+                            <div class="">
+                                <textarea name="comment" rows="6" id="input-comment" class="form-control" required style="height: 100px">{{ comment }}</textarea>
+                                {% if  error_comment %}
+                                    <div class="text-danger">{{ error_comment }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="clear: both"></div>
+                    </div>
+                    {% if shop_rating_good_bad %}
+                    <div class="grid grid-2">
+                        <div class="col">
+                            <label class="rating-form-label text-success" for="input-good"><i class="fa fa-plus fa-fw"></i>{{ entry_good }}</label>
+                            <div class="">
+                                <textarea type="text" name="good" id="input-good" class="form-control" style="height: 75px">{{ good }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label class="rating-form-label text-danger " for="input-bad"><i class="fa fa-minus fa-fw "></i>{{ entry_bad }}</label>
+                            <div class="">
+                                <textarea type="text" name="bad"  id="input-bad" class="form-control"  style="height: 75px">{{ bad }}</textarea>
+                            </div>
+                        </div>
+                        <div style="clear: both"></div>
+                        <div class="field_desc">{{ god_bad_desc }}</div>
+                    </div>
+                    {% endif %}
+
+                    <div class="grid">
+                        <div class="col">{{ captcha }}</div>
+                    </div>
+
+                </div>
+            </div>
+            <br>
+            <button type="submit" class="remodal-confirm add_rating-button">{{ button_submit }}</button>
+            <button data-remodal-action="cancel" class="remodal-cancel">{{ button_close }}</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <script src="../catalog/view/javascript/jquery/remodal/remodal.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-remodal-id=ratingModal]').remodal();
+        $('.rate-star').hover(
+                function(){
+                    var params = this.id.split('-');
+                    var type = params[0];
+                    var id = params[1];
+                    $('[id^='+type+']').removeClass('star-hover');
+
+                    for(var i = 1; i<=id; i++){
+                        $('#'+type+'-'+i).addClass('star-hover');
+                    }
+                },function(){
+                    var params = this.id.split('-');
+                    var type = params[0];
+                    var id = params[1];
+
+                    $('[id^='+type+']').removeClass('star-hover');
+                }
+        );
+        $('.rate-star').click(function(){
+            var params = this.id.split('-');
+            var type = params[0];
+            var id = params[1];
+            $('[id^='+type+']').removeClass('star-change');
+
+            for(var i = 1; i<=id; i++){
+                $('#'+type+'-'+i).addClass('star-change');
+            }
+            //$("input[name="+type+"-input]").attr('checked', false);
+            //$("input[name="+type+"-input][value=" + id + "]").attr('checked', true);
+            $("input[name="+type+"-input]").val(id);
+        });
+    });
+
+</script>
+    </div>
+{{column_right }}
+    </div></div>
+{{ footer }}

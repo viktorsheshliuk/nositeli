@@ -1,0 +1,607 @@
+<div id="sс-{{module}}" class="{{sc_class}} ttt sc-main">
+  {% if title %}
+  {#  по умолчанию
+  <div class="sc-heading">
+    <h3>{{title}}</h3>
+  </div>
+  #}
+  {#  для темы Fanes #}
+  <div class="module-block">
+    <h3 class="heading-title">{{title}}</h3>
+  </div>
+  {# конец правок -- для темы Fanes #}
+  {% endif%}
+  <div class="{% if items_carousel %}sc-carousel sc-theme {% else %}sc-grid{% endif %}">
+    {% for item in items %}
+    <div class="item-container{% if item.subitems %} parent-item{% endif %}">
+      <div class="item-wrapper img-{{item_img_pos}}{% if item.active %} active{% endif %}">
+        {% if item_heading and item_img_pos == 'bottom' %}
+        <div class="item-heading">
+          <a href="{{item.href}}">
+            {{item.name}}
+            {% if count_status and item.count %}
+            <span class="item-count">{{item.count}}</span>
+            {% endif %}
+          </a>
+        </div>
+        {% endif %}
+        {% if item_image %}
+        <div class="item-image">
+          <a href="{{item.href}}">
+            <img src="{{item.thumb}}" alt="{{item.name}}">
+          </a>
+        </div>
+        {% endif %}
+        {% if item_heading and item_img_pos != 'bottom' or item_desc or item_btn %}
+        <div class="info-wrapper">
+          <div class="item-info">
+            {% if item_heading and item_img_pos != 'bottom' %}
+            <div class="item-heading">
+              <a href="{{item.href}}">
+                {{item.name}}
+                {% if count_status and item.count %}
+                <span class="item-count">{{item.count}}</span>
+                {% endif %}
+              </a>
+            </div>
+            {% endif %}
+            {% if item_desc and item.item_sd %}
+            <div class="item-description">{{item.item_sd}}</div>
+           {% endif %}
+          </div>
+          {% if item_btn %}
+          <div class="item-btn">
+            <a class="{{btn_class}}" href="{{item.href}}">{{item_btn_text}}</a>
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+        {% if subitems_status and item.subitems %}
+        <div class="sc-child">
+          <div class="sc-child-wrapper">
+            <div class="sc-parent-info">
+              {% if description_status and item.description %}
+              <div class="sc-parent-title"> <a href="{{item.href}}">{{item.name}}</a> </div>
+              <div class="sc-parent-desc">{{item.description}}</div>
+             {% endif %}
+            </div>
+            <div class="{% if subitems_carousel %} sc-carousel sc-theme {% else %} subitem-wrapper {% endif %}">
+              {% for subitem in item.subitems %}
+              <div class="item-container">
+                <div class="item-wrapper img-{{subitem_img_pos}}{% if subitem.active %} active {% endif %}">
+                  {% if subitem_heading and subitem_img_pos == 'bottom' %}
+                  <div class="item-heading">
+                    <a href="{{subitem.href}}">
+                      {{subitem.name}}
+                      {% if count_status and subitem.count %}
+                      <span class="item-count">{{subitem.count}}</span>
+                      {% endif %}
+                    </a>
+                  </div>
+                  {% endif %}
+                  {% if subitem_image %}
+                  <div class="item-image">
+                    <a href="{{subitem.href}}">
+                      <img src="{{subitem.thumb}}" alt="{{subitem.name}}">
+                    </a>
+                  </div>
+                 {% endif %}
+                  {% if subitem_heading and subitem_img_pos != 'bottom' or subitem_desc or subitem_btn %}
+                  <div class="info-wrapper">
+                    <div class="item-info">
+                      {% if subitem_heading and subitem_img_pos != 'bottom' %}
+                      <div class="item-heading">
+                        <a href="{{subitem.href}}">
+                          {{subitem.name}}
+                          {% if count_status and subitem.count %}
+                          <span class="item-count">{{subitem.count}}</span>
+                         {% endif %}
+                        </a>
+                      </div>
+                     {% endif %}
+                      {% if subitem_desc and subitem.description %}
+                      <div class="item-description">{{subitem.description}}</div>
+                      {% endif %}
+                      {% if products_by_item %}
+                      {% if rating and subitem.rating %}
+                      <div class="rating">
+                      {% set n = 5 %}
+                      {% for i in range(1, n) %}
+                        {% if subitem.rating < i %}
+                        <span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span>
+                        {% else %}
+                        <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span>
+                        {% endif %}
+                      {% endfor %}
+                      </div>
+                     {% endif %}
+                      {% if price and subitem.price %}
+                      <p class="price">
+                        {% if not subitem.special %}
+                        {{subitem.price}}
+                        {% else %}
+                        <span class="price-new">{{subitem.special}}</span> <span class="price-old">{{subitem.price}}</span>
+                        {% endif %}
+                      </p>
+                      {% endif %}
+                      {% endif %}
+                    </div>
+                    {% if products_by_item and cart %}
+                    <div class="item-btn">
+                      <a class="{{cart_class}}" onclick="cart.add('{{subitem.product_id}}');">{{cart_icon}}&nbsp; <span class="hidden-xs">{{button_cart}}</span></a>
+                    </div>
+                    {% endif %}
+                    {% if subitem_btn %}
+                    <div class="item-btn">
+                      <a class="{{subbtn_class}}" href="{{subitem.href}}">{{subitem_btn_text}}</a>
+                    </div>
+                    {% endif %}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+<script type="text/javascript"><!--
+{% if items_carousel %}
+  var itemscarousel = $('#sс-{{module}} > .sc-carousel');
+  itemscarousel.sccCarousel({
+    margin: {{item_margin}},
+    nav: {{items_nav}},
+    navText: ['{{items_prev_nav}}', '{{items_next_nav}}'],
+    navSpeed: {{items_nav_speed}},
+    dots: {{items_dots}},
+    mouseDrag: {{items_drag}},
+    slideBy: 2,
+    {% if autoplay %}
+    autoplay: true,
+    loop: true,
+    autoplayTimeout: {{autoplay_timeout}},
+    autoplaySpeed: {{autoplay_speed}},
+    autoplayHoverPause: true,
+    {% endif %}
+    responsive: {0:{items:{{items_xs}}}, 768:{items:{{items_sm}}}, 992:{items:{{items_md}}}, 1200:{ items:{{items_lg}}}},
+    onRefreshed : function(event) {
+      var cw = itemscarousel.width();
+      var scitem = $('#sс-{{module}} > .sc-carousel').find('.scc-stage').children();
+      var itemscount = event.item.count;
+      var size = event.page.size;
+      if (itemscount < size) {
+        scitem.parent().width(cw+{{item_margin}} + 'px');
+        scitem.width(((cw+{{item_margin}})-(itemscount*{{item_margin}}))/itemscount + 'px');
+      }
+      var iteminfo = scitem.find('.item-info').not('.sc-child .item-info');
+      iteminfo.height('auto');
+      var imh = 0;
+      $(iteminfo).each(function() {
+        imh = Math.max(imh, $(this).height());
+      }).height(imh);
+      {% if item_img_pos == 'bottom' %}
+        var heading = scitem.find('.item-heading').not('.sc-child .item-heading');
+        heading.height('auto');
+        var hmh = 0;
+        $(heading).each(function() {
+          hmh = Math.max(hmh, $(this).height());
+        }).height(hmh);
+      {% endif %}
+    }
+  });
+
+  {% if items_mousewheel %}
+  itemscarousel.on('mousewheel', '.scc-stage', function(e) {
+    if (e.deltaY>0) {
+      $(this).trigger('next.scc');
+    } else {
+      $(this).trigger('prev.scc');
+    }
+    e.preventDefault();
+  });
+  {% endif %}
+
+  {% if subitems_status %}
+  {% if autoplay %}
+    $('#sс-{{module}} .sc-child').hover(function(){
+      itemscarousel.trigger('stop.scc.autoplay');
+    });
+ {% endif %}
+  {% if subitems_carousel %}
+    $('#sс-{{module}}').append('<div class="sc-subitems-row"></div>');
+    $('#sс-{{module}} .parent-item').each(function(i) {
+      $(this).addClass('sc-toggle-'+(i+1)).find('.sc-child').addClass('sc-target-'+(i+1));
+      $(this).find('a').not('.sc-child a, .item-btn a').attr('onclick','return false');
+      var target = $('#sс-{{module}} .sc-target-'+(i+1));
+      var subcarousel = $('#sс-{{module}} .sc-target-'+(i+1) + ' .sc-carousel');
+      target.appendTo('#sс-{{module}} .sc-subitems-row');
+
+      $('#sс-{{module}} .sc-toggle-'+(i+1)).find('a').not('.item-btn a').on('click', function() {
+        if ($(subcarousel).is(':hidden')) {
+          target.show();
+          subcarousel.trigger('refresh.scc.carousel');
+          target.hide();
+        }
+        $('#sс-{{module}} .sc-target-'+(i+1)).toggleClass('sc-target-open').animate({'opacity': 'toggle', 'height': 'toggle'}, 300).siblings('.sc-target-open').removeClass('sc-target-open').animate({'opacity': 'toggle', 'height': 'toggle'}, 300);
+        $(this).closest('.item-wrapper').toggleClass('sc-toggle-active').closest('.scc-item').siblings().find('.sc-toggle-active').toggleClass('sc-toggle-active');
+      });
+
+      subcarousel.sccCarousel({
+        margin: {{subitem_margin}},
+        nav: {{subitems_nav}},
+        navText: ['{{subitems_prev_nav}}', '{{subitems_next_nav}}'],
+        navSpeed: {{subitems_nav_speed}}
+        dots: {{subitems_dots}},
+        slideBy: 2,
+        mouseDrag: {{subitems_drag}},
+        responsive: {0:{items:{{subitems_xs}}}, 768:{items:{{subitems_sm}}}, 992:{items:{{subitems_md}}}, 1200:{ items:{{subitems_lg}}}},
+        onRefreshed: function(event) {
+          var cw = subcarousel.width();
+          var scsubitem = subcarousel.find('.scc-stage').children();
+          var subitemscount = event.item.count;
+          var size = event.page.size;
+
+          if (subitemscount < size) {
+            scsubitem.parent().width(cw+{{subitem_margin}} + 'px');
+            scsubitem.width(((cw+{{subitem_margin}})-(subitemscount*{{subitem_margin}}))/subitemscount + 'px');
+          }
+
+          var subinfo = scsubitem.find('.item-info');
+          subinfo.height('auto');
+          var smh = 0;
+          $(subinfo).each(function() {
+            smh = Math.max(smh, $(this).height());
+          }).height(smh);
+
+          {% if subitem_img_pos == 'bottom' %}
+            var heading = scsubitem.find('.item-heading');
+            heading.height('auto');
+            var shmh = 0;
+            $(heading).each(function() {
+              shmh = Math.max(shmh, $(this).height());
+            }).height(shmh);
+          {% endif %}
+        }
+      });
+
+      {% if subitems_mousewheel %}
+      subcarousel.on('mousewheel', '.scc-stage', function(e) {
+        if (e.deltaY>0) {
+          $(this).trigger('next.scc');
+        } else {
+          $(this).trigger('prev.scc');
+        }
+        e.preventDefault();
+      });
+      {% endif %}
+    });
+  {% else %}
+    $('#sс-{{module}}').append('<div class="sc-subitems-row"></div>');
+    function dimension(){
+      var subrow = $('#sс-{{module}} .sc-child');
+      var subitems = subrow.find('.subitem-wrapper').children('.item-container');
+      var subitem_count = {{subitems_lg}};
+
+      subrow.find('.subitem-wrapper').css('margin-right','-{{subitem_margin}}px');
+      subitems.css('margin-right','{{subitem_margin}}px');
+
+      $(subrow).each(function() {
+        var subiteminrow = $(this).find('.subitem-wrapper').children('.item-container');
+        for (var i = 0; i < subiteminrow.length; i+=subitem_count) {
+          var childrow = subiteminrow.slice(i, i+subitem_count);
+          var subinfo = childrow.find('.item-info');
+
+          if ($(this).is(':hidden')) {$(this).addClass('hidden-subrow').show();}
+          subinfo.height('auto');
+
+          var subrow_width = $(this).find('.sc-child-wrapper').width()+{{subitem_margin}};
+          var subitem_width = 0;
+
+          if ($(window).width() < 768) {
+            subitem_width = Math.floor(subrow_width/{{subitems_xs}}-{{subitem_margin}});
+            subitem_count = {{subitems_xs}};
+          }
+          if ($(window).width() >= 768 && $(window).width() < 992) {
+            subitem_width = Math.floor(subrow_width/{{subitems_sm}}-{{subitem_margin}});
+            subitem_count = {{subitems_sm}};
+          }
+          if ($(window).width() >= 992 && $(window).width() < 1200) {
+            subitem_width = Math.floor(subrow_width/{{subitems_md}}-{{subitem_margin}});
+            subitem_count = {{subitems_md}};
+          }
+          if ($(window).width() >= 1200) {
+            subitem_width = Math.floor(subrow_width/{{subitems_lg}}-{{subitem_margin}});
+            subitem_count = {{subitems_lg}};
+          }
+
+          var subitems = $(this).find('.subitem-wrapper').children('.item-container');
+          subitems.width(subitem_width);
+
+          // Centering items
+          // var ml = 0;
+          // childrow.css('margin-left', ml);
+          // if (childrow.length < subitem_count) {
+          //   ml = (subrow_width - (subitem_width+{{subitem_margin}})*childrow.length)/2;
+          // }
+          // childrow.first().css('margin-left', ml);
+
+          // Full Width
+          if (childrow.length < subitem_count) {
+            childrow.width(Math.floor(subrow_width/childrow.length - {{subitem_margin}}));
+          }
+
+          var subiteminfo = 0;
+          $(subinfo).each(function() {
+            subiteminfo = Math.max(subiteminfo, $(this).height());
+          }).height(subiteminfo);
+
+          {% if subitem_img_pos == 'bottom' %}
+            var subheading = childrow.find('.item-heading');
+            subheading.height('auto');
+            var subitemheading = 0;
+            $(subheading).each(function() {
+              subitemheading = Math.max(subitemheading, $(this).height());
+            }).height(subitemheading);
+          {% endif %}
+          if ($(this).is('.hidden-subrow')) {$(this).removeClass('hidden-subrow').hide();}
+        }
+      });
+    }
+
+    $('#sс-{{module}} .parent-item').each(function(i) {
+      $(this).addClass('sc-toggle-'+(i+1)).find('.sc-child').addClass('sc-target-'+(i+1));
+      $(this).find('a').not('.sc-child a, .item-btn a').attr('onclick','return false');
+
+      var target = $('#sс-{{module}} .sc-target-'+(i+1));
+      target.appendTo('#sс-{{module}} .sc-subitems-row');
+
+      $('#sс-{{module}} .sc-toggle-'+(i+1)).find('a').not('.item-btn a').on('click', function() {
+        $('#sс-{{module}} .sc-target-'+(i+1)).toggleClass('sc-target-open').animate({'opacity': 'toggle', 'height': 'toggle'}, 300).siblings('.sc-target-open').removeClass('sc-target-open').animate({'opacity': 'toggle', 'height': 'toggle'}, 300);
+        $(this).closest('.item-wrapper').toggleClass('sc-toggle-active').closest('.scc-item').siblings().find('.sc-toggle-active').toggleClass('sc-toggle-active');
+      });
+    });
+    dimension();
+    $(window).resize(dimension);
+  {% endif %}
+  {% endif %}
+{% else %}
+  var item_count = {{items_lg}};
+  $('#sс-{{module}} .sc-grid').children().css('margin-right','{{item_margin}}px');
+
+  {% if subitems_status %}
+    var subrow = $('#sс-{{module}} .sc-child');
+    var subitems = subrow.find('.subitem-wrapper').children('.item-container');
+    subrow.find('.subitem-wrapper').css('margin-right','-{{subitem_margin}}px');
+    subitems.css('margin-right','{{subitem_margin}}px');
+    var subitem_count = {{subitems_lg}};
+  {% endif %}
+
+  function dimension(){
+    $('#sс-{{module}} .sc-grid').each(function() {
+      var row_width = $(this).parent().width()+{{item_margin}};
+      var item_width = 0;
+
+      if ($(window).width() < 768) {
+        item_width = Math.floor(row_width/{{items_xs}}-{{item_margin}});
+        item_count = {{items_xs}};
+      }
+      if ($(window).width() >= 768 && $(window).width() < 992) {
+        item_width = Math.floor(row_width/{{items_sm}}-{{item_margin}});
+        item_count = {{items_sm}};
+      }
+      if ($(window).width() >= 992 && $(window).width() < 1200) {
+        item_width = Math.floor(row_width/{{items_md}}-{{item_margin}});
+        item_count = {{items_md}};
+      }
+      if ($(window).width() >= 1200) {
+        item_width = Math.floor(row_width/{{items_lg}}-{{item_margin}});
+        item_count = {{items_lg}};
+      }
+
+      if ($(this).children().is('.item-container')) {
+        var items = $(this).children();
+      } else {
+        var items = $(this).find('.sc-items-row').children();
+      }
+
+      items.width(item_width);
+
+      for (var i = 0; i < items.length; i+=item_count) {
+        var row = items.slice(i, i+item_count);
+        if (row.first().parent().is('.sc-items-row')) {
+          row.unwrap();
+        }
+        row.wrapAll('<div class="sc-items-row"></div>');
+        $(this).find('.sc-items-row').css('margin-right','-{{item_margin}}px').detach(':empty');
+
+        {% if subitems_status %}
+        if (!row.first().parent('.sc-items-row').next().is('.sc-subitems-row')) {
+          row.first().parent('.sc-items-row').after('<div class="sc-subitems-row"></div>');
+        }
+        {% endif %}
+
+        // Centering items
+        // var iml = 0;
+        // row.css('margin-left', iml);
+        // if (row.length < item_count) {
+        //   iml = (row_width-(item_width+{{item_margin}})*row.length)/2;
+        // }
+        // row.first().css('margin-left', iml);
+
+        // Full Width
+        if (row.length < item_count) {
+          row.width(Math.floor(row_width/row.length - {{item_margin}}));
+        }
+        $(this).fadeIn(300);
+        var info = row.find('.item-info').not('.sc-child .item-info');
+        info.height('auto');
+        var iteminfo = 0;
+        $(info).each(function() {
+          iteminfo = Math.max(iteminfo, $(this).height());
+        }).height(iteminfo);
+
+        {% if item_img_pos == 'bottom' %}
+          var heading = row.find('.item-heading').not('.sc-child .item-heading');
+          heading.height('auto');
+          var itemheading = 0;
+          $(heading).each(function() {
+            itemheading = Math.max(itemheading, $(this).height());
+          }).height(itemheading);
+        {% endif %}
+      }
+
+      {% if subitems_status %}
+      $(this).find('.parent-item').each(function(i) {
+        var target = $('#sс-{{module}} .sc-target-'+(i+1));
+        var subrow = $(this).parent().next();
+        target.appendTo(subrow);
+      });
+
+      $(this).find('.sc-child').each(function() {
+        var subiteminrow = $(this).find('.subitem-wrapper').children('.item-container');
+        for (var i = 0; i < subiteminrow.length; i+=subitem_count) {
+          var childrow = subiteminrow.slice(i, i+subitem_count);
+          var subinfo = childrow.find('.item-info');
+
+          if ($(this).is(':hidden')) {$(this).addClass('hidden-subrow').show();}
+          subinfo.height('auto');
+
+          var subrow_width = $(this).find('.sc-child-wrapper').width() + {{subitem_margin}};
+          var subitem_width = 0;
+
+          if ($(window).width() < 768) {
+            subitem_width = Math.floor(subrow_width/{{subitems_xs}} - {{subitem_margin}});
+            subitem_count = {{subitems_xs}};
+          }
+          if ($(window).width() >= 768 && $(window).width() < 992) {
+            subitem_width = Math.floor(subrow_width/{{subitems_sm}} - {{subitem_margin}});
+            subitem_count = {{subitems_sm}};
+          }
+          if ($(window).width() >= 992 && $(window).width() < 1200) {
+            subitem_width = Math.floor(subrow_width/{{subitems_md}} - {{subitem_margin}});
+            subitem_count = {{subitems_md}};
+          }
+          if ($(window).width() >= 1200) {
+            subitem_width = Math.floor(subrow_width/{{subitems_lg}} - {{subitem_margin}});
+            subitem_count = {{subitems_lg}};
+          }
+
+          var subitems = $(this).find('.subitem-wrapper').children('.item-container');
+          subitems.width(subitem_width);
+
+          // Centering items
+          // var sml = 0;
+          // childrow.css('margin-left', sml);
+          // if (childrow.length < subitem_count) {
+          //   sml = (subrow_width-(subitem_width+{{subitem_margin}})*childrow.length)/2;
+          // }
+          // childrow.first().css('margin-left', sml);
+
+          // Full Width
+          if (childrow.length < subitem_count) {
+            childrow.width(Math.floor(subrow_width/childrow.length - {{subitem_margin}}));
+          }
+
+          var subiteminfo = 0;
+          $(subinfo).each(function() {
+            subiteminfo = Math.max(subiteminfo, $(this).height());
+          }).height(subiteminfo);
+
+          {% if subitem_img_pos == 'bottom' %}
+            var subheading = childrow.find('.item-heading');
+            subheading.height('auto');
+            var subitemheading = 0;
+            $(subheading).each(function() {
+              subitemheading = Math.max(subitemheading, $(this).height());
+            }).height(subitemheading);
+          {% endif %}
+
+          if ($(this).is('.hidden-subrow')) {$(this).removeClass('hidden-subrow').hide();}
+        }
+      });
+     {% endif %}
+    });
+  }
+
+  {% if subitems_status %}
+  $('#sс-{{module}} .parent-item').each(function(i) {
+    $(this).addClass('sc-toggle-'+(i+1)).find('.sc-child').addClass('sc-target-'+(i+1));
+    $(this).find('a').not('.sc-child a, .item-btn a').attr('onclick','return false');
+    var target = $('#sс-{{module}} .sc-target-'+(i+1));
+    var subrow = $(this).parent().next();
+    target.appendTo(subrow);
+
+    $('#sс-{{module}} .sc-toggle-'+(i+1)).find('a').not('.sc-child a,.item-btn a').on('click', function() {
+      {% if subitems_carousel %}
+        if ($(subcarousel).is(':hidden')) {
+            target.show();
+            subcarousel.trigger('refresh.scc.carousel');
+            target.hide();
+        }
+      {% endif %}
+      $('#sс-{{module}} .sc-target-'+(i+1)).toggleClass('sc-target-open').animate({'opacity': 'toggle', 'height': 'toggle'}, 300).siblings('.sc-target-open').removeClass('sc-target-open').animate({'opacity': 'toggle', 'height': 'toggle'}, 300);
+      $(this).closest('.item-wrapper').toggleClass('sc-toggle-active').parent().siblings().find('.sc-toggle-active').toggleClass('sc-toggle-active');
+    });
+
+    {% if subitems_carousel %}
+      var subcarousel = $('#sс-{{module}} .sc-target-'+(i+1) + ' .sc-carousel');
+      subcarousel.sccCarousel({
+          margin: {{subitem_margin}},
+          nav: {{subitems_nav}},
+          navText: ['{{subitems_prev_nav}}', '{{subitems_next_nav}}'],
+          navSpeed: {{subitems_nav_speed}},
+          dots: {{subitems_dots}},
+          slideBy: 2,
+          mouseDrag: {{subitems_drag}},
+          responsive: {0:{items:{{subitems_xs}}}, 768:{items:{{subitems_sm}}}, 992:{items:{{subitems_md}}}, 1200:{ items:{{subitems_lg}}}},
+          onRefreshed: function(event) {
+            var cw = subcarousel.width();
+            var scsubitem = subcarousel.find('.scc-stage').children();
+            var subitemscount = event.item.count;
+            var size = event.page.size;
+
+            if (subitemscount < size) {
+                scsubitem.parent().width(cw+{{subitem_margin}} + 'px');
+                scsubitem.width(((cw+{{subitem_margin}})-(subitemscount*{{subitem_margin}}))/subitemscount + 'px');
+            }
+
+            var subinfo = scsubitem.find('.item-info');
+            subinfo.height('auto');
+            var imh = 0;
+            $(subinfo).each(function() {
+                imh = Math.max(imh, $(this).height());
+            }).height(imh);
+
+            {% if subitem_img_pos == 'bottom' %}
+              var heading = scsubitem.find('.item-heading');
+              heading.height('auto');
+              var hmh = 0;
+              $(heading).each(function() {
+                hmh = Math.max(hmh, $(this).height());
+              }).height(hmh);
+          {% endif %}
+          }
+      });
+
+      {% if subitems_mousewheel %}
+      subcarousel.on('mousewheel', '.scc-stage', function(e) {
+        if (e.deltaY>0) {
+          $(this).trigger('next.scc');
+        } else {
+          $(this).trigger('prev.scc');
+        }
+        e.preventDefault();
+      });
+     {% endif %}
+    {% endif %}
+  });
+  {% endif %}
+  dimension();
+  $(window).resize(dimension);
+{% endif %}
+//--></script>

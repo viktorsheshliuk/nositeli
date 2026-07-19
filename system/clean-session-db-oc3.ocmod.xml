@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<name>Clean Database Session Table oc3</name>
+	<code>clean-session-table</code>
+	<version>1.0</version>
+	<author>agatha65.com</author>
+	
+	<!-- https://github.com/opencart/opencart/issues/7094 -->
+	<file path="system/library/session/db.php">
+		<operation>
+			<search><![CDATA[$this->expire = ini_get('session.gc_maxlifetime');]]></search>
+			<add position="after"><![CDATA[
+		if ($this->db) {
+			// remove entries older than gc_maxlifetime seconds + 1 day
+			$sql = "DELETE FROM `".DB_PREFIX."session` WHERE expire < DATE_SUB(NOW(), INTERVAL ".((int)$this->expire+86400)." SECOND);";
+			$this->db->query( $sql );
+		}
+			]]></add>
+		</operation>
+	</file>
+</modification>

@@ -1,0 +1,193 @@
+<div id="form-creator-{{ module_id }}" class="form-creator box">
+	{%if module_name %}
+	<div class="box-heading">
+		<h3>{{ module_name }}</h3>
+	</div>
+	<hr style="margin: 8px 0 10px 0" />
+	{% endif %}
+	<div class="box-content">
+				<form role="form" data-toggle="validator" enctype="multipart/form-data" id="form-formcreator{{ module_id }}">
+					{% if fields %}
+					{% set k = 0 %}
+					{% set field_row = 0 %}
+						 {% for field in fields %}
+						 {% set field_row = field_row + 1 %}
+							 {% if field.type == 'input'  and  field.field_status %}
+									{% if field.required %}
+										<div class="form-group required ">
+											<label class="control-label" for="formInput{{ module_id }}-{{ field_row }}">{{ field.name }}</label>
+											<input type="text" class="form-control" name="form_input[{{ field_row }}][{{ field.name2}}]" id="formInput{{ module_id }}-{{ field_row }}" data-minlength="3" required="" placeholder="{{ field.name }}">
+											<div class="help-block with-errors"></div>
+											<input type="hidden" class="form-control" name="form_input[{{ field_row }}][required]" value="input">
+										</div>
+									{% else %}
+										<div class="form-group">
+											<label for="formInput{{ module_id }}-{{ field_row }}" class="control-label">{{ field.name }}</label>
+											<input type="text" class="form-control" name="form_input[{{ field_row }}][{{ field.name2 }}]" id="formInput{{ module_id }}-{{ field_row }}" placeholder="{{ field.name }}">
+										</div>
+									{% endif %}
+							 {% elseif  field.type == 'textarea'  and  field.field_status %}
+										{% if field.required %}
+											<div class="form-group required">
+												<label class="control-label" for="formInputText{{ module_id }}-{{ field_row }}">{{ field.name }}</label>
+												<textarea class="form-control" name="form_input[{{ field_row }}][{{ field.name2 }}]" id="formInputText{{ module_id }}-{{ field_row }}" rows="3" data-minlength="5" required="" placeholder="{{ field.name }}"></textarea>
+												<div class="help-block with-errors"></div>
+												<input type="hidden" class="form-control" name="form_input[{{ field_row }}][required]" value="textarea">
+											</div>
+										{% else %}
+												<div class="form-group">
+													<label for="formInputText{{ module_id }}-{{ field_row }}" class="control-label">{{ field.name }}</label>
+													<textarea class="form-control" name="form_input[{{ field_row }}][{{ field.name2 }}]" id="formInputText{{ module_id }}-{{ field_row }}" rows="3" placeholder="{{ field.name }}"></textarea>
+											 </div>
+										 {% endif %} 
+								 {% elseif  field.type == 'select'  and  field.field_status %}
+											 {% if field.required %}
+													<div class="form-group required">
+														<label for="formInputSelect{{ module_id }}-{{ field_row }}" class="control-label">{{ field.name }}</label>
+														<select class="form-control"  name="form_input[{{ field_row }}][{{ field.name2 }}]" id="formInputSelect{{ module_id }}-{{ field_row }}">
+															{% set field_count = field.option|length - 1 %}
+															{% for i in 0..field_count %}
+																<option >{{ field['option'][i] }}</option>
+															{% endfor %}
+														</select>
+													 
+													</div>
+												{% else %}
+													<div class="form-group">
+														<label for="formInputSelect{{ module_id }}-{{ field_row }}" class="control-label">{{ field.name }}</label>
+														<select class="form-control" name="form_input[{{ field_row }}][{{ field.name2 }}]" id="formInputSelect{{ module_id }}-{{ field_row }}">
+															{% set field_count = field.option|length - 1 %}
+															{% for i in 0..field_count %}
+																<option>{{ field['option'][i]}}</option>
+															 {% endfor %}
+														</select>
+													</div>
+												{% endif %} 
+								 {% elseif  field.type == 'radio'  and  field.field_status %}
+											 {% if field.required %}
+													<div class="form-group required">
+														<label for="formInputRadio{{ module_id }}-{{ field_row }}" class="control-label">{{ field.name }}</label>
+														<div class="radio" id="formInputRadio{{ module_id }}-{{ field_row }}" style="margin:0">
+															{% set field_count = field.option|length - 1 %}
+															{% for i in 0..field_count %}
+																<div><label><input required="" type="radio" name="form_input[{{ field_row }}][{{ field.name }}]" value="{{ field['option'][i]}}">{{ field['option'][i]}}</label></div>
+															{% endfor %}
+														</div>
+														<input type="hidden" class="form-control" name="form_input[{{ field_row }}][required]" value="radio">
+													</div>
+												{% else %}
+													<div class="form-group">
+														<label for="formInputRadio{{ module_id }}-{{ field_row }}" class="control-label">{{ field.name }}</label>
+														<div class="radio" id="formInputRadio{{ module_id }}-{{ field_row }}" style="margin:0">
+															{% set field_count = field.option|length - 1 %}
+															{% for i in 0..field_count %}
+																<div><label><input type="radio" name="form_input[{{ field_row }}][{{ field.name }}]" value="{{ field['option'][i]}}">{{ field['option'][i]}}</label></div>
+															{% endfor %}
+														</div>
+													</div>
+												{% endif %} 
+										{% elseif  field.type == 'checkbox'  and  field.field_status %}
+											 {% if field.required %}
+													<div class="form-group required">
+														<label for="formInputCheckbox{{ module_id }}-{{ field_row }}" class="control-label">{{ field.name }}</label>
+														<div class="checkbox form-control" id="formInputCheckbox{{ module_id }}-{{ field_row }}" style="margin:0">
+															{% set field_count = field.option|length - 1 %}
+															{% for i in 0..field_count %}
+																<div><label> <input type="checkbox" name="form_input[{{ field_row }}][{{ field.name }}][{{ i }}]" value="{{ field['option'][i]}}">{{ field['option'][i]}}</label></div>
+														 {% endfor %}
+														</div>
+														<div class="help-block with-errors"></div>
+														<input type="hidden" class="form-control" name="form_input[{{ field_row }}][required]" value="checkbox">
+													</div>
+												{% else %}
+													<div class="form-group">
+														<label for="formInputCheckbox{{ module_id }}-{{ field_row }}" class="control-label">{{ field.name }}</label>
+														<div class="checkbox" id="formInputCheckbox{{ module_id }}-{{ field_row }}" style="margin:0">
+															{% set field_count = field.option|length - 1 %}
+															{% for i in 0..field_count %}
+																<div><label><input type="checkbox" name="form_input[{{ field_row }}][{{ field.name }}][{{ i }}]" value="{{ field['option'][i]}}">{{ field['option'][i] }}</label></div>
+															{% endfor %}
+														</div>
+													</div>
+												{% endif %}
+								 {% elseif  field.type == 'date'  and  field.field_status %}
+										{% set k = k + 1 %}
+										{% if k == 1 %}
+											<script src="catalog/view/javascript/bootstrap/js/bootstrap-datepicker.js"></script>
+											<script src="catalog/view/javascript/bootstrap/js/bootstrap-datepicker.ru.js"></script>
+											<link rel="stylesheet" href="catalog/view/javascript/bootstrap/css/bootstrap-datepicker.css" />
+										{% endif %}
+									{% if field.required %}
+										<div class="form-group required">
+											<label class="control-label" for="formInputDate{{ module_id }}-{{ module_id }}-{{ field_row }}">{{ field.name }}</label>
+												<input type="text" class="form-control" name="form_input[{{ field_row }}][{{ field.name2}}]" id="formInputDate{{ module_id }}-{{ field_row }}" data-minlength="3" required="" placeholder="{{ field.name }}">
+												<div class="help-block with-errors"></div>
+											<input type="hidden" class="form-control" name="form_input[{{ field_row }}][required]" value="input">
+										</div>
+									{% else %}
+										<div class="form-group">
+											<label for="form_input{{ field_row }}" class="control-label">{{ field.name }}</label>
+												<input type="text" id="formInputDate{{ module_id }}-{{ field_row }}" class="form-control" name="form_input[{{ field_row }}][{{ field.name2 }}]"  placeholder="{{ field.name }}">
+										</div>
+					{% endif %}
+									 <script>
+											$(function () {
+													$('#formInputDate{{ module_id }}-{{ field_row }}').datepicker({
+														language: 'ru',
+													});
+											});
+									</script>
+				 {% endif %}
+				{% endfor %}
+			{% endif %} 
+					<div class="hidden-inputs">
+						<input type="hidden" name="link_page" value="http://{{ domain }}" />
+						<input type="hidden" name="module_name" value="{{ module_name }}" />
+						<input type="hidden" name="module_id" value="{{ module_id }}" />
+						<input type="hidden" name="form_success" value="{{ form_success }}" />
+					</div>
+					<div class="form-group text-center">
+						<button type="submit" class="btn btn-lg btn-primary">{{ button_send }}</button>
+					</div>
+			</form>
+	</div>
+</div>
+
+<script>
+	window.onload =function(){
+			var module_id = {{module_id}};
+			$('#form-formcreator{{ module_id }}').on('submit', function(e) {
+				e.preventDefault(); 
+				var that = $(e.target);      
+				$.ajax({                 
+					url: 'index.php?route=extension/module/formcreator/send',
+					type: 'post', 
+					data: $(this).serialize(), 
+					dataType:'json', 
+					success: function(data) {
+						if (data['error']) {
+							$('.form-creator .text-danger').remove();
+							if (data['error']) {
+								var error = $('<div class="text-left alert alert-danger">'+ data['error'] +'</div>');
+								//that.prepend(error);
+								$('#form-formcreator'+module_id).prepend(error);
+							}
+							return;
+						}
+						$('.form-creator .alert-danger').remove();
+						alertForm({form: that, msg: data['success']});
+						that.find('input[type=\'text\']').val('');
+						that.find('textarea').val('');
+					}, 
+				});
+			});
+			function alertForm(alert) {
+				var div = $('<div class="text-left alert alert-success" style="display: none;">' + alert.msg + '</div>');        
+				alert.form.prepend(div);
+				div.slideDown(400).delay(3000).slideUp(400, function() {
+					alert.form.closest('.modal').modal('hide');
+					div.remove();    
+				});
+			}
+	}		
+</script>

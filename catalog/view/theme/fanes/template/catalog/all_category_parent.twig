@@ -1,0 +1,9 @@
+ {% for breadcrumb in breadcrumbs %}
+   <div id="product-category{{breadcrumb.category_id}}"><div class="btn btn-danger btn-sm"><i class="fa fa-minus-circle"></i></div> {{breadcrumb.text}} <input type="hidden" name="product_category[]" value="breadcrumb.category_id"></div>
+   {% endfor%}
+
+
+  
+
+
+

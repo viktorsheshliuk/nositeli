@@ -1,0 +1,136 @@
+{{ header }}{{ column_left }}
+<div id="content">
+<script>
+  function hided_setting(selector, selector2 = false){
+    $('[name="' + selector + '"]').parent().parent().slideToggle(200);
+    if(selector2){
+      $('[name="' + selector2 + '"]').parent().parent().slideToggle(200);
+    }
+  }
+</script>
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-easyphoto" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumbs in breadcrumb %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit}}</h3>
+      </div>
+      <div class="panel-body">
+        {% if module_easyphoto_key %}
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-easyphoto" class="form-horizontal">
+          <input type="hidden" value="{{ easyphoto_key }}" name="easyphoto_key">
+          <input type="hidden" value="{{ module_easyphoto_key }}" name="module_easyphoto_key">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status}}</label>
+            <div class="col-sm-10">
+              <select name="module_easyphoto_status" id="input-status" class="form-control">
+                {% if module_easyphoto_status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-easyphoto_direct">{{ entry_direct }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="module_easyphoto_direct" value="{{ module_easyphoto_direct }}" placeholder="easyphoto" id="input-easyphoto_direct" class="form-control" />
+            </div>
+          </div>
+          {# 3.1  #}
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-easyphoto_separate">{{ entry_separate }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="module_easyphoto_separate" value="{{ module_easyphoto_separate }}" placeholder="{{ separate_placeholder }}" id="input-easyphoto_separate" class="form-control" />
+            </div>
+          </div>
+          {# 3.1  #}
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-easyphoto_main" style="padding-top:0px;">{{ entry_first_main }}</label>
+            <div class="col-sm-10">
+              <input type="checkbox" name="module_easyphoto_main" value="1" {% if module_easyphoto_main %}checked="checked"{% endif %} id="input-easyphoto_main" class="form-control" />
+            </div>
+          </div>
+		      <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-easyphoto_name" style="padding-top:0px;">{{ entry_photo_name }}</label>
+            <div class="col-sm-10">
+              <input type="checkbox" onchange="hided_setting('module_easyphoto_language', 'module_easyphoto_from')" name="module_easyphoto_name" value="1" {% if module_easyphoto_name %}checked="checked"{% endif %} id="input-easyphoto_name" class="form-control" />
+            </div>
+          </div>
+
+          {# 3.1  #}
+          <div class="form-group" {% if not module_easyphoto_name %}style="display:none;"{% endif %}>
+           <label class="col-sm-2 control-label" for="input-easyphoto_from">{{ entry_from }}</label>
+           <div class="col-sm-10">
+            <select name="module_easyphoto_from" id="input-easyphoto_from" class="form-control">
+              {% for field in fields %}
+              {% if field  == module_easyphoto_from %}
+              <option value="{{ field }}" selected="selected">{{ field }}</option>
+              {% else %}
+              <option value="{{ field }}">{{ field }}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+           </div>
+          </div>
+          {# 3.1  #}
+
+          <div class="form-group" {% if not module_easyphoto_name %}style="display:none;"{% endif %}>
+           <label class="col-sm-2 control-label" for="input-easyphoto_language">{{ entry_language }}</label>
+           <div class="col-sm-10">
+            <select name="module_easyphoto_language" id="input-easyphoto_language" class="form-control">
+              {% for language in languages %}
+                {% if language.language_id  == module_easyphoto_language %}
+                <option value="{{ language.language_id }}" selected="selected">{{ language.name }}</option>
+                {% else %}
+                <option value="{{ language.language_id }}">{{ language.name }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+           </div>
+          </div>
+		      <div class="form-group">
+            <label class="col-sm-2 control-label"></label>
+            <div class="col-sm-10">
+              {{ text_manual }}
+		        </div>
+          </div>
+
+          {# 3.1  #}
+          <div class="form-group">
+            <div class="col-sm-12">
+              {{ more_info }}
+		        </div>
+          </div>
+          {# 3.1  #}
+
+        </form>
+        {% else %}
+          <div style="font-size:22px;text-align:center;">{{ text_no_active}}</div>
+          <style>
+            .easyphoto_img_main{border:2px solid #ccc;padding:5px;margin:30px auto;width:600px;}
+            .easyphoto_img_main img{max-width:100%;}
+          </style>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+	$("[type='checkbox']").bootstrapSwitch('onColor', 'success');
+</script>
+{{ footer}}

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<code>order_status_changer</code>
+	<name>Order status quick changer</name>
+	<version>2.1.1</version>
+	<author>Byteomatic</author>
+	<link>http://byteomatic.net/opencart/extension/order_status_changer.html</link>
+	
+	<file path="admin/controller/sale/order.php">
+		<operation error="skip">
+			<search><![CDATA[public function index() {]]></search>
+			<add position="after"><![CDATA[
+                $this->document->addScript('view/javascript/jquery/jquery.jeditable.mini.js');
+                ]]></add>
+		</operation>
+
+		<operation>
+			<search><![CDATA[$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();]]></search>
+			<add position="after"><![CDATA[                foreach ($data['order_statuses'] as $order_status) {
+                        $status_array[$order_status['order_status_id']] = $order_status['name'];
+                }
+                $data['status_json'] = json_encode($status_array);]]></add>
+		</operation>
+	</file>
+    <file path="admin/controller/extension/dashboard/recent.php">
+        <operation error="skip">
+            <search><![CDATA[public function dashboard() {]]></search>
+            <add position="after"><![CDATA[
+                //order statuses change
+                $this->document->addScript('view/javascript/jquery/jquery.jeditable.mini.js');
+                $this->load->model('user/api');
+                $this->load->model('localisation/order_status');
+                  $api_info = $this->model_user_api->getApi($this->config->get('config_api_id'));
+
+                if ($api_info && $this->user->hasPermission('modify', 'sale/order')) {
+                    $session = new Session($this->config->get('session_engine'), $this->registry);
+                    
+                    $session->start();
+                            
+                    $this->model_user_api->deleteApiSessionBySessonId($session->getId());
+                    
+                    $this->model_user_api->addApiSession($api_info['api_id'], $session->getId(), $this->request->server['REMOTE_ADDR']);
+                    
+                    $session->data['api_id'] = $api_info['api_id'];
+
+                    $data['api_token'] = $session->getId();
+                } else {
+                    $data['api_token'] = '';
+                }
+                    $data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
+                     foreach ($data['order_statuses'] as $order_status) {
+                                $status_array[$order_status['order_status_id']] = $order_status['name'];
+                        }
+                        $data['status_json'] = json_encode($status_array);
+                    //order statuses change    
+                ]]></add>
+        </operation>
+    </file>   
+	                                                     	
+	<file path="admin/view/template/sale/order_list.twig">
+		
+        <operation error="skip">
+            <search><![CDATA[<td class="text-left">{{ order.order_status }}</td>]]></search>
+            <add position="replace"><![CDATA[ <td class="text-left">
+                    {% if (order.j_text_color or order.j_backgrond_color) %}
+                      <label style="padding: 5px; border-radius: 4px;
+                        {% if order.j_backgrond_color %}
+                           background: {{ order.j_backgrond_color }};
+                        {% endif %} 
+                        {% if order.j_text_color %}
+                          color: {{ order.j_text_color }};
+                        {% endif %}"> 
+                    <span class="editable" style="cursor:pointer;" id="{{order.order_id}}">{{order.order_status}}</span>   </label>
+                    {% else %}{{ order.order_status }}
+                    {% endif %}</td>]]></add>
+        </operation>
+		<operation>
+			<search><![CDATA[{{ footer }} ]]></search>
+			<add position="before"><![CDATA[<script><!--
+$(document).ready(function() {
+    $('.editable').editable(function(value, settings) {
+            var order_id = this.id;
+            var text_value = '';
+
+            $.ajax({
+                url: '/index.php?route=api/order/history&api_token='+'{{api_token}}' + '&order_id=' + order_id,
+                type: 'post',
+                dataType: 'json',
+                async: false,
+                data: 'order_status_id=' + encodeURIComponent(value) + '&notify=0&append=0&override=0&comment=',
+                success: function(json) {
+                        if (json['error']) { text_value = json['error']; }
+
+                        if (json['success']) {
+                                var data = $.parseJSON(settings.data);
+                                text_value = data[value];
+                        }
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                }
+            });
+            location.href='/admin/index.php?route=sale/order&user_token='+'{{user_token}}';  
+            return(text_value);
+        }, {
+        data   : '{{status_json}}',
+        type   : 'select',
+        submit : 'OK'
+    });
+});
+//--></script>]]></add>
+		</operation>
+	</file>
+    <file path="admin/view/template/extension/dashboard/recent_info.twig">
+        <operation>
+            <search><![CDATA[</tbody></table></div></div>]]></search>
+            <add position="after"><![CDATA[<script><!--
+$(document).ready(function() {
+    $('.editable').editable(function(value, settings) {
+            var order_id = this.id;
+            var text_value = '';
+
+            $.ajax({
+                url: '/index.php?route=api/order/history&api_token='+'{{api_token}}' + '&order_id=' + order_id,
+                type: 'post',
+                dataType: 'json',
+                async: false,
+                data: 'order_status_id=' + encodeURIComponent(value) + '&notify=0&append=0&override=0&comment=',
+                success: function(json) {
+                        if (json['error']) { text_value = json['error']; }
+
+                        if (json['success']) {
+                                var data = $.parseJSON(settings.data);
+                                text_value = data[value];
+                        }
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                }
+            });
+            location.href='https://nositeli.com.ua/admin/index.php?route=common/dashboard&user_token='+'{{user_token}}';  
+            return(text_value);
+        }, {
+        data   : '{{status_json}}',
+        type   : 'select',
+        submit : 'OK'
+    });
+
+});
+//--></script>]]></add>
+        </operation>
+
+    </file>
+
+</modification>

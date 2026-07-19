@@ -1,0 +1,261 @@
+{{ header }}
+  <div class="content-block">
+ <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>
+<div id="information-contact" class="content">
+{{ column_left }}
+    <div id="informations" class="content-center">{{ content_top }}
+      <h1 class="heading-title">{{ heading_title }}</h1>
+      <div class="contact-block-wrapp">
+      <div class="contact-block">
+        <div class="contact">
+         <h3 class="heading-title">{{ text_location }}</h3>
+            <div class="adress"><strong>{{ text_address }}</strong><br />
+              <address>
+              {{ address }}
+              </address>
+              {% if geocode %}
+              <a href="https://www.google.com/maps/place/nositeli.com.ua/@49.9968513,36.2256287,17z/data=!3m1!4b1!4m5!3m4!1s0x0:0xfefd9c66322e5d1b!8m2!3d49.9968513!4d36.2278174?hl=uk" target="_blank" class="btn btn-info"><i class="fa fa-map-marker"></i> {{ button_map }}</a>
+              {% endif %}
+            </div>
+            {% if image %}
+            <div class="image-thumbnail"><img src="{{ image }}" alt="{{ store }}" title="{{ store }}" class="img-thumbnail" /></div>
+            {% endif %}
+           {#  <div class="telephone"><strong>{{ text_telephone }}</strong><br>
+              <a href="tel:{{telephone}}">{{ telephone }} Виктор</a><br />
+              {% if fax %}
+              <strong>{{ text_fax }}</strong><br>
+              {{ fax }}
+              {% endif %}
+            </div> #}
+            <div class="email">
+              <strong>{{entry_email}}</strong><br>
+              {{config_email}}<br>
+            </div>
+            <div class="store-open">
+              {% if open %}
+              <strong>{{ text_open }}</strong><br />
+              {{ open }}<br />
+              <br />
+              {% endif %}
+              {% if comment %}
+              <strong>{{ text_comment }}</strong><br />
+              {{ comment }}
+              {% endif %}
+            </div>
+{# <style>
+.arcu-buttons {
+    padding: 0;
+    margin: 5px;
+    list-style: none outside none;
+}
+.arcu-buttons .arcu-button {
+    display: block;
+    margin: 0;
+    position: relative;
+    padding: 0 10px 0 40px;
+    height: 38px;
+    border-radius: 4px;
+    border-bottom: 3px solid rgba(0,0,0,.3);
+    text-decoration: none;
+}
+.arcu-buttons .arcu-button {
+    display: block;
+    margin: 0;
+    position: relative;
+    padding: 0 10px 0 40px;
+    height: 38px;
+    border-radius: 4px;
+    border-bottom: 3px solid rgba(0,0,0,.3);
+    text-decoration: none;
+}
+.arcu-buttons .arcu-button .arcu-item-icon svg {
+    height: 24px;
+    width: 24px;
+    display: block;
+    text-align: center;
+    color: #fff;
+}
+.arcu-buttons .arcu-button .arcu-item-content {
+    color: #FFF;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: left;
+    height: 100%;
+    line-height: 1.2em;
+}
+.arcu-buttons .arcu-button .arcu-item-title {
+    font-size: 14px;
+    text-decoration: none;
+}
+.arcu-buttons .arcu-button .arcu-item-icon {
+    position: absolute;
+    top: 50%;
+    margin-top: -12px;
+    left: 10px;
+    width: 40px;
+    color: #FFF;
+    width: 24px;
+    text-align: center;
+    height: 24px;
+}
+</style>
+<ul class="arcu-buttons row">
+  <li class="col-md-6"> 
+    <a href="viber://chat?number=%2B380675783876" style="background-color: #7c529d" id="arcu-button-msg-item-3" class="arcu-button" target="_blank">
+      <div class="arcu-item-icon"> 
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M444 49.9C431.3 38.2 379.9.9 265.3.4c0 0-135.1-8.1-200.9 52.3C27.8 89.3 14.9 143 13.5 209.5c-1.4 66.5-3.1 191.1 117 224.9h.1l-.1 51.6s-.8 20.9 13 25.1c16.6 5.2 26.4-10.7 42.3-27.8 8.7-9.4 20.7-23.2 29.8-33.7 82.2 6.9 145.3-8.9 152.5-11.2 16.6-5.4 110.5-17.4 125.7-142 15.8-128.6-7.6-209.8-49.8-246.5zM457.9 287c-12.9 104-89 110.6-103 115.1-6 1.9-61.5 15.7-131.2 11.2 0 0-52 62.7-68.2 79-5.3 5.3-11.1 4.8-11-5.7 0-6.9.4-85.7.4-85.7-.1 0-.1 0 0 0-101.8-28.2-95.8-134.3-94.7-189.8 1.1-55.5 11.6-101 42.6-131.6 55.7-50.5 170.4-43 170.4-43 96.9.4 143.3 29.6 154.1 39.4 35.7 30.6 53.9 103.8 40.6 211.1zm-139-80.8c.4 8.6-12.5 9.2-12.9.6-1.1-22-11.4-32.7-32.6-33.9-8.6-.5-7.8-13.4.7-12.9 27.9 1.5 43.4 17.5 44.8 46.2zm20.3 11.3c1-42.4-25.5-75.6-75.8-79.3-8.5-.6-7.6-13.5.9-12.9 58 4.2 88.9 44.1 87.8 92.5-.1 8.6-13.1 8.2-12.9-.3zm47 13.4c.1 8.6-12.9 8.7-12.9.1-.6-81.5-54.9-125.9-120.8-126.4-8.5-.1-8.5-12.9 0-12.9 73.7.5 133 51.4 133.7 139.2zM374.9 329v.2c-10.8 19-31 40-51.8 33.3l-.2-.3c-21.1-5.9-70.8-31.5-102.2-56.5-16.2-12.8-31-27.9-42.4-42.4-10.3-12.9-20.7-28.2-30.8-46.6-21.3-38.5-26-55.7-26-55.7-6.7-20.8 14.2-41 33.3-51.8h.2c9.2-4.8 18-3.2 23.9 3.9 0 0 12.4 14.8 17.7 22.1 5 6.8 11.7 17.7 15.2 23.8 6.1 10.9 2.3 22-3.7 26.6l-12 9.6c-6.1 4.9-5.3 14-5.3 14s17.8 67.3 84.3 84.3c0 0 9.1.8 14-5.3l9.6-12c4.6-6 15.7-9.8 26.6-3.7 14.7 8.3 33.4 21.2 45.8 32.9 7 5.7 8.6 14.4 3.8 23.6z"></path></svg>
+      </div>
+      <div class="arcu-item-content">
+        <div class="arcu-item-title"> Viber</div>
+      </div>
+    </a>
+  </li>
+  <li class="col-md-6">
+    <a href="https://t.me/Filex777" style="background-color: #2ca5e0" id="arcu-button-msg-item-4" class="arcu-button" target="_blank">
+      <div class="arcu-item-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M446.7 98.6l-67.6 318.8c-5.1 22.5-18.4 28.1-37.3 17.5l-103-75.9-49.7 47.8c-5.5 5.5-10.1 10.1-20.7 10.1l7.4-104.9 190.9-172.5c8.3-7.4-1.8-11.5-12.9-4.1L117.8 284 16.2 252.2c-22.1-6.9-22.5-22.1 4.6-32.7L418.2 66.4c18.4-6.9 34.5 4.1 28.5 32.2z"></path></svg>
+      </div>
+      <div class="arcu-item-content">
+        <div class="arcu-item-title"> Telegram</div>
+      </div>
+    </a>
+  </li>
+  <li class="col-md-6" style="display:none">
+    <a href="https://wa.me/380777777777" style="background-color: #1ebea5" id="arcu-button-msg-item-2" class="arcu-button" target="_blank">
+      <div class="arcu-item-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"></path></svg>
+      </div>
+      <div class="arcu-item-content">
+        <div class="arcu-item-title"> WhatsApp</div>
+      </div>
+    </a>
+  </li>
+</ul> #}
+
+
+        </div>
+      </div>
+      
+      
+      {% if locations %}
+      <h3>{{ text_store }}</h3>
+      <div class="panel-group" id="accordion">
+        {% for location in locations %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title"><a href="#collapse-location{{ location.location_id }}" class="accordion-toggle" data-toggle="collapse" data-parent="#accordion">{{ location.name }} <i class="fa fa-caret-down"></i></a></h4>
+          </div>
+          <div class="panel-collapse collapse" id="collapse-location{{ location.location_id }}">
+            <div class="panel-body">
+              <div class="row">
+                {% if location.image %}
+                <div class="col-sm-3"><img src="{{ location.image }}" alt="{{ location.name }}" title="{{ location.name }}" class="img-thumbnail" /></div>
+                {% endif %}
+                <div class="col-sm-3"><strong>{{ location.name }}</strong><br />
+                  <address>
+                  {{ location.address }}
+                  </address>
+                  {% if location.geocode %}
+                  <a href="https://maps.google.com/maps?q={{ location.geocode|url_encode }}&hl={{ geocode_hl }}&t=m&z=15" target="_blank" class="btn btn-info"><i class="fa fa-map-marker"></i> {{ button_map }}</a>
+                  {% endif %}
+                </div>
+                <div class="col-sm-3"> <strong>{{ text_telephone }}</strong><br>
+                  {{ location.telephone }}<br />
+                  <br />
+                  {% if location.fax %}
+                  <strong>{{ text_fax }}</strong><br>
+                  {{ location.fax }}
+                  {% endif %}
+                </div>
+                <div class="col-sm-3">
+                  {% if location.open %}
+                  <strong>{{ text_open }}</strong><br />
+                  {{ location.open }}<br />
+                  <br />
+                  {% endif %}
+                  {% if location.comment %}
+                  <strong>{{ text_comment }}</strong><br />
+                  {{ location.comment }}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      
+<div class="contact-form">
+      <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal">
+        <fieldset>
+          <legend>{{ text_contact }}</legend>
+          <div class="form-group required">
+            <div class="col-sm-12">
+             <label class="control-label" for="input-name">{{ entry_name }}</label>
+              <input type="text" name="name" value="{{ name }}" id="input-name" class="form-control" />
+              {% if error_name %}
+              <div class="text-danger">{{ error_name }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group required">
+            <div class="col-sm-12">
+             <label class="control-label" for="input-email">{{ entry_email }}</label>
+              <input type="text" name="email" value="{{ email }}" id="input-email" class="form-control" />
+              {% if error_email %}
+              <div class="text-danger">{{ error_email }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group required">
+            <div class="col-sm-12">
+              <label class="control-label" for="input-enquiry">{{ entry_enquiry }}</label>
+              <textarea name="enquiry" rows="10" id="input-enquiry" class="form-control">{{ enquiry }}</textarea>
+              {% if error_enquiry %}
+              <div class="text-danger">{{ error_enquiry }}</div>
+              {% endif %}
+            </div>
+          </div>
+          {{ captcha }}
+        </fieldset>
+        <div class="buttons">
+          <div class="pull-right">
+             
+           {#  <input class="btn btn-primary" id="excel"  value="Excel" />#}
+            <input class="btn btn-primary" type="submit" value="{{ button_submit }}" /> 
+          </div>
+        </div>
+      </form>
+    </div>
+   </div>
+</div>
+    {{ column_right }}
+</div>
+{{ content_bottom }}
+</div>
+{{ footer }}
+<script>
+// $(document).ready(function(){
+//   $('#excel').click(function(){
+    
+//    {#   $.ajax({
+//       url: 'index.php?route=information/information/excel', //&user_token={{ user_token }}',
+//       //dataType: 'json',
+//       success: function(json) {}
+//     });
+//     #}
+//         $.ajax({
+//       url: 'index.php?route=product/category/getAllParentCategory&category_id=78', //&user_token={{ user_token }}',
+//       //dataType: 'json',
+//       success: function(json) {}
+//     });
+
+//   });
+// });
+</script>

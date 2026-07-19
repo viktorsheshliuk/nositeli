@@ -1,0 +1,167 @@
+<div id="popupcart_extended">   
+	<div class="head">{{head}}<i class="fa fa-close" onclick="$('#popupcart_extended').popup('hide')" ></i></div>
+	{% if products or vouchers %}
+		<div class="popupcart_info">
+			<table>
+				<tr>
+					<td class="image">{{text_foto}}</td>
+					<td class="name">{{text_name}}</td>
+					{% if manufacturer_show %}
+						<td class="brand">{{text_manufacturer}}</td>
+					{% endif %}
+					<td class="quantity">{{text_quantity}}</td>
+					<td class="price">{{text_price}}</td>
+					<td></td>
+				</tr>
+				<tr class="hr"><td colspan="6"></td></tr>
+				{% for key, product in products %}
+					<tr class="row_{{key}}_{{product.id}}">
+						<td class="image">
+							{% if product.thumb %}
+								<img src="{{product.thumb}}" onclick="location='{{product.href}}'" alt="{{product.name}}" title="{{product.name}}" />
+							{% endif %}
+						</td>
+						<td class="name">
+							<a href="{{product.href}}">{{product.name}}</a>
+							<div>
+								{% for option in product.option %}
+									- <small>{{option.name}} {{option.value}}</small><br />
+								{% endfor %}
+							</div>
+							{% if not product.stock %}
+								{% if product.quantity >= product.maximum %}
+									<span style="font-size:10px; color:#f00;">{{in_stock}} 
+									{% if product.maximum > 1 %} 
+										{{left}}
+									{% else %}									
+									 	{{left1}} 
+									{% endif %}
+									 {{just}} {{product.maximum}} {{pcs}}</span>
+								{% endif %}
+							{% endif %}
+						</td>
+						{% if manufacturer_show %}
+							<td class="brand">{{product.manufacturer}}</td>
+						{% endif %}
+						<td class="quantity">
+							<div>
+								<input type="text" name="{{product.key}}" size="2" value="{{product.quantity}}" onchange="updateCart('{{product.id}}', '{{product.key}}')" />
+								<span>
+									{% if not product.stock %}
+										{% if product.quantity < product.maximum %}
+											<i class="fa fa-plus" onclick="updateCart('{{product.id}}', '{{product.key}}', '+')"></i>
+										{% else %}
+											<i class="fa fa-plus" style="opacity:0.5; cursor:default"></i>
+										{% endif %}
+									{% else %}
+										<i class="fa fa-plus" onclick="updateCart('{{product.id}}', '{{product.key}}', '+')"></i>
+									{% endif %}
+									<i class="fa fa-minus" onclick="updateCart('{{product.id}}', '{{product.key}}', '-')"></i>
+								</span>
+							</div>
+						</td>
+						<td class="price">{{product.total}}</td>
+						<td class="remove"><i class="fa fa-trash-o" title="{{button_remove}}" onclick="$(this).parent().prev().prev().find('input').val(''); updateCart('{{product.id}}', '{{product.key}}')" ></i></td>
+					</tr>
+					<tr class="hr"><td colspan="6"></td></tr>
+				{% endfor %}
+			</table>
+		</div>
+		<div class="popupcart_total">
+			<table>
+				{% for total in totals %}
+					<tr>
+						<td class="right">{{total.title}}</td> <td class="right">{{total.text}}</td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<div class="popupcart_buttons">
+			{% if button_shopping_show %}
+				<button type="button" class="button btn btn-primary btn-lg" onclick="$('#popupcart_extended').popup('hide')" >{{button_shopping}}</button>
+			{% else %}
+				<a class="continue" onclick="$('#popupcart_extended').popup('hide')">{{button_shopping}}</a>
+			{% endif %}
+			{% if button_cart_show %}
+				<button type="button" class="cont button btn btn-primary btn-lg" onclick="location='{{cart}}'" >{{button_cart}}</button>
+			{% endif %}
+			<button type="button" class="button btn btn-primary btn-lg" onclick="location='{{checkout}}'">{{button_checkout}}</button>
+		</div>
+		{%  if products_related %}
+			<div id="related">
+				<div class="heading">{{text_related}}</div>
+				<div class="related_product">
+					{% for product in products_related %}
+						<div>
+							{% if product.thumb %}
+								<div class="image"><a href="{{product.href}}"><img src="{{product.thumb}}" alt="{{product.name}}" /></a></div>
+							{% endif %}
+							<div>
+								<div class="name"><a href="{{product.href}}">{{product.name}}</a></div>
+								{% if product.price %}
+									<div class="price">
+										{% if not product.special %}
+											{{product.price}}
+										{% else %}
+											<span class="price-old">{{product.price}}</span> <span class="price-new">{{product.special}}</span>
+										{% endif %}
+									</div>
+								{% endif %}
+								<div class="cart"><a onclick="cart.add('{{product.product_id}}', 1, 1);" class="button btn btn-primary"><i class="fa fa-shopping-cart"></i></a></div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		{% endif %}
+	{% else %}
+		<div class="empty">{{text_empty}}</div>
+	{% endif %}
+	<input type="hidden" name="addtocart_logic" value="{{addtocart_logic}}" />
+	<input type="hidden" name="click_on_cart" value="{{click_on_cart}}" />
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#popupcart_extended').popup({transition: 'all 0.3s',	scrolllock: true});	
+});
+
+function carousel () {
+	$('.related_product').owlCarousel({
+		responsiveBaseWidth: '.related_product',
+		navigation: true,
+		slideSpeed: 200,
+		paginationSpeed: 300,
+		touchDrag: true,
+		mouseDrag: false,
+		navigationText: ['&lt;', '&gt;'],
+		pagination: false,
+	});
+}
+
+function p_array() {
+	{% for product in products %}
+		{% if product.option %}
+			replace_button('{{product.id}}', 1);
+		{% else %}
+			replace_button('{{product.id}}', 0);
+		{% endif %}
+	{% endfor %}
+}
+
+function replace_button(product_id, options){
+	if(options && $('.'+product_id).attr('id') == 'button-cart') {
+		var text = '{{button_incart_with_options}}';
+	} else {
+		var text = '{{button_incart}}';
+	}
+	{% if button_incart_logic %}
+		$('html, body').find('.'+product_id).val(text).text(text).addClass('in_cart');
+	{% else %}
+		if(options) {
+			$('html, body').find('.'+product_id).val(text).text(text).addClass('in_cart');
+		} else {
+			$('html, body').find('.'+product_id).attr('onclick', '$(\'#popupcart_extended\').popup(\'show\');').val(text).text(text).addClass('in_cart');
+		}
+	{% endif %}
+}
+</script>

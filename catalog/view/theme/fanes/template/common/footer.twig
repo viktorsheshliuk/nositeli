@@ -1,0 +1,67 @@
+﻿</div> {# end class wrapper #}
+<footer>
+  <div class="footer_bg">
+    <div class="container">
+      <div class="foot-wrapp">
+        {% if informations %}
+        <div class="col-footer">
+          <h5>{{ text_information }}</h5>
+          <ul class="list-unstyled">
+           {% for information in informations %}
+            <li><a href="{{ information.href }}">{{ information.title }}</a></li> 
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        <div class="col-footer">
+          <h5>{{ text_service }}</h5>
+          <ul class="list-unstyled">
+            <li><a href="{{ contact }}">{{ text_contact }}</a></li>
+            <li><a href="{{ return }}">{{ text_return }}</a></li>  
+            <li><a href="{{ sitemap }}">{{ text_sitemap }}</a></li>
+         {#    <li><a href="https://" target="_blank"rel ="nofollow">Соцсети</a></li> #}
+          </ul>
+        </div>
+        <div class="col-footer">
+          <h5>{{ text_extra }}</h5>
+          <ul class="list-unstyled">
+            <li><a href="{{ manufacturer }}">{{ text_manufacturer }}</a></li>
+         {#   <li><a href="{{ voucher }}">{{ text_voucher }}</a></li>
+            <li><a href="{{ affiliate }}">{{ text_affiliate }}</a></li>   #}
+            <li><a href="{{ special }}">{{ text_special }}</a></li>
+            <li><a href="/blog">Блог</a></li>
+            <li><a href="/shop-rating">{{text_review}}</a></li>
+            
+       
+          </ul>
+        </div>
+        <div class="col-footer">
+          <h5>{{ text_account }}</h5>
+          <ul class="list-unstyled">
+            <li><a href="{{ account }}">{{ text_account }}</a></li>
+            <li><a href="{{ order }}">{{ text_order }}</a></li>
+            <li><a href="{{ wishlist }}">{{ text_wishlist }}</a></li>
+            {# <li><a href="{{ newsletter }}">{{ text_newsletter }}</a></li> #}
+          </ul>
+        </div>
+      </div>
+      <div class="powered-block">
+           <div class="powered">{{ powered }}</div>
+      </div>
+    </div>
+  </div>  
+</footer>
+
+{# </div>  {# end class wrapper #}
+
+
+ <link  href="catalog/view/javascript/jquery/swiper/css/swiper.min.css" rel="stylesheet" media="screen"/> 
+{# <script src="catalog/view/javascript/bootstrap/js/bootstrap.min.js"></script> #}
+<script src="catalog/view/theme/fanes/javascript/click.min.js"></script>
+
+{% for script in scripts %}
+<script src="{{ script }}"></script>
+{% endfor %}
+
+
+</body></html>

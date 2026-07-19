@@ -1,0 +1,658 @@
+<script src="view/javascript/may/js/jquery.jexcel.js"></script>
+<script src="view/javascript/may/js/jquery.jdropdown.js"></script>
+<link rel="stylesheet" href="view/javascript/may/css/jquery.jexcel.min.css" type="text/css" />
+<link rel="stylesheet" href="view/javascript/may/css/jquery.jdropdown.min.css" type="text/css" />
+<link rel="stylesheet" href="view/stylesheet/may/advanced_options.css" type="text/css" />
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="may-advanced-option-exist-alert" id="modal-may-advanced-option-exist-alert" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">{{ text_alert_title }}</h4>
+      </div>  
+      <div class="modal-body">{{ text_alert_content }}</div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-advanced-option-content">
+  {% set option_row = 10000 %}
+  {% set option_value_row = 0 %}
+</div>
+<script type="text/javascript"><!--
+function init_excel(option_length, option_row, option_value_row) {
+  return {
+    data: [],
+    nestedHeaders: [
+      {title: '<span class="text-left text-nowrap may-tree-icon" style="width: ' + (option_length * 24 + 10) + 'px"><i class="fa fa-plus-square-o expand-all" aria-hidden="true"></i> / <i class="fa fa-minus-square-o collapse-all" aria-hidden="true"></i></span>'},
+      {title: '{{ entry_option_value }}'},
+      {% if may_advanced_options_config['attribute_sku'] %}
+      {title: '{{ entry_option_sku }}'},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_quantity'] %}
+      {title: '{{ entry_quantity }}'},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_price'] %}
+      {title: '{{ entry_price }}', colspan: 2},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_point'] %}
+      {title: '{{ entry_option_points }}', colspan: 2},
+      {% endif %}
+      {% if may_advanced_options_config['attribute_weight'] %}
+      {title: '{{ entry_weight }}', colspan: 2},
+      {% endif %}
+      {title: '{{ entry_image }} <i class="fa fa-search-plus" aria-hidden="true" id="zoom-images"></i>'},
+      {title: '{{ entry_option_hide }}'},
+    ],
+    contextMenu: function() { return false; },
+    colWidths: [
+      (option_length * 24 + 10), 
+      90, 
+      {% if may_advanced_options_config['attribute_sku'] %}
+      250, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_quantity'] %}
+      90, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_price'] %}
+      45, 
+      90, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_point'] %}
+      45, 
+      90, 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_weight'] %}
+      45, 
+      90, 
+      {% endif %}
+      250
+    ],
+    colAlignments: [
+      'center', 
+      'left', 
+      {% if may_advanced_options_config['attribute_sku'] %}
+      'left', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_quantity'] %}
+      'center', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_price'] %}
+      'center', 
+      'center', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_point'] %}
+      'center', 
+      'center', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_weight'] %}
+      'center', 
+      'center', 
+      {% endif %}
+      'center', 
+      'center'
+    ],
+    columns: [
+      { type: 'text', readOnly: true},
+      { type: 'text', readOnly: true},
+      {% if may_advanced_options_config['attribute_sku'] %}
+      { type: 'text' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_quantity'] %}
+      { type: 'number' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_price'] %}
+      { type: 'dropdown', source:['+','-'] },
+      { type: 'number' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_point'] %}
+      { type: 'dropdown', source:['+','-'] },
+      { type: 'number' },
+      {% endif %}
+      {% if may_advanced_options_config['attribute_weight'] %}
+      { type: 'dropdown', source:['+','-'] },
+      { type: 'number' },
+      {% endif %}
+      { type: 'text', readOnly: true },
+      { type: 'checkbox' },
+    ],
+    rowDrag: false,
+    readOnly: [],
+    colname: [
+      '', 
+      'label', 
+      {% if may_advanced_options_config['attribute_sku'] %}
+      'sku', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_quantity'] %}
+      'quantity', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_price'] %}
+      'price_prefix', 
+      'price', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_point'] %}
+      'points_prefix', 
+      'points', 
+      {% endif %}
+      {% if may_advanced_options_config['attribute_weight'] %}
+      'weight_prefix', 
+      'weight', 
+      {% endif %}
+      'image', 
+      'hide'
+    ],
+    optionRow: option_row,
+    optionValueRow: option_value_row,
+    onchange: function (object, cell, value) {
+      var col_row = cell.attr('id').split('-');
+      var col = col_row[0];
+      var row = parseInt(col_row[1]) + this.optionValueRow;
+      var colname = this.colname[col];
+
+      var product_options = JSON.parse($('#product_options' + this.optionRow).val());
+
+      var isUpdated = false;
+      for (var key in product_options) {
+        if (isUpdated) {
+          break;
+        }
+
+        for (var index in product_options[key]['product_option_value']) {
+          if (index == row) {
+            product_options[key]['product_option_value'][index][colname] = value;
+            isUpdated = true;
+            break;
+          }
+        }
+      }
+
+      $('#product_options' + this.optionRow).val(JSON.stringify(product_options));
+    }
+  };  
+}
+
+
+
+function render_advanced_option_section(excel, option_row, product_options) {
+  html = '<input type="hidden" value=\'' + product_options + '\' name="may_advanced_option_values[' + option_row + ']" id="product_options' + option_row + '">'
+  html += '<div class="form-group">';
+  html += ' <label class="col-sm-2"><div class="input-group input-group-sm">';
+  html += '   <span class="input-group-addon">{{ entry_required }}</span>';
+  html += '   <select id="input-required' + option_row + '" data-option-row="' + option_row + '" class="form-control input-required">';
+  html += '       <option value="1" selected>{{ text_yes }}</option>';
+  html += '       <option value="0">{{ text_no }}</option>';
+  html += '   </select>';
+  html += ' </div></label>';
+  html += ' <label class="col-sm-2"><div class="input-group input-group-sm">';
+  html += '   <span class="input-group-addon">{{ entry_subtract }}</span>';
+  html += '   <select id="input-subtract' + option_row + '" data-option-row="' + option_row + '" class="form-control input-subtract">';
+  html += '       <option value="1" selected>{{ text_yes }}</option>';
+  html += '       <option value="0">{{ text_no }}</option>';
+  html += '   </select>';
+  html += ' </div></label>';
+  html += ' <label class="col-sm-3"><div class="input-group input-group-sm">';
+  html += '   <span class="input-group-addon">{{ entry_swatch_image }}</span>';
+  html += '   <select id="input-swatch-image' + option_row + '" data-option-row="' + option_row + '" class="form-control input-swatch-image">';
+  html += '       <option value="1" selected>{{ text_yes }}</option>';
+  html += '       <option value="0">{{ text_no }}</option>';
+  html += '   </select>';
+  html += ' </div></label>';
+  html += '</div>';
+
+  $('#tab-option .tab-content').append('<div class="tab-pane" id="tab-option' + option_row + '">' + html + '<div class="jexcel-wrapper"><div id="tab-option-excel-' + option_row + '"></div></div></div>');
+  $('#tab-option-excel-' + option_row).jexcel(excel);
+  $('#tab-option-excel-' + option_row).jexcel('updateSettings', {
+    cells: function (cell, col, row) {
+      var colname = excel.colname[col];
+      var row_key = $(cell).closest('tr').find('span.row-identifier').data('row-key');
+      if (excel.readOnly.includes(colname + '-' + row_key)) {
+        $(cell).addClass('readonly');
+      }
+    }
+  });
+
+  product_options = JSON.parse(product_options);
+  
+  for (var option_index in product_options) {
+    if (product_options[option_index]['required'] == 0) {
+      $('#input-required' + option_row + ' option[value=\'0\']').prop('selected', true);
+    }
+
+    if (product_options[option_index]['swatch_image'] == 0) {
+      $('#input-swatch-image' + option_row + ' option[value=\'0\']').prop('selected', true);
+    }
+
+    for (var value_index in product_options[option_index]['product_option_value']) {
+      if (product_options[option_index]['product_option_value'][value_index]['subtract'] == 0) {
+        $('#input-subtract' + option_row + ' option[value=\'0\']').prop('selected', true);
+      }
+      break;
+    }
+
+    break;
+  }
+}
+
+var option_row = {{ option_row }};
+var option_value_row = {{ option_value_row }};
+
+var tree_depth = 0;
+var excel_data;
+var row_key;
+var tree_icon_html;
+var image_html;
+
+{% for product_option in may_advanced_options %}
+tree_depth = {{ product_option['option_value_tree_depth'] }};
+excel_data = init_excel(tree_depth, option_row, option_value_row);
+
+{% for product_option_item in product_option['option_value_tree'] %}
+row_key = '{{ product_option_item['row_key']|join('-')|escape }}';
+tree_icon_html = '<span class="row-identifier" data-row-key="' + row_key + '"></span>';
+{% if product_option_item['depth'] > 0 %}
+{% for i in range(0, product_option_item['depth'] - 1) %}
+  tree_icon_html += '<span class="vr-space ' + ({{ product_option_item['parent_sibling_index'][i] }} ? 'invisible' : '') + '"></span>';
+{% endfor %}
+{% endif %}
+if ({{ product_option_item['depth'] }} < tree_depth - 1) {
+  {% if may_advanced_options_config['attribute_quantity'] %}
+  excel_data.readOnly.push('quantity-' + row_key);
+  {% endif %}
+  tree_icon_html += '<span class="vr ' + ({{ product_option_item['is_last_sibling'] }} ? 'vr-last' : '') + '"><span class="vr-child"></span><i class="fa fa-minus-square-o" aria-hidden="true"></i></span>';
+} else {
+  tree_icon_html += '<span class="vr-space vr-leap ' + ({{ product_option_item['is_last_sibling'] }} ? 'vr-last' : '') + '"></span>';
+}
+
+image_html = '';
+{% for product_option_item_value_image in product_option_item['value']['image'] %}
+{% if product_option_item_value_image['image'] == '' %}
+image_html += '<div class="option-image-wrapper" data-cindex="{{ loop.index }}"><a href="" id="thumb-option-image-c{{ loop.index }}-' + option_value_row + '" data-toggle="image" class="img-thumbnail"><img src="{{ placeholder }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" value="" name="may_advanced_option_images[' + option_row + '][' + (option_row + {{ product_option_item['index'] }}) + '][{{ product_option_item['value']['option_value_id'] }}][]" id="input-option-image-c{{ loop.index }}-' + option_value_row + '"></div>';
+{% else %}
+image_html += '<div class="option-image-wrapper" data-cindex="{{ loop.index }}"><a href="" id="thumb-option-image-c{{ loop.index }}-' + option_value_row + '" data-toggle="image" class="img-thumbnail"><img src="{{ product_option_item_value_image['thumb'] }}" alt="" title="" data-placeholder="{{ product_option_item_value_image['thumb'] }}" /></a><input type="hidden" value="{{ product_option_item_value_image['image'] }}" name="may_advanced_option_images[' + option_row + '][' + (option_row + {{ product_option_item['index'] }}) + '][{{ product_option_item['value']['option_value_id'] }}][]" id="input-option-image-c{{ loop.index }}-' + option_value_row + '"></div>';
+{% endif %}
+{% endfor %}
+
+excel_data.data.push([
+  tree_icon_html,
+  "<span class=\"hint\">" + row_key + "</span>{{ product_option_item['name'] }}",
+  {% if may_advanced_options_config['attribute_sku'] %}
+  "{{ product_option_item['value']['sku'] }}",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_quantity'] %}
+  (({{ product_option_item['depth'] }} >= tree_depth - 1) && {{ product_option_item['value']['quantity'] }}) ? {{ product_option_item['value']['quantity'] }} : "",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_price'] %}
+  "{{ product_option_item['value']['price_prefix'] }}",
+  parseFloat("{{ product_option_item['value']['price'] }}") ? parseFloat("{{ product_option_item['value']['price'] }}") : "",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_point'] %}
+  "{{ product_option_item['value']['points_prefix'] }}",
+  parseFloat("{{ product_option_item['value']['points'] }}") ? parseFloat("{{ product_option_item['value']['points'] }}") : "",
+  {% endif %}
+  {% if may_advanced_options_config['attribute_weight'] %}
+  "{{ product_option_item['value']['weight_prefix'] }}",
+  parseFloat("{{ product_option_item['value']['weight'] }}") ? parseFloat("{{ product_option_item['value']['weight'] }}") : "",
+  {% endif %}
+  image_html,
+  {{ product_option_item['value']['hide'] }},
+]);
+
+option_value_row ++;
+{% endfor %}
+render_advanced_option_section(excel_data, option_row, '{{ product_option['options']|json_encode }}');
+option_row ++;
+{% endfor %}
+
+$('#tab-option .tab-content').append($('#tab-advanced-option-content').html());
+$('#tab-advanced-option-content').remove();
+
+var option_row_reverse = option_row;
+{% for product_option in may_advanced_options|reverse %}
+  option_row_reverse --;
+  var advanced_option_anchor_html = '<li><a class="may-advanced-option-tab" href="#tab-option' + option_row_reverse + '" data-toggle="tab"><i class="fa fa-minus-circle" onclick="$(\'a[href=\\\'#tab-option' + option_row_reverse + '\\\']\').parent().remove(); $(\'#tab-option' + option_row_reverse + ' .jexcel\').jexcel(\'destroy\'); $(\'#tab-option' + option_row_reverse + '\').remove(); $(\'#option a:first\').tab(\'show\');"></i> {{ product_option['name'] }}<i class="fa fa-chain pull-right"></i></a></li>';
+  {% if product_option['after'] == -1 %}
+    $('#option').prepend(advanced_option_anchor_html);
+  {% else %}
+    $('a[href=\'#tab-option{{ product_option['after'] }}\']').parent().after(advanced_option_anchor_html);
+  {% endif %}
+{% endfor %}
+
+$('#option > li:last-child').append('<hr style="margin:2px auto;"/><input type="text" name="may_advanced_option" value="" placeholder="{{ entry_may_advanced_option }}" id="input-may-advanced-option" class="form-control" /><div class="text-center"><span>-{{ text_or }}-</span><br/><button type="button" id="button-add-new-combination" class="btn btn-success" data-url="{{ url_combine_options_modal }}">{{ button_add_new }}</button></div>');
+
+function add_new_addvanced_option(item) {
+  var options = item['options'];
+
+  var product_options = {};
+  var product_option_sku_tmp = [];
+  var excel = init_excel(options.length, option_row, option_value_row);
+
+  var option_tree = [];
+
+  tree_depth = options.length;
+
+  for (var i=0; i<options.length; i++) {
+    var option_tree_tmp = [];
+    if (i == 0) {
+      options[i]['option_value'].forEach(function(option_value) {
+        option_tree_tmp.push({'depth' : 0, 'option_id' : options[i]['option_id'], 'option_name' : options[i]['name'], 'value' : option_value, 'parent_sibling_index' : [], 'is_last_sibling' : 0});
+      });
+      option_tree_tmp[option_tree_tmp.length - 1]['is_last_sibling'] = 1;
+    } else {
+      option_tree.forEach(function(tree_item) {
+        option_tree_tmp.push(tree_item);
+        if (tree_item.depth == i - 1) {
+          options[i]['option_value'].forEach(function(option_value) {
+            if (tree_item['value']['children'].indexOf(option_value['option_value_id']) != -1) {
+              option_tree_tmp.push({'depth' : i, 'option_id' : options[i]['option_id'], 'option_name' : options[i]['name'], 'value' : option_value, 'parent_sibling_index' : tree_item['parent_sibling_index'].concat(tree_item['is_last_sibling']), 'is_last_sibling' : 0});
+            }
+          });
+          option_tree_tmp[option_tree_tmp.length - 1]['is_last_sibling'] = 1;
+        }
+      });
+    }
+
+    option_tree = option_tree_tmp;
+  }
+
+  var product_option_value = [item['value']];
+  var product_option_value_tooltip = [];
+  var prev_item_depth = -1;
+  var advanced_option_row = option_row;
+  var advanced_option_rows = new Array(options.length).fill(option_row);
+
+  option_tree.forEach(function(tree_item, index) {
+
+    if (prev_item_depth < tree_item['depth']) {
+      product_options[advanced_option_row] = {
+        "product_option_id": "",
+        "name": item['label'],
+        "value": item['label'] + ':::' + product_option_value.slice(0, tree_item['depth'] + 1).join('-'),
+        "option_id": tree_item['option_id'],
+        "type": "may_advanced_option",
+        "required": 1,
+        "swatch_image": item['swatch_image']
+      }
+
+      advanced_option_rows[tree_item['depth']] = advanced_option_row;
+      advanced_option_row ++;
+    }
+
+    prev_item_depth = tree_item['depth'];
+
+    if (product_option_value.length <= tree_item['depth']) {
+      product_option_value.push(tree_item['value']['option_value_id']);
+    } else {
+      product_option_value[tree_item['depth'] + 1] = tree_item['value']['option_value_id'];
+    }
+
+    if (product_option_value_tooltip.length <= tree_item['depth']) {
+      product_option_value_tooltip.push(tree_item['option_name'] + ' : ' + tree_item['value']['name']);
+    } else {
+      product_option_value_tooltip[tree_item['depth']] =  tree_item['option_name'] + ' : ' + tree_item['value']['name'];
+    }
+
+    if (product_option_sku_tmp.length <= tree_item['depth']) {
+      product_option_sku_tmp.push(tree_item['value']['name']);
+    } else {
+      product_option_sku_tmp[tree_item['depth']] = tree_item['value']['name'];
+    }
+
+    var row_key = product_option_sku_tmp.slice(0, tree_item['depth'] + 1).join('-').toLowerCase();
+    var tree_icon_html = '<span class="row-identifier" data-row-key="' + row_key + '"></span>';
+    for (var i=0; i<tree_item['depth']; i++) {
+      tree_icon_html += '<span class="vr-space ' + (tree_item['parent_sibling_index'][i] ? 'invisible' : '') + '"></span>';
+    }
+    if (tree_item['depth'] < options.length - 1) {
+      tree_icon_html += '<span class="vr ' + (tree_item['is_last_sibling'] ? 'vr-last' : '') + '"><span class="vr-child"></span><i class="fa fa-minus-square-o" aria-hidden="true"></i></span>';
+    } else {
+      tree_icon_html += '<span class="vr-space vr-leap ' + (tree_item['is_last_sibling'] ? 'vr-last' : '') + '"></span>';
+    }
+
+    if (typeof product_options[advanced_option_rows[tree_item['depth']]]['product_option_value'] === 'undefined') {
+      product_options[advanced_option_rows[tree_item['depth']]]['product_option_value'] = {};
+    }
+
+    var product_option_sku = $('#input-sku').val() ? $('#input-sku').val().toLowerCase() + '-' + row_key : row_key;
+
+    product_options[advanced_option_rows[tree_item['depth']]]['product_option_value'][option_value_row] = {
+      "option_value_id": tree_item['value']['option_value_id'],
+      "product_option_value_id": "",
+      "sku": product_option_sku,
+      "quantity": 0,
+      "subtract": 0,
+      "subtract-from": option_row,
+      "price_prefix": "+",
+      "price": "",
+      "points_prefix": "+",
+      "points": "",
+      "weight_prefix": "+",
+      "weight": "",
+      "image": ""
+    };
+
+    if (tree_item['depth'] < options.length - 1) {
+      excel.readOnly.push('quantity-' + row_key);
+    }
+
+    excel.data.push([
+      tree_icon_html,
+      '<span class="hint">' + row_key + '</span>' + tree_item['value']['name'],
+      {% if may_advanced_options_config['attribute_sku'] %}
+      product_option_sku,
+      {% endif %}
+      {% if may_advanced_options_config['attribute_quantity'] %}
+      "",
+      {% endif %}
+      {% if may_advanced_options_config['attribute_price'] %}
+      "+",
+      "",
+      {% endif %}
+      {% if may_advanced_options_config['attribute_point'] %}
+      "+",
+      "",
+      {% endif %}
+      {% if may_advanced_options_config['attribute_weight'] %}
+      "+",
+      "",
+      {% endif %}
+      '<div class="option-image-wrapper" data-cindex="1"><a href="" id="thumb-option-image-c1-' + option_value_row + '" data-toggle="image" class="img-thumbnail"><img src="{{ placeholder }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" value="" name="may_advanced_option_images[' + option_row + '][' + advanced_option_rows[tree_item['depth']] + '][' + tree_item['value']['option_value_id'] + '][]" id="input-option-image-c1-' + option_value_row + '"></div>',
+      false,
+    ]);
+
+    option_value_row ++;
+  });
+
+  render_advanced_option_section(excel, option_row, JSON.stringify(product_options));
+
+  $('#option > li:last-child').before('<li><a class="may-advanced-option-tab" href="#tab-option' + option_row + '" data-toggle="tab"><i class="fa fa-minus-circle" onclick="$(\'a[href=\\\'#tab-option' + option_row + '\\\']\').parent().remove(); $(\'#tab-option' + option_row + ' .jexcel\').jexcel(\'destroy\'); $(\'#tab-option' + option_row + '\').remove(); $(\'#option a:first\').tab(\'show\');"></i>' + item['label'] + '<i class="fa fa-chain pull-right"></i></a></li>');
+
+  $('#option a[href=\'#tab-option' + option_row + '\']').tab('show');
+
+  option_row = advanced_option_row;  
+}
+
+$('input[name=\'may_advanced_option\']').autocomplete({
+  'source': function(request, response) {
+    $.ajax({
+      url: 'index.php?route=extension/may/advanced_options/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+      dataType: 'json',
+      success: function(json) {
+        response($.map(json, function(item) {
+          return {
+            value: item['value'],
+            label: item['name'],
+            options: item['options'],
+            swatch_image: item['swatch_image']
+          }
+        }));
+      }
+    });
+  },
+  'select': function(item) {
+    if ($('.may-advanced-option-tab').length) {
+      $('#modal-may-advanced-option-exist-alert').modal('show');
+      return;
+    }
+
+    add_new_addvanced_option(item);
+  }
+});
+
+$(document).delegate('select.input-required', 'change', function() {
+  var product_options = JSON.parse($('#product_options' + $(this).data('option-row')).val());
+  for (var key in product_options) {
+    product_options[key]['required'] = $(this).val();
+  }
+  $('#product_options' + $(this).data('option-row')).val(JSON.stringify(product_options));
+});
+
+$(document).delegate('select.input-swatch-image', 'change', function() {
+  var product_options = JSON.parse($('#product_options' + $(this).data('option-row')).val());
+  for (var key in product_options) {
+    product_options[key]['swatch_image'] = $(this).val();
+  }
+  $('#product_options' + $(this).data('option-row')).val(JSON.stringify(product_options));
+});
+
+$(document).delegate('select.input-subtract', 'change', function() {
+  var product_options = JSON.parse($('#product_options' + $(this).data('option-row')).val());
+  for (var key in product_options) {
+    for (var index in product_options[key]['product_option_value']) {
+      product_options[key]['product_option_value'][index]['subtract'] = $(this).val();
+    }
+  }
+  $('#product_options' + $(this).data('option-row')).val(JSON.stringify(product_options));
+});
+
+$(document).delegate('tbody td.c0 i.fa', 'click', function() {
+  var $table = $(this).closest('table');
+  var $row = $(this).closest('tr');
+  var $row_identifier = $row.find('span.row-identifier');
+  var children = [];
+  $table.find('span.row-identifier[data-row-key^=\'' + $row_identifier.data('row-key') + '-\']').each(function() {
+    children.push($(this).closest('tr').get(0));
+  });
+
+  $table.find('tr.collapsed span.row-identifier[data-row-key^=\'' + $row_identifier.data('row-key') + '-\']').each(function() {
+    $table.find('tr span.row-identifier[data-row-key^=\'' + $(this).data('row-key') + '-\']').each(function() {
+      var index = children.indexOf($(this).closest('tr').get(0));
+      if (index !== -1) {
+        children.splice(index, 1);
+      }
+    });
+  });
+
+  if ($row.hasClass('collapsed')) {
+    $(children).each(function() {
+      $(this).fadeIn(100);
+    })
+    $row.removeClass('collapsed');
+    $(this).removeClass('fa-plus-square-o');
+    $(this).addClass('fa-minus-square-o');
+  } else {
+    $(children).each(function() {
+      $(this).fadeOut(100);
+    })
+    $row.addClass('collapsed');
+    $(this).removeClass('fa-minus-square-o');
+    $(this).addClass('fa-plus-square-o');    
+  }
+});
+
+$(document).delegate('i.expand-all', 'click', function() {
+  var $table = $(this).closest('.jexcel').find('.jexcel-content table');
+  var children = $table.find('tbody i.fa-plus-square-o').toArray().reverse();
+  $(children).trigger('click');
+});
+
+$(document).delegate('i.collapse-all', 'click', function() {
+  var $table = $(this).closest('.jexcel').find('.jexcel-content table');
+  var children = $table.find('tbody i.fa-minus-square-o').toArray().reverse();
+  $(children).trigger('click');
+});
+
+$(document).delegate('.jexcel > div > table > tbody > tr > td > input[type=checkbox]', 'change', function() {
+  var jexcel = $(this).closest('.jexcel');
+  var cell = $(this).parent();
+  jexcel.jexcel('setValue', cell, $(this).is(':checked'));
+});
+
+$(document).delegate('#zoom-images', 'click', function() {
+  var $table = $(this).closest('.jexcel').find('.jexcel-content table');
+  $table.toggleClass('zoom');
+
+  $(this).toggleClass('fa-search-plus');
+  $(this).toggleClass('fa-search-minus');
+});
+
+$('#option a:first').tab('show');
+
+// Option Value Images Management
+var $may_advanced_option_value_image_target = false;
+$(document).delegate('a[data-toggle=\'image\']', 'click', function() {
+  if ($(this).parent().hasClass('option-image-wrapper') && $(this).attr('aria-describedby') == undefined && $(this).parent().find('input').val() == '') {
+    $may_advanced_option_value_image_target = $(this).closest('td');
+  } else {
+    $may_advanced_option_value_image_target = false;
+  }
+});
+$(document).delegate('#modal-image a.thumbnail', 'click', function() {
+  if (!$may_advanced_option_value_image_target) {
+    return;
+  }
+
+  var next_index = parseInt($may_advanced_option_value_image_target.find('.option-image-wrapper').last().data('cindex')) + 1;
+  var orig_index = parseInt($may_advanced_option_value_image_target.find('.option-image-wrapper').eq(0).data('cindex'));
+  var $option_image_wrapper = $may_advanced_option_value_image_target.find('.option-image-wrapper').eq(0).clone();
+  $option_image_wrapper.attr('data-cindex', next_index);
+  $option_image_wrapper.find('a.img-thumbnail').attr('id', $option_image_wrapper.find('a.img-thumbnail').attr('id').replace('c' + orig_index, 'c' + next_index));
+  $option_image_wrapper.find('a.img-thumbnail img').attr('src', '{{ placeholder }}');
+  $option_image_wrapper.find('input').attr('id', $option_image_wrapper.find('input').attr('id').replace('c' + orig_index, 'c' + next_index));
+  $option_image_wrapper.find('input').val('');
+  $may_advanced_option_value_image_target.append($option_image_wrapper);
+  
+  $may_advanced_option_value_image_target = false;
+});
+$(document).delegate('#button-clear', 'click', function() {
+  if (!$may_advanced_option_value_image_target && $(this).closest('td').find('.option-image-wrapper').length > 1) {
+    $(this).closest('.option-image-wrapper').remove();
+  }
+
+  $may_advanced_option_value_image_target = false;
+});
+
+$(document).delegate('#button-add-new-combination', 'click', function() {
+  if ($('.may-advanced-option-tab').length) {
+    $('#modal-may-advanced-option-exist-alert').modal('show');
+    return;
+  }
+
+  if ($('#modal-add-new').length) {
+    $('#modal-add-new').modal('show');
+    return;
+  }
+
+  $.ajax({
+    url: $(this).data('url'),
+    type: 'post',
+    dataType: 'html',
+    beforeSend: function() {
+      $('#button-add-new-combination').button('loading');
+    },
+    complete: function() {
+      $('#button-add-new-combination').button('reset');
+    },
+    success: function(html) {
+      $('body').append(html);
+      $('#modal-add-new').modal('show');
+    },
+    error: function(xhr, ajaxOptions, thrownError) {
+      alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+    }
+  });  
+});
+//--></script>

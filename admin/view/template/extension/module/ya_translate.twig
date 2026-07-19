@@ -1,0 +1,346 @@
+{{ header }}{{ column_left }} 
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="button" id="view-log" data-toggle="tooltip" title="{{ text_view_log }}" class="btn btn-primary"><i class="fa fa-eye"></i> Log</button>
+        <button type="submit" form="form-translator" onclick="$('#form-translator').attr('action','{{ apply }}')" data-toggle="tooltip" title="{{ button_apply }}" class="btn btn-info"><i class="fa fa-save"></i></button>
+        <button type="submit" form="form-translator" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %} 
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %} 
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+	   <div class="nav navbar-nav navbar-left">
+         {% for nav in navs %} 
+         <a href="{{ nav.href }}" class="btn btn-default navbar-btn {{ nav.active }}">{{ nav.text }}</a>
+         {% endfor %} 
+       </div>
+      </div>
+    </nav>  
+  </div>
+  <div class="container-fluid">
+    {% if (error_warning) %} 
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }} 
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %} 
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-translator" class="form-horizontal">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+            <li><a href="#tab-product" data-toggle="tab">Product</a></li>
+            <li><a href="#tab-category" data-toggle="tab">Category</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab-general">
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-api-key">{{ entry_api_provider }}</label>
+                <div class="col-sm-10">
+                  <select id="input-api-provider" name="ya_translate_api_provider" class="form-control">
+                    {% for cod,api_provider in api_providers %}
+                    {% if (cod == ya_translate_api_provider) %}
+                    <option value="{{ cod }}" selected="selected">{{ api_provider }}</option>
+                    {% else %}
+                    <option value="{{ cod }}">{{ api_provider }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="api-provider form-group" id="Google">
+                <label class="col-sm-2 control-label" for="input-api-key">{{ entry_api_key }}</label>
+                <div class="col-sm-10">
+                  <div class="input-group">
+                    <input name="ya_translate_api_key[Google][api_key]" class="form-control" value="{{ ya_translate_api_key['Google']['api_key'] is defined?ya_translate_api_key['Google']['api_key']:'' }}" />
+                    <span class="input-group-btn"><button type="button" onclick="check_api('Google')" class="btn btn-warning" data-toggle="tooltip" ><i class="fa fa-check"></i> </button></span>
+                  </div>
+                  <div id="result_check" class="alert"></div>
+                </div>
+              </div>
+              <div class="api-provider form-group" id="API1">
+                <label class="col-sm-2 control-label" for="input-api-key">{{ entry_api_key }}</label>
+                <div class="col-sm-10">
+                  <div class="input-group">
+                    <input name="ya_translate_api_key[API1][api_key]" class="form-control" value="{{ ya_translate_api_key['API1']['api_key'] is defined?ya_translate_api_key['API1']['api_key']:'' }}" />
+                    <span class="input-group-btn"><button type="button" onclick="check_api('API1')" class="btn btn-warning" data-toggle="tooltip" ><i class="fa fa-check"></i> </button></span>
+                  </div>
+                  <div id="result_check" class="alert"></div>
+                </div>
+              </div>
+              <div class="api-provider form-group" id="API2">
+                <label class="col-sm-2 control-label" for="input-api-key">{{ entry_api_key }}</label>
+                <div class="col-sm-10">
+                <label class="control-label">API KEY</label>
+                  <div class="input-group">
+                    <input name="ya_translate_api_key[API2][api_key]" class="form-control" value="{{ ya_translate_api_key['API2']['api_key'] is defined?ya_translate_api_key['API2']['api_key']:'' }}" />
+                    <span class="input-group-btn"><button type="button" onclick="check_api('API2')" class="btn btn-warning" data-toggle="tooltip" ><i class="fa fa-check"></i> </button></span>
+                  </div>
+    
+                <label class="control-label">FOLDER_ID (catalog id)</label>
+                  <input name="ya_translate_api_key[API2][folder_id]" class="form-control" value="{{ ya_translate_api_key['API2']['folder_id'] is defined?ya_translate_api_key['API2']['folder_id']:'' }}" />
+                  <div id="result_check" class="alert"></div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label">{{ entry_default_lang }}</label>
+                <div class="col-sm-10">
+                  <select name="ya_translate_default_lang" class="form-control">
+                  {% for language in languages %} 
+                    {% if language.language_id == ya_translate_default_lang %}
+                    <option value="{{ language.language_id }}" selected="selected">{{ language.name }}</option>
+                    {% else %}
+                    <option value="{{ language.language_id }}">{{ language.name }}</option>
+                    {% endif %}
+                  {% endfor %} 
+                  </select>
+    			</div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-api-key">{{ entry_code_lang }}</label>
+                <div class="col-sm-10">
+                    {% for language in languages %} 
+                    <div class="input-group">
+                      <span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" alt="{{ language.name }}" /></span>
+                      <input name="ya_translate_codelanguage[{{ language.code }}]" class="form-control" value="{{ ya_translate_codelanguage[language.code] is defined?ya_translate_codelanguage[language.code]:language.ya_code }}" />
+                    </div>
+                    {% endfor %} 
+                </div>
+                <div class="form-text">{{ text_warn }}</div>
+              </div>
+              <div class="well">
+                <div class="row">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">{{ text_test }}</h3>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label class="control-label">{{ text_language_from }}</label>
+                        {% for language in languages %} 
+                        <label class="sw-langs">
+                        <input type="radio" name="lang_from" {{ config_admin_language == language.code?' checked="checked"':"" }} value="{{ language['code'] }}" />
+                        <span><img src="language/{{ language.code }}/{{ language.code }}.png" alt="{{ language.name }}" />{{ language.name }}</span>
+                        </label>
+                       {% endfor %} 
+                    </div>
+                    <div class="form-group">
+                      <textarea name="text_from" rows="10" class="form-control"></textarea>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label class="control-label">{{ text_language_to }}</label>
+                      {% for language in languages %} 
+                        <label class="sw-langs">
+                        <input type="radio" name="lang_to" value="{{ language.code }}" />
+                            <span><img src="language/{{ language['code'] }}/{{ language.code }}.png" alt="{{ language.name }}" />
+                        {{ language.name }}</span>
+                        </label>
+                      {% endfor %} 
+                    </div>
+                    <div class="form-group">
+                      <textarea name="text_to" rows="10" class="form-control"></textarea>
+                    </div>
+                    <div id="lic"></div>
+                  </div>
+                
+                  <div class="pull-right">
+                    <button type="button" onclick="getTranslate();" data-toggle="tooltip" title="{{ button_translate }}" class="btn btn-info"><i class="fa fa-flag"></i> {{ button_translate }}</button>
+                  </div>
+                </div>
+              <div class="row" id="error"></div>
+              </div>
+            <div>
+              <div class="col-sm-6" id="dirs"></div>
+              <div class="col-sm-6" id="langs"></div>
+            </div>
+          </div>
+            <div class="tab-pane" id="tab-product">
+            Поля товара
+              <div class="well">
+			  {#
+			  <fieldset><legend>Table Product</legend>
+			{% for field in product_fields %}
+                <div class="checkbox">
+				<label><input type="checkbox" name="ya_translate_product_field[]"> {{ field }}</label>
+                </div>
+			
+			{% endfor %}
+			</fieldset>
+			<hr>
+			#}
+			<fieldset><legend>Table Product_Description</legend>
+			{% for field in product_description_fields %}
+              {% if field in ya_translate_product_description_field %}
+              {% set checked= ' checked="checked"' %}
+              {% else %}
+              {% set checked='' %}
+              {% endif %}
+                <div class="checkbox">
+				<label><input type="checkbox" value="{{ field }}" {{ checked }} name="ya_translate_product_description_field[]"> {{ field }}</label>
+                </div>
+			
+			{% endfor %}
+			</fieldset>
+              </div>
+              <div>
+			  <fieldset><legend>Работа с атрибутами</legend>
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Перевод</label>
+                <div class="col-sm-10">
+					<select name="ya_translate_attribute" class="form-control">
+					<option value="0">Не Переводить</option>
+					<option value="1">Переводить</option>
+					</select>
+                </div>
+
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Длина</label>
+                <div class="col-sm-10">
+					<div>Минимальная длина значения</div>
+					<input type="text" name="ya_translate_attribute_length" value="{{ ya_translate_attribute_length }}" placeholder="5" class="form-control"/>
+                </div>
+              </div>
+			  
+			  </fieldset>
+              </div>
+            </div>
+            <div class="tab-pane" id="tab-category">
+            Поля категории
+              <div class="well">
+              {#
+			  <fieldset><legend>Table Category</legend>
+			{% for field in category_fields %}
+                <div class="checkbox">
+				<label><input type="checkbox" {{ checked }} name="ya_translate_category_field[]"> {{ field }}</label>
+                </div>
+			
+			{% endfor %}
+			</fieldset>
+			<hr>
+			#}
+			<fieldset><legend>Table Category_Description</legend>
+			{% for field in category_description_fields %}
+              {% if field in ya_translate_category_description_field %}
+                {% set checked= ' checked="checked"' %}
+              {% else %}
+                {% set checked='' %}
+              {% endif %}
+                <div class="checkbox">
+				<label><input type="checkbox" value="{{ field }}" {{ checked }} name="ya_translate_category_description_field[]"> {{ field }}</label>
+                </div>
+			
+			{% endfor %}
+			</fieldset>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">//<!--
+function check_api(api){
+	api_key = $('[name*="ya_translate_api_key['+ api + ']"]');
+	$.ajax({
+		url:'{{ check_api }}',
+		method: 'post',
+		data: api_key,
+		data_type: 'json',
+		success: function(json) {
+			if (json['success']) {
+                var message = json['success'];
+                $('#result_check').removeClass('alert-danger').addClass('alert-success').text(message);
+                $('#dirs').html(json['dirs']);
+                $('#langs').html(json['langs']);
+			} else {
+                if (json['error']) {
+                	message = json['error'];
+                	$('#result_check').removeClass('alert-success').addClass('alert-danger').text(message);
+                }
+			}
+		}
+	})
+};
+function getTranslate(){
+	var api_provider = $('[name=ya_translate_api_provider]').val();
+	var lang_from = $('[name=lang_from]:checked').val();
+	var lang_to = $('[name=lang_to]:checked').val();
+	if (lang_to == lang_from) return;
+	var text_from = $('[name=text_from]').val();
+	if (!text_from) return;
+	var data = $('[name*="ya_translate_api_key['+ api_provider + ']"], [name=lang_from]:checked, [name=lang_to]:checked, [name=text_from]');
+	$.ajax({
+		url:'{{ test_translate }}',
+		method: 'POST',
+		data: data,
+		data_type: 'json',
+		success: function(json) {
+			if (json['success']) {
+                $('[name=text_to]').val(json['text']);
+                $('#lic').html('<a href="http://translate.yandex.ru/">Переведено сервисом «Яндекс.Переводчик»</a>');
+			} else {
+                if (json['error']) {
+                	var message = json['error'];
+                	$('#error').addClass('alert-danger').text(message);
+                }
+			}
+		}
+	})
+};
+
+$(document).ready(function(){
+	$('select#input-api-provider').on('change', function(){
+		var value = $(this).val();
+		$('.api-provider').hide();
+		$('#' + value).show();
+	});
+	$('select#input-api-provider').trigger('change');
+});
+
+//--></script>
+<style>
+label.sw-langs > input{visibility: hidden;position: absolute;}
+label.sw-langs > input + span{cursor:pointer;border:2px solid transparent;padding:0 5px}
+label.sw-langs > input:checked + span{border-color: #66afe9;box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);}
+label.sw-langs {padding:0 5px}
+</style>                			
+<script>
+$('#view-log').click(function(){
+    $.ajax({
+        url:'{{ viewLog }}',
+        success:function(html){
+            if (html){
+                $('#log-view').remove();
+                $('body').append(html);
+                $('#log-view').modal('show');
+            }
+        }
+    })
+});
+function clearlog(){
+    $.ajax({
+        url:'{{ clearLog }}',
+        success:function(html){
+            if (html=='ok'){
+                $('#log-view textarea').val('');
+            }
+        }
+    });
+}
+</script>
+
+{{ footer }}

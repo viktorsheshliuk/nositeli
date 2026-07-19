@@ -1,0 +1,111 @@
+var languages = [];
+{% for language in languages %} 
+	languages[{{ language['language_id'] }}] = '{{ language['direction'] }}';
+{% endfor %} 
+
+	var buutons = '';
+	{% for language in languages %}
+		{% if language['language_id'] != first_id %}
+		buutons += '<button type="button" onclick="yaTraslitAttr(\'{{ first_id }}\',\'{{ language['language_id'] }}\')" data-toggle="tooltip" title="translate Attribute" class="translate-content btn btn-warning"><i class="fa fa-flag-o"></i> {{ language['direction'] }}</button>';
+		{% endif %} 
+	{% endfor %} 
+	$('form[id^="form-"]').prepend('<div class="pull-right">' + buutons + '</div><div class="clearfix"></div>');
+
+
+
+
+function yaTraslitAttr(from,to) {
+	var form_element = $('form[id^="form-"] ');
+	var text_element = form_element.find('input[type=text], textarea');
+
+	{% for field_name in ya_script_field_name %} 
+		if ($('[name="' + '{{ field_name }}' + '[' + from + '][name]"]').length) {
+			var field_name = '{{ field_name }}';
+		}
+	{% endfor %} 	
+	
+	var element_from =  $('[name="' + field_name + '[' + from + '][name]"]');
+	var element_to =  $('[name="' + field_name + '[' + to + '][name]"]');
+	if (from) {
+		var parameters = {};
+		parameters.text = {};
+		parameters['name'] = element_from.val();
+		$.ajax({
+			url: '{{ ya_script_translate }}' + '&from=' + from + '&to=' + to,
+			method: 'post',
+			data: parameters,
+			data_type: 'json',
+//			beforeSend: function(){processShow();},
+			success: function(json) {
+				if (json['success']) {
+					for(var name_tag in json['text']) {
+						var new_val = json['text'][name_tag];
+						element_to.val(new_val);
+					}
+//					processHide();
+//					$('#confirm-translate').modal().show();
+				}
+			}
+		});	
+	}
+}
+	var buutons = '';
+	{% for language in languages %}
+		{% if language['language_id'] != first_id %}
+		buutons += '<button type="button" onclick="yaTraslitValue(\'{{ first_id }}\',\'{{ language['language_id'] }}\')" data-toggle="tooltip" title="translate Attribute" class="translate-content btn btn-warning"><i class="fa fa-flag-o"></i> {{ language['direction'] }}</button>';
+		{% endif %} 
+	{% endfor %}
+	
+	var id_value;
+	{% for field_name in ya_script_field_name_value %}
+		id_value = '{{ field_name }}'. replace('_','-'); 
+		if ($('#' + id_value).length) {
+			$('#' + id_value).before(buutons);
+		}
+	
+	{% endfor %}
+
+function yaTraslitValue(from,to) {
+
+    var id_value = 'form-option';
+	var form_element = $('#' + id_value);
+//	var text_element = form_element.find('input[type=text][name$="\[name\]"]');
+
+	{% for field_name in ya_script_field_name %} 
+		if ($('[name="' + '{{ field_name }}' + '[' + from + '][name]"]').length) {
+			var field_name = '{{ field_name }}';
+		}
+	{% endfor %} 	
+
+
+	var element_from =  $('#' + id_value + ' [name$="\[' + from + '\]\[name\]"]');
+
+		var parameters = {};
+		parameters.text = {};
+	element_from.each(function(i,elem){
+			let el_to =  $('#' + id_value + ' [name$="\[' + to + '\]\[name\]"]');
+		parameters[encodeURIComponent($(el_to[i]).attr('name'))] = $(elem).val();
+		
+	});
+//	console.log(parameters);
+		$.ajax({
+			url: '{{ ya_script_translate }}' + '&from=' + from + '&to=' + to,
+			method: 'post',
+			data: parameters,
+			data_type: 'json',
+//			beforeSend: function(){processShow();},
+			success: function(json) {
+				if (json['success']) {
+					for(var name_tag in json['text']) {
+						var element_to = $('[name=' + decodeURIComponent(name_tag).replace(/\[/g,'\\[').replace(/\]/g,'\\]') + ']');
+						element_to.val(new_val);
+						var new_val = json['text'][name_tag];
+						element_to.val(new_val);
+					}
+//					processHide();
+//					$('#confirm-translate').modal().show();
+				}
+			}
+		});	
+	
+}

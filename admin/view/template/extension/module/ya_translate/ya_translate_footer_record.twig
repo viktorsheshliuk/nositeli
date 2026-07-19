@@ -1,0 +1,19 @@
+{% if (count(languages) > 1) %} 
+<script src="index.php?route=extension/module/ya_translate/getScript&type=product&user_token={{ user_token }}"  type="text/javascript"></script>
+<div class="modal fade" id="confirm-translate" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">?</button>
+                <h4 class="modal-title" id="myModalLabel">Translate complete</h4>
+            </div>
+            <div class="modal-content">
+				<div class="ya">Переведено сервисом <a href="http://translate.yandex.ru/">«Яндекс.Переводчик»</a></div>
+			</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
