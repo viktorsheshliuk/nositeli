@@ -43,3 +43,5 @@ system/storage/upload/*
 
 /storage/upload/*
 !/storage/upload/index.html
+
+catalog/view/theme/*/stylesheet/ocfilter/ocf.cache.*
