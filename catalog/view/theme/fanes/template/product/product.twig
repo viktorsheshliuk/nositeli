@@ -122,6 +122,7 @@
     {% endif %}
     <div id="product-product" class="content-center">
      {{ content_top }}
+      <h1 class="heading-title">{{ heading_title }}</h1>
       <div class="product-wrapp">
         <div class="{{ class }}"> {% if thumb or images %}
           <ul class="thumbnails">
@@ -146,7 +147,7 @@
         </div>
       
         <div class="left-panel">
-          <h1 class="heading-title">{{ heading_title }}</h1>
+          
           <ul class="list-unstyled">
             {% if manufacturer %}
             <li>{{ text_manufact }} <a href="{{ manufacturers }}">{{ manufacturer }}</a></li>
@@ -236,6 +237,7 @@
                 {% endfor %} </div>
             </div>
             {% endif %}
+            {#
             {% if option.type == 'text' %}
             <div class="form-group{% if option.required %} required {% endif %}">
               <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
@@ -284,7 +286,7 @@
                 <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
                 </span></div>
             </div>
-            {% endif %}
+            {% endif %} #}
             {% endfor %}
             {% endif %}
             {% if recurrings %}
