@@ -35,6 +35,27 @@ class ControllerCommonHeader extends Controller {
 		$data['links'] = $this->document->getLinks();
 		$data['robots'] = $this->document->getRobots();
 		$data['styles'] = $this->document->getStyles();
+		
+		// добавление версионности к файлу стилей simple.css  (напрямую нельзя - закодировано)
+		foreach ($data['styles'] as &$style) {
+			// Проверяем, содержит ли путь наш файл
+			if (isset($style['href']) && strpos($style['href'], 'catalog/view/theme/fanes/stylesheet/simple.css') !== false) {
+				$file_path = 'catalog/view/theme/fanes/stylesheet/simple.css';
+				
+				// Формируем полный путь к файлу на сервере
+				// Если вы в OpenCart, DIR_APPLICATION — это обычно папка /catalog/
+				// Если файл лежит там же, то используйте DIR_APPLICATION . 'view/theme/fanes/stylesheet/simple.css'
+				// Если файл в корне, используйте DIR_ROOT . $file_path (или абсолютный путь)
+				$full_path = DIR_APPLICATION . '../' . $file_path; 
+
+				if (file_exists($full_path)) {
+					// Добавляем ?v= с временем изменения файла
+					$style['href'] = $file_path . '?v=' . filemtime($full_path);
+				}
+			}
+		}
+		unset($style);
+		
 		$data['scripts'] = $this->document->getScripts('header');
 		$data['lang'] = $this->language->get('code');
 		$data['direction'] = $this->language->get('direction');
@@ -58,32 +79,7 @@ class ControllerCommonHeader extends Controller {
 		}
 		
 		$data['og_image'] = $this->document->getOgImage();
-		//динамический ремаркетинг
-		// $data['show_gtm'] = false;
-		// if (isset($this->request->get['route']) && $this->request->get['route'] == 'product/product') {
-        //     $data['product_id'] = "'".$this->document->getProductId()."'";
-		// 	$data['pagetype']  = 'offerdetail';
-		// 	$data['total_value'] = $this->document->getProductTotalValue();
-		// 	$data['show_gtm'] = true;
-		// }	
-        // elseif (isset($this->request->get['route']) && $this->request->get['route'] == 'checkout/cart'){ 
-		// 	$data['product_id'] = str_replace("''","','", $this->document->getProductId()); //;+ добавление запятых
-		// 	$data['total_value'] = $this->document->getProductTotalValue(); 
-		// 	$data['pagetype']  = 'conversionintent';
-		// 	$data['show_gtm'] = true;
-		// }
-		// elseif (isset($this->request->get['route']) && $this->request->get['route'] == 'checkout/success'){ 
-		// 	$data['product_id'] = str_replace("''","','", $this->document->getProductId()); 
-		// 	$data['total_value'] = $this->document->getProductTotalValue(); 
-		// 	$data['pagetype']  = 'conversion';
-		// 	$data['show_gtm'] = true;
-		// }
-		// else {
-        //     $data['product_id'] = 0;
-		// 	$data['pagetype']  = '';
-		// 	$data['total_value'] = 0;
-        // }
-		//end динамический ремаркетинг
+		
 		// Wishlist
 		if ($this->customer->isLogged()) {
 			$this->load->model('account/wishlist');

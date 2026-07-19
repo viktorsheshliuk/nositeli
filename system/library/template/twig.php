@@ -29,6 +29,11 @@ final class Twig {
 		$this->twig = new \Twig_Environment($loader, $config);
 
 		$this->twig->addFilter(new \Twig_SimpleFilter('html_entity_decode', 'html_entity_decode')); // добавлено
+
+		// Add the filemtime function to the Twig environment  - добавлено
+        $this->twig->addFunction(new \Twig_SimpleFunction('filemtime', function ($file) {
+            return filemtime($file);
+        }));
 		
 		try {
 			// load template

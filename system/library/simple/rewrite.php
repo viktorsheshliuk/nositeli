@@ -17,8 +17,8 @@ class Rewrite {
     public function rewrite($url) {
         //return $url;   //-отключить SIMPLECHECKOUT 
         $get_route = isset($_GET['route']) ? $_GET['route'] : (isset($_GET['_route_']) ? $_GET['_route_'] : '');
-        $debug = isset($_GET['debug']) ? true : false;
-        $unlicensed = !empty($this->session) && !empty($this->session->data['simple_unlicensed']);
+        $debug = false; //isset($_GET['debug']) ? true : false;
+        $unlicensed = false;//!empty($this->session) && !empty($this->session->data['simple_unlicensed']);
 
         if ($debug || $unlicensed || !$this->config || !$this->config->get('simple_settings') || !$this->session) {
             return $url;

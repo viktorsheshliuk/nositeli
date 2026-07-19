@@ -10,16 +10,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>{{ title }}</title>
-{# {% if show_gtm %}
-<script>
-window.dataLayer = window.dataLayer || [];
-dataLayer.push({
-dynx_itemid: {{product_id}},
-dynx_pagetype: '{{pagetype}}',
-dynx_totalvalue: {{total_value}}
-});
-</script>
-{% endif %} #}
 {% if robots %}
 <meta name="robots" content="{{ robots }}" />
 {% endif %}
@@ -46,7 +36,7 @@ dynx_totalvalue: {{total_value}}
 <link  href="catalog/view/theme/fanes/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"  />  
 <script src="catalog/view/theme/fanes/javascript/common.min.js"></script>
 <link href="catalog/view/theme/fanes/font-awesome/fonts/fontawesome-webfont.woff2" />  
-<link href="catalog/view/theme/fanes/stylesheet/stylesheet.min.css" rel="stylesheet"/> 
+<link href="catalog/view/theme/fanes/stylesheet/stylesheet.min.css?v={{ filemtime('catalog/view/theme/fanes/stylesheet/stylesheet.min.css') }}" rel="stylesheet"/> 
 <script src="catalog/view/javascript/jquery/swiper/js/swiper.min.js"></script> 
 {% for style in styles %}
 <link href="{{ style.href }}" type="text/css" rel="{{ style.rel }}" media="{{ style.media }}" />
