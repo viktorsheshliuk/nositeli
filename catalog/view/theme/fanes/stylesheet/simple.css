@@ -201,7 +201,7 @@
     clear: both;
     margin-bottom: 20px;
     padding: 6px;
-    background: none repeat scroll 0 0 #FFFFFF;
+    /* background: none repeat scroll 0 0 #FFFFFF; */
     text-align:right;
 }
 .simplecheckout-button-right {
@@ -625,12 +625,8 @@ div#simplecheckout_shipping.simplecheckout-block .form-group label, div#simplech
 .simple-step {
     display: inline-block;
     padding: 5px;
-    -webkit-border-radius: 5px 5px 5px 5px;
-    -moz-border-radius: 5px 5px 5px 5px;
-    border-radius: 5px 5px 5px 5px;
-    /*background-color: #D9D9D9;*/
-    background-color: #fff;
-    color: #999999;
+    /* background-color: #fff; */
+    color: #6d6d6d;
     font-size: 16px;
     -khtml-border-radius: 5px 5px 5px 5px;
     cursor: pointer;
@@ -639,14 +635,9 @@ div#simplecheckout_shipping.simplecheckout-block .form-group label, div#simplech
 .simple-step-current {
     display: inline-block;
     padding: 5px;
-    -webkit-border-radius: 5px 5px 5px 5px;
-    -moz-border-radius: 5px 5px 5px 5px;
-    border-radius: 5px 5px 5px 5px;
-    /*background-color: #38B0E3;*/
-    background-color: #fff;
+    /* background-color: #fff; */
     color: #148AE0;
     font-size: 16px;
-    -khtml-border-radius: 5px 5px 5px 5px;
 }
 .simple-step-delimiter {
     display: inline-block;
