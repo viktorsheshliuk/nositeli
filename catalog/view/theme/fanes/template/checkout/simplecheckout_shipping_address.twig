@@ -1,9 +1,7 @@
 <div class="simplecheckout-block" id="simplecheckout_shipping_address" {{ hide ? 'data-hide="true"' : '' }} {{ display_error and has_error ? 'data-error="true"' : '' }}>
   {% if display_header %}
-    <div class="checkout-heading panel-heading"><span>{{ text_checkout_shipping_address }}</span>
-
-    <img class="icon-arrow-down" src="/catalog/view/image/strelka.jpg">
-
+    <div class="checkout-heading panel-heading">
+      <span>{{ text_checkout_shipping_address }}</span>
     </div>
   {% endif %}
   <div class="simplecheckout-block-content">

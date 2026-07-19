@@ -1,9 +1,6 @@
 <div class="simplecheckout-block" id="simplecheckout_payment" {{ hide ? 'data-hide="true"' : '' }} {{ display_error and has_error ? 'data-error="true"' : '' }}>
     {% if display_header %}
         <div class="checkout-heading panel-heading my_toggle is-active" data-tabs-btn="tab_payment">{{ text_checkout_payment_method }}
-
-        <img class="icon-arrow-down" src="/catalog/view/image/strelka.jpg">
-        
         </div>
     {% endif %}
     <div class="alert alert-danger simplecheckout-warning-block" {{ display_error and has_error_payment ? '' : 'style="display:none"' }}>{{ error_payment }}</div>

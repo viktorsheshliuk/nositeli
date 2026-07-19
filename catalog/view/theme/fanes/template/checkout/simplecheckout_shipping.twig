@@ -1,9 +1,6 @@
 <div class="simplecheckout-block" id="simplecheckout_shipping" {{ hide ? 'data-hide="true"' : '' }} {{ display_error and has_error ? 'data-error="true"' : '' }}>
     {% if display_header %}
         <div class="checkout-heading panel-heading my_toggle is-active" data-tabs-btn="tab_shipping">{{ text_checkout_shipping_method }}
-
-        <img class="icon-arrow-down" src="/catalog/view/image/strelka.jpg">
-
         </div>
     {% endif %}
     <div class="alert alert-danger simplecheckout-warning-block" {{ display_error and has_error_shipping ? '' : 'style="display:none"' }}>{{ error_shipping }}</div>

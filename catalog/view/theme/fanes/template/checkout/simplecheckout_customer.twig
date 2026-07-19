@@ -1,9 +1,6 @@
 <div class="simplecheckout-block" id="simplecheckout_customer" {{ hide ? 'data-hide="true"' : '' }} {{ display_error and has_error ? 'data-error="true"' : '' }}>
   {% if display_header or display_login %}
   <div class="checkout-heading panel-heading my_toggle is-active" data-tabs-btn="tab_customer"><span>{{ text_checkout_customer }}</span>
-
-  <img class="icon-arrow-down" src="/catalog/view/image/strelka.jpg">
-
   {% if display_login %}<span class="checkout-heading-button"><a href="javascript:void(0)" data-onclick="openLoginBox">{{ text_checkout_customer_login }}</a></span>{% endif %}</div>
   {% endif %}
   <div class="simplecheckout-block-content" data-tabs-content="tab_customer">
