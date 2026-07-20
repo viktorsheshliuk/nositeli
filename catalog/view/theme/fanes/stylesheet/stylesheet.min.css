@@ -58,7 +58,9 @@ body {
     font-family: 'Montserrat';
     font-weight: 400;
 }
-
+*:focus{
+    outline: none;
+}
 .wrapper {
 
     max-width: 1540px;
@@ -3239,33 +3241,23 @@ header #right-menu-language-select{
 }
 
 #product-product .product-wrapp .left-panel .add-block {
-
     display: flex;
-
     display: -webkit-box;
-
     display: -moz-box;
-
     display: -ms-flexbox;
-
     display: -webkit-flex;
-
     flex-wrap: wrap;
-
     padding: 0;
-
     margin: 0;
-
+    column-gap: 24px;
 }
 
-#product-product .product-wrapp .left-panel .add-block .add, #product-product .product-wrapp .left-panel .add-block .quantity-block {
-
+#product-product .product-wrapp .left-panel .add-block .add  
+/*#product-product .product-wrapp .left-panel .add-block .quantity-block */
+{
     flex-grow: 1;
-
     padding: 0;
-
     margin: 0;
-
 }
 
 #product-product .product-wrapp .left-panel .add-block .add button, #product-product .product-wrapp .left-panel .add-block .quantity-block button {
@@ -5568,50 +5560,63 @@ textarea {
 }
 
 .quantity-block {
-
-    display: flex;
-
+    /* display: flex;
     display: -webkit-box;
-
     display: -moz-box;
-
     display: -ms-flexbox;
-
-    display: -webkit-flex;
-
+    display: -webkit-flex; */
     padding: 0;
-
     margin: 0;
-
-    margin-left: 3px;
-
-    margin-right: 3px;
-
+    display: inline-block;
+    background-color: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 10px;
+    box-shadow: 0px 3px 10px 0px rgba(6, 0, 63, .0901960784);
+    width: 131px;
+    line-height: 50px;
+    /* margin-left: 3px;
+    margin-right: 3px; */
 }
-
-.quantity-block input[type="text"] {
-
-    width: 50px;
-
-    height: auto !important;
-
+.quantity-block .minus, .quantity-block .plus{  
+    font-size: 32px;
+    color: var(--color-orange);
+    float: left;
+    width: 49px;
+    height: 50px;
     text-align: center;
-
+    transition: all .3s ease;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+/* .quantity-block input[type="text"] {
+    width: 50px;
+    height: auto !important;
+    text-align: center;
     border: 0;
-
     border-top: 1px solid #eee;
-
     border-bottom: 1px solid #eee;
-
-}
-
-.quantity-block .btn {
-
+} */
+ .quantity-block .input_amount{
+    background-color: #fff;
+    border: none;
+    color: #232221;
+    font-size: 18px;
+    text-align: center;
+    display: block;
+    width: 30px;
+    height: 50px;
     margin: 0;
+    padding: 0;
+    float: left;
+    font-weight: 500;
+ }
 
+/* .quantity-block .btn {
+    margin: 0;
     font-weight: bold;
-
-}
+} */
 
 .event-block {
 

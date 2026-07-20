@@ -21,83 +21,6 @@
      {% endfor %}
     }
 </script>
-{#
-<script type="application/ld+json">
-    {
-      "@context": "https://schema.org/",
-      "@type": "Product",
-      "name": "{{ heading_title }}",
-       {% if thumb or images %}
-    "image": [
-               {% if thumb %}
-            " {{ thumb }}"
-              {% endif %}
-          {% if images %}
-             ,
-        {% endif %}     
-      
-           {% for key, image in images %}
-              {% if key + 1 < images|length %}
-               "{{ image.thumb }}",
-          {% else %}
-               "{{ image.thumb }}"
-              {% endif %}
-             {% endfor %} 
-       ],   {% endif %}
-      {% set d = description|striptags %}
-      "description": " {{ d|replace({'"': "'" }) }} ",
-     "sku": "{{ model }}",
-      "gtin13": "{{ean}}",
-       {% if isbn %}
-  // "isbn" : " {{ isbn }}",
-       {% endif %}
-      {% if manufacturer %}
-       "brand": {
-        "@type": "Brand",
-        "name": "{{ manufacturer }}"
-      },
-      {% endif %} 
-    //  "review": {
-     //   "@type": "Review",
-      //  "reviewRating": {
-      //    "@type": "Rating",
-       //   "ratingValue": "4",
-       //   "bestRating": "5"
-       // },
-       // "author": {
-        //  "@type": "Person",
-        //  "name": "Петр Иванович Сидоренко"
-       // }
-    //  },
-     // "aggregateRating": {
-    //    "@type": "AggregateRating",
-    //    "ratingValue": "4.4",
-     //   "reviewCount": "{{viewed}}"
-    //  },
-      "offers": {
-        "@type": "Offer",
-        "url": " {{breadcrumbs|last.href }} ",
-        "priceCurrency": "UAH",
-        {% if price %}"price": "{{ price|trim(' грн.')|number_format(2, '.', '')}}",
-        {% else %}"price": "{{special|trim(' грн.')|number_format(2, '.', '')}}",{% endif %}
-  
-      {% set date100 = 'now'|date_modify("+100 day") %}
-      
-      "priceValidUntil": "  {{ date100|date('Y-m-d') }} ",
-        "itemCondition": "https://schema.org/NewCondition",
-		{% if ostatok > 0 %}       
-        "availability": "https://schema.org/InStock",
-        {% else %}
-        "availability": "https://schema.org/OutOfStock",
-        {% endif %}
-        "seller": {
-          "@type": "Organization",
-          "name": "Nositeli"
-        }
-      }
-    }
-    
-</script>    #}
 <div class="content-block">
     <ul class="breadcrumb">
     {% for key, breadcrumb in breadcrumbs %}
@@ -302,29 +225,32 @@
               <div class="help-block" id="recurring-description"></div>
             </div>
             {% endif %}
-         {% if stock_status_id != 9 or ostatok > 0 %} {#показываем кнопки купить#}
+          {% if stock_status_id != 9 or ostatok > 0 %} {#показываем кнопки купить#}
             
-            <div class="form-group">
-              <label class="control-label" for="input-quantity">{{ entry_qty }}</label>
+            {# <div class="form-group">
+              <label class="control-label" for="input-quantity">{{ entry_qty }}</label> #}
               <div class="add-block">
-               <div class="quantity-block">
-                 <span class="minus btn btn-primary">-</span>
-                 <input type="text" name="quantity" value="{{ minimum }}" size="5" id="input-quantity" class="quant form-control"/>
-                 <input type="hidden" name="product_id" value="{{ product_id }}" />
-                 <span class="plus btn btn-primary">+</span>
+
+                <div class="quantity-block">
+                  <span class="minus">−</span>
+                  <input class="input_amount" type="text" name="quantity" value="{{ minimum }}" size="5" id="input-quantity"/>
+                  <span class="plus">+</span>
                 </div>
+
+
+                <input type="hidden" name="product_id" value="{{ product_id }}" />
                 <div class="add">
                     <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-lg btn-block">{{ button_cart }}</button>
-                   
                 </div>
               </div>
-            </div><div>{{ formcreator_id46 }}</div>
+            {# </div> #}
+            <div>{{ formcreator_id46 }}</div>
             {% if minimum > 1 %}
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
             {% endif %}
-         {% else %}
+          {% else %}
             <div></div>
-         {% endif %}</div>
+          {% endif %}</div>
           
           
           
