@@ -1008,7 +1008,7 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
             } else {
                 $np_q = $this->db->query("SELECT DescriptionRu, Description FROM `" . DB_PREFIX . "novaposhta_regions` WHERE Ref = '" . $this->db->escape($payment_address['zone_id']) . "'");
                 if ($np_q->num_rows) {
-                    $data['payment_zone'] = !empty($np_q->row['DescriptionRu']) ? $np_q->row['DescriptionRu'] : $np_q->row['Description'];
+                    $data['payment_zone'] = !empty($np_q->row['DescriptionRu']) ? $np_q->row['DescriptionRu'] . ' область': $np_q->row['Description'] . ' область';
                 }
             }
         }
@@ -1048,7 +1048,7 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
                 } else {
                     $np_q = $this->db->query("SELECT DescriptionRu, Description FROM `" . DB_PREFIX . "novaposhta_regions` WHERE Ref = '" . $this->db->escape($shipping_address['zone_id']) . "'");
                     if ($np_q->num_rows) {
-                        $data['shipping_zone'] = !empty($np_q->row['DescriptionRu']) ? $np_q->row['DescriptionRu'] : $np_q->row['Description'];
+                        $data['shipping_zone'] = !empty($np_q->row['DescriptionRu']) ? $np_q->row['DescriptionRu'] . ' область' : $np_q->row['Description'] . ' область';
                     }
                 }
             }
