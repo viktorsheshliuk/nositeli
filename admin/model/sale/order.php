@@ -18,6 +18,13 @@ class ModelSaleOrder extends Model {
 
 			if ($zone_query->num_rows) {
 				$payment_zone_code = $zone_query->row['code'];
+			} elseif (!empty($order_query->row['payment_zone_id'])) {
+				$np_zone_query = $this->db->query("SELECT DescriptionRu, Description FROM `" . DB_PREFIX . "novaposhta_regions` WHERE Ref = '" . $this->db->escape($order_query->row['payment_zone_id']) . "'");
+				if ($np_zone_query->num_rows) {
+					$payment_zone_code = $np_zone_query->row['DescriptionRu'];
+				} else {
+					$payment_zone_code = '';
+				}
 			} else {
 				$payment_zone_code = '';
 			}
@@ -36,6 +43,13 @@ class ModelSaleOrder extends Model {
 
 			if ($zone_query->num_rows) {
 				$shipping_zone_code = $zone_query->row['code'];
+			} elseif (!empty($order_query->row['shipping_zone_id'])) {
+				$np_zone_query = $this->db->query("SELECT DescriptionRu, Description FROM `" . DB_PREFIX . "novaposhta_regions` WHERE Ref = '" . $this->db->escape($order_query->row['shipping_zone_id']) . "'");
+				if ($np_zone_query->num_rows) {
+					$shipping_zone_code = $np_zone_query->row['DescriptionRu'];
+				} else {
+					$shipping_zone_code = '';
+				}
 			} else {
 				$shipping_zone_code = '';
 			}

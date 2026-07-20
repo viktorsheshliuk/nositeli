@@ -1000,7 +1000,18 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
         $data['payment_address_2']      = $payment_address['address_2'];
         $data['payment_city']           = $payment_address['city'];
         $data['payment_postcode']       = $payment_address['postcode'];
-        $data['payment_zone']           = $payment_address['zone'];
+        $data['payment_zone']           = !empty($payment_address['zone']) ? $payment_address['zone'] : '';
+        if (empty($data['payment_zone']) && !empty($payment_address['zone_id'])) {
+            $zone_q = $this->db->query("SELECT name FROM `" . DB_PREFIX . "zone` WHERE zone_id = '" . (int)$payment_address['zone_id'] . "'");
+            if ($zone_q->num_rows) {
+                $data['payment_zone'] = $zone_q->row['name'];
+            } else {
+                $np_q = $this->db->query("SELECT DescriptionRu, Description FROM `" . DB_PREFIX . "novaposhta_regions` WHERE Ref = '" . $this->db->escape($payment_address['zone_id']) . "'");
+                if ($np_q->num_rows) {
+                    $data['payment_zone'] = !empty($np_q->row['DescriptionRu']) ? $np_q->row['DescriptionRu'] : $np_q->row['Description'];
+                }
+            }
+        }
         $data['payment_zone_id']        = $payment_address['zone_id'];
         $data['payment_country']        = $payment_address['country'];
         $data['payment_country_id']     = $payment_address['country_id'];
@@ -1029,7 +1040,18 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
             $data['shipping_address_2']      = $shipping_address['address_2'];
             $data['shipping_city']           = $shipping_address['city'];
             $data['shipping_postcode']       = $shipping_address['postcode'];
-            $data['shipping_zone']           = $shipping_address['zone'];
+            $data['shipping_zone']           = !empty($shipping_address['zone']) ? $shipping_address['zone'] : '';
+            if (empty($data['shipping_zone']) && !empty($shipping_address['zone_id'])) {
+                $zone_q = $this->db->query("SELECT name FROM `" . DB_PREFIX . "zone` WHERE zone_id = '" . (int)$shipping_address['zone_id'] . "'");
+                if ($zone_q->num_rows) {
+                    $data['shipping_zone'] = $zone_q->row['name'];
+                } else {
+                    $np_q = $this->db->query("SELECT DescriptionRu, Description FROM `" . DB_PREFIX . "novaposhta_regions` WHERE Ref = '" . $this->db->escape($shipping_address['zone_id']) . "'");
+                    if ($np_q->num_rows) {
+                        $data['shipping_zone'] = !empty($np_q->row['DescriptionRu']) ? $np_q->row['DescriptionRu'] : $np_q->row['Description'];
+                    }
+                }
+            }
             $data['shipping_zone_id']        = $shipping_address['zone_id'];
             $data['shipping_country']        = $shipping_address['country'];
             $data['shipping_country_id']     = $shipping_address['country_id'];

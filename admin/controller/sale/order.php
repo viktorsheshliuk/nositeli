@@ -230,8 +230,8 @@ class ControllerSaleOrder extends Controller {
 				'customer'      => $result['customer'],
 				'order_status'  => $result['order_status'] ? $result['order_status'] : $this->language->get('text_missing'),
 				'total'         => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),
-				'date_added'    => date('j.m.Y G:i', strtotime($result['date_added'])),// было вывод  только даты   $this->language->get('date_format_short')
-				'date_modified' => date('j.m.Y G:i', strtotime($result['date_modified'])), // $this->language->get('date_format_short')
+				'date_added'    => date('j.m.Y G:i', strtotime($result['date_added'])),
+				'date_modified' => date('j.m.Y G:i', strtotime($result['date_modified'])),
 				'shipping_code' => $result['shipping_code'],
 				'view'          => $this->url->link('sale/order/info', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . $result['order_id'] . $url, true),
 				'edit'          => $this->url->link('sale/order/edit', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . $result['order_id'] . $url, true)
@@ -847,6 +847,9 @@ class ControllerSaleOrder extends Controller {
 				$format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
 			}
 
+			// Якщо назва області пуста, але zone_code заповнений — використовуємо його (для Нової пошти)
+			//$payment_zone_final = !empty($order_info['payment_zone']) ? $order_info['payment_zone'] : $order_info['payment_zone_code'];
+
 			$find = array(
 				'{firstname}',
 				'{lastname}',
@@ -882,6 +885,9 @@ class ControllerSaleOrder extends Controller {
 				$format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
 			}
 
+			// Якщо назва області пуста, але zone_code заповнений — використовуємо його
+			$shipping_zone_final = !empty($order_info['shipping_zone']) ? $order_info['shipping_zone'] : $order_info['shipping_zone_code'];
+
 			$find = array(
 				'{firstname}',
 				'{lastname}',
@@ -903,7 +909,7 @@ class ControllerSaleOrder extends Controller {
 				'address_2' => $order_info['shipping_address_2'],
 				'city'      => $order_info['shipping_city'],
 				'postcode'  => $order_info['shipping_postcode'],
-				'zone'      => $order_info['shipping_zone'],
+				'zone'      => $shipping_zone_final,
 				'zone_code' => $order_info['shipping_zone_code'],
 				'country'   => $order_info['shipping_country']
 			);
@@ -1529,6 +1535,8 @@ class ControllerSaleOrder extends Controller {
 					$format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
 				}
 
+				$payment_zone_final = !empty($order_info['payment_zone']) ? $order_info['payment_zone'] : $order_info['payment_zone_code'];
+
 				$find = array(
 					'{firstname}',
 					'{lastname}',
@@ -1550,7 +1558,7 @@ class ControllerSaleOrder extends Controller {
 					'address_2' => $order_info['payment_address_2'],
 					'city'      => $order_info['payment_city'],
 					'postcode'  => $order_info['payment_postcode'],
-					'zone'      => $order_info['payment_zone'],
+					'zone'      => $payment_zone_final,
 					'zone_code' => $order_info['payment_zone_code'],
 					'country'   => $order_info['payment_country']
 				);
@@ -1562,6 +1570,8 @@ class ControllerSaleOrder extends Controller {
 				} else {
 					$format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
 				}
+
+				$shipping_zone_final = !empty($order_info['shipping_zone']) ? $order_info['shipping_zone'] : $order_info['shipping_zone_code'];
 
 				$find = array(
 					'{firstname}',
@@ -1584,7 +1594,7 @@ class ControllerSaleOrder extends Controller {
 					'address_2' => $order_info['shipping_address_2'],
 					'city'      => $order_info['shipping_city'],
 					'postcode'  => $order_info['shipping_postcode'],
-					'zone'      => $order_info['shipping_zone'],
+					'zone'      => $shipping_zone_final,
 					'zone_code' => $order_info['shipping_zone_code'],
 					'country'   => $order_info['shipping_country']
 				);
@@ -1739,6 +1749,8 @@ class ControllerSaleOrder extends Controller {
 					$format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
 				}
 
+				$shipping_zone_final = !empty($order_info['shipping_zone']) ? $order_info['shipping_zone'] : $order_info['shipping_zone_code'];
+
 				$find = array(
 					'{firstname}',
 					'{lastname}',
@@ -1760,7 +1772,7 @@ class ControllerSaleOrder extends Controller {
 					'address_2' => $order_info['shipping_address_2'],
 					'city'      => $order_info['shipping_city'],
 					'postcode'  => $order_info['shipping_postcode'],
-					'zone'      => $order_info['shipping_zone'],
+					'zone'      => $shipping_zone_final,
 					'zone_code' => $order_info['shipping_zone_code'],
 					'country'   => $order_info['shipping_country']
 				);
