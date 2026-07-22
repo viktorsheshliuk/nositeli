@@ -400,7 +400,7 @@ $('#button-review').on('click', function() {
   });
 });
 
-$(document).ready(function() {
+{# $(document).ready(function() {
   $('.thumbnails').magnificPopup({
     type:'image',
     delegate: 'a',
@@ -408,20 +408,20 @@ $(document).ready(function() {
       enabled: true
     }
   });
-});
+}); #}
 //--></script> 
 <script><!--
 $(document).ready(function() {
   $('#description').find('a>img').each(function(){
     $(this).parent().addClass('gallery');
   });
-  $('#description').magnificPopup({
-    delegate: 'a.gallery',
-    type: 'image',
-    gallery: {
-        enabled: true
-    }
-  });
+  //$('#description').magnificPopup({
+  //  delegate: 'a.gallery',
+  //  type: 'image',
+  //  gallery: {
+  //      enabled: true
+  //  }
+  //});
 
   gotoReview = function() {
     offset = $('#form-review').offset();

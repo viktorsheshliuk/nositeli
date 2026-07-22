@@ -36,234 +36,329 @@
   
 <div class="content">
   {{ column_left }}
-    {% if column_left and column_right %}
+    {# {% if column_left and column_right %}
     {% set class = 'thumbnails-block small' %}
     {% elseif column_left or column_right %}
     {% set class = 'thumbnails-block small' %}
     {% else %}
     {% set class = 'thumbnails-block' %}
-    {% endif %}
+    {% endif %} #}
     <div id="product-product" class="content-center">
      {{ content_top }}
       <h1 class="heading-title">{{ heading_title }}</h1>
       <div class="product-wrapp">
-        <div class="{{ class }}"> {% if thumb or images %}
-          <ul class="thumbnails">
-            <li class="btn-group">
-              {% if stock_status_id != 9 or ostatok > 0 %} 
-            	  <button type="button" data-toggle="tooltip" class="btn btn-default" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product_id }}');"><i class="fa fa-heart"></i></button>
-            	  <button type="button" data-toggle="tooltip" class="btn btn-default" title="{{ button_compare }}" onclick="compare.add('{{ product_id }}');"><i class="fa fa-exchange"></i></button>
+        <div class="left-panel {#{{ class }}#}">
+          <div class="product_all_images">
+          {% if thumb or images %}
+
+            {# <ul class="thumbnails">
+              {% if thumb %}
+              <li id="main_image"><a class="thumbnail" href="{{ popup }}" title="{{ heading_title }}"><img src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" width="{{main_image_width}}" height="{{main_image_height}}" /></a></li>
               {% endif %}
-            </li>
-            {% if thumb %}
-            <li id="main_image"><a class="thumbnail" href="{{ popup }}" title="{{ heading_title }}"><img src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" width="{{main_image_width}}" height="{{main_image_height}}" /></a></li>
-            {% endif %}
-            {% if images %}
-             {# повторяем 1 фото:#}
-            <li class="image-additional"><a class="thumbnail" href="{{ popup }}" title="{{ heading_title }}"> <img src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" width="{{additional_image_width}}px"/></a></li>
-            {% for image in images %}
-            <li class="image-additional"><a class="thumbnail" href="{{ image.popup }}" title="{{ heading_title }}"> <img src="{{ image.thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" /></a></li>
-            {% endfor %}
-            {% endif %}
-          </ul>
+              {% if images %}
+              <li class="image-additional"><a class="thumbnail" href="{{ popup }}" title="{{ heading_title }}"> <img src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" width="{{additional_image_width}}px"/></a></li>
+              {% for image in images %}
+              <li class="image-additional"><a class="thumbnail" href="{{ image.popup }}" title="{{ heading_title }}"> <img src="{{ image.thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" /></a></li>
+              {% endfor %}
+              {% endif %}
+            </ul> #}
+
+           
+              <!-- 1. Главный слайдер -->
+              <div class="fn_images_main swiper">
+                <div class="swiper-wrapper">
+                  
+                  <!-- Главное (основное) фото -->
+                  {% if thumb %}
+                    <a class="images_link swiper-slide" href="{{ popup }}" data-fancybox="group" title="{{ heading_title }}" data-caption="{{ heading_title }} #1">
+                      <img class="fn_image" src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
+                    </a>
+                  {% endif %}
+                  
+                  <!-- Дополнительные фото -->
+                  {% if images %}
+                    {% for image in images %}
+                      <a class="images_link swiper-slide" href="{{ image.popup }}" data-fancybox="group" data-caption="{{ heading_title }} #{{ loop.index + 1 }}" title="{{ heading_title }}">
+                        <img src="{{ image.thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
+                      </a>
+                    {% endfor %}
+                  {% endif %}
+                  
+                </div>
+                <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+              </div>
+
+              <!-- 2. Блок миниатюр (превью) -->
+              <div class="fn_images_nav images clearfix swiper swiper-thumbs">
+                <div class="swiper-wrapper">
+                  
+                  <!-- Миниатюра для главного фото -->
+                  {% if thumb %}
+                    <div class="images_item swiper-slide">
+                      <a class="images_link">
+                        <img src="{{ small }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
+                      </a>
+                    </div>
+                  {% endif %}
+                  
+                  <!-- Миниатюры для дополнительных фото -->
+                  {% if images %}
+                    {% for image in images %}
+                      <div class="images_item swiper-slide">
+                        <a class="images_link">
+                          <img src="{{ image.small }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
+                        </a>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                  
+                </div>
+                
+                <!-- Навигация (стрелки) -->
+                <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide">
+                  <svg width="10" height="21" viewBox="0 0 10 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 20L1 10.5L9 1" stroke="currentColor" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+                <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide">
+                  <svg width="10" height="21" viewBox="0 0 10 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 20L1 10.5L9 1" stroke="currentColor" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+                
+                <!-- Пагинация (опционально) -->
+                <div class="swiper-pagination"></div>
+               
+                <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span> 
+              </div>
+
+          
+          
+          
           {% endif %}
+          </div>
         </div>
       
-        <div class="left-panel">
-          
-          <ul class="list-unstyled">
-            {% if manufacturer %}
-            <li>{{ text_manufact }} <a href="{{ manufacturers }}">{{ manufacturer }}</a></li>
-            {% endif %}
-            <li>{{ text_model }} {{ model }}</li>
-            {% if reward %}
-            <li>{{ text_reward }} {{ reward }}</li>
-            {% endif %}
-            <li>{{ text_stock }} {{ stock }}</li>
-          </ul>
-          {% if stock_status_id == 9 and ostatok <= 0 %}
-            <div id="product_unavailable">{{text_unavailable}}</div>
-          {% endif %}
-          {% if price %}
-          {% if stock_status_id != 9 or ostatok > 0 %}
-           <div class="price-block">
-            {% if not special %}
-              <div class="price-text">{{ price }}</div>
-            {% else %}
-            <span style="text-decoration: line-through;">{{ price }}</span>
-              <div class="price-text">{{ special }}</div>
-            {% endif %}
-            {% if tax %}
-            <span class="tax">{{ text_tax }} {{ tax }}</span>
-            {% endif %}
-           </div>
-          <ul class="list-unstyled">
-            {% if points %}
-            <li>{{ text_points }} {{ points }}</li>
-            {% endif %}
-            {% if discounts %}
-            <li><b>{{ text_pri_pokupke }}</b></li>
-            <!--<li><hr></li>-->
-            {% for discount in discounts %}
-            <li>{{ discount.quantity }}{{ text_discount }}{{ discount.price }}</li>
-            {% endfor %}
-            {% endif %}
-          </ul>
-          {% endif %}
-          {% endif %}
-          <div id="product"> {% if options %}
-            <h3 class="heading-title">{{ text_option }}</h3>
-            {% for option in options %}
-            {% if option.type == 'select' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-              <select name="option[{{ option.product_option_id }}]" id="input-option{{ option.product_option_id }}" class="form-control">
-                <option value="">{{ text_select }}</option>
-                {% for option_value in option.product_option_value %}
-                <option value="{{ option_value.product_option_value_id }}">{{ option_value.name }}
-                {% if option_value.price %}
-                ({{ option_value.price_prefix }}{{ option_value.price }})
-                {% endif %} </option>
-                {% endfor %}
-              </select>
-            </div>
-            {% endif %}
-            {% if option.type == 'radio' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label">{{ option.name }}</label>
-              <div id="input-option{{ option.product_option_id }}"> {% for option_value in option.product_option_value %}
-                <div class="radio">
-                  <label>
-                    <input type="radio" name="option[{{ option.product_option_id }}]" value="{{ option_value.product_option_value_id }}" data-radiobutton="my" />
-                    {% if option_value.image %} <img src="{{ option_value.image }}" alt="{{ option_value.name }} {% if option_value.price %} {{ option_value.price_prefix }} {{ option_value.price }} {% endif %}" class="img-thumbnail" /> {% endif %}                  
-                    {{ option_value.name }}
-                    {% if option_value.price %}
-                    ({{ option_value.price_prefix }}{{ option_value.price }})
-                    {% endif %} </label>
+        <div class="right-panel">
+          <div class="product_details"> 
+            <div class="product_details_item">
+              <div class="product_header_wrapper">
+                <div class="available">
+                  <span class="no_stock fn_not_stock {% if ostatok > 0 %}hidden{% endif %}">{{ text_outstock }}</span>
+                  <span class="in_stock fn_in_stock {% if ostatok < 1 %}hidden{% endif %}">{{ text_instock }}</span>
                 </div>
-                {% endfor %} </div>
-            </div>
-            {% endif %}
-            {% if option.type == 'checkbox' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label">{{ option.name }}</label>
-              <div id="input-option{{ option.product_option_id }}"> {% for option_value in option.product_option_value %}
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" name="option[{{ option.product_option_id }}][]" value="{{ option_value.product_option_value_id }}" />
-                    {% if option_value.image %} <img src="{{ option_value.image }}" alt="{{ option_value.name }} {% if option_value.price %} {{ option_value.price_prefix }} {{ option_value.price }} {% endif %}" class="img-thumbnail" /> {% endif %}
-                    {{ option_value.name }}
-                    {% if option_value.price %}
-                    ({{ option_value.price_prefix }}{{ option_value.price }})
-                    {% endif %} </label>
+                <div class="rating_wrapper">
                 </div>
-                {% endfor %} </div>
-            </div>
-            {% endif %}
-            {#
-            {% if option.type == 'text' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-              <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" placeholder="{{ option.name }}" id="input-option{{ option.product_option_id }}" class="form-control" />
-            </div>
-            {% endif %}
-            {% if option.type == 'textarea' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-              <textarea name="option[{{ option.product_option_id }}]" rows="5" placeholder="{{ option.name }}" id="input-option{{ option.product_option_id }}" class="form-control">{{ option.value }}</textarea>
-            </div>
-            {% endif %}
-            {% if option.type == 'file' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label">{{ option.name }}</label>
-              <button type="button" id="button-upload{{ option.product_option_id }}" data-loading-text="{{ text_loading }}" class="btn btn-default btn-block"><i class="fa fa-upload"></i> {{ button_upload }}</button>
-              <input type="hidden" name="option[{{ option.product_option_id }}]" value="" id="input-option{{ option.product_option_id }}" />
-            </div>
-            {% endif %}
-            {% if option.type == 'date' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-              <div class="input-group date">
-                <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD" id="input-option{{ option.product_option_id }}" class="form-control" />
-                <span class="input-group-btn">
-                <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
-                </span></div>
-            </div>
-            {% endif %}
-            {% if option.type == 'datetime' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-              <div class="input-group datetime">
-                <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD HH:mm" id="input-option{{ option.product_option_id }}" class="form-control" />
-                <span class="input-group-btn">
-                <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                </span></div>
-            </div>
-            {% endif %}
-            {% if option.type == 'time' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-              <div class="input-group time">
-                <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="HH:mm" id="input-option{{ option.product_option_id }}" class="form-control" />
-                <span class="input-group-btn">
-                <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                </span></div>
-            </div>
-            {% endif %} #}
-            {% endfor %}
-            {% endif %}
-            {% if recurrings %}
-            <hr>
-            <h3>{{ text_payment_recurring }}</h3>
-            <div class="form-group required">
-              <select name="recurring_id" class="form-control">
-                <option value="">{{ text_select }}</option>
-                {% for recurring in recurrings %}
-                <option value="{{ recurring.recurring_id }}">{{ recurring.name }}</option>
-                {% endfor %}
-              </select>
-              <div class="help-block" id="recurring-description"></div>
-            </div>
-            {% endif %}
-          {% if stock_status_id != 9 or ostatok > 0 %} {#показываем кнопки купить#}
-            
-            {# <div class="form-group">
-              <label class="control-label" for="input-quantity">{{ entry_qty }}</label> #}
-              <div class="add-block">
-
-                <div class="quantity-block">
-                  <span class="minus">−</span>
-                  <input class="input_amount" type="text" name="quantity" value="{{ minimum }}" size="5" id="input-quantity"/>
-                  <span class="plus">+</span>
-                </div>
-
-
-                <input type="hidden" name="product_id" value="{{ product_id }}" />
-                <div class="add">
-                    <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-lg btn-block">{{ button_cart }}</button>
+                <div class="product_code">
+                  {{ text_model }}
+                  <span class="product_code_nubmer">{{ model }}</span> 
                 </div>
               </div>
-            {# </div> #}
-            <div>{{ formcreator_id46 }}</div>
-            {% if minimum > 1 %}
-            <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
-            {% endif %}
-          {% else %}
-            <div></div>
-          {% endif %}</div>
-          
-          
-          
-     {#      {% if review_status %}
-          <div class="rating-social-block">
-            <div class="rating">{% for i in 1..5 %}
-              {% if rating < i %}<span class="fa fa-stack"><i class="fa fa-star-o fa-stack-1x"></i></span>{% else %}<span class="fa fa-stack"><i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span>{% endif %}
-              {% endfor %}</div>
-           <div class="social-icon-block">
-              <span onClick='open("https://www.facebook.com/sharer.php?u="+window.location.href, "displayWindow","width=520,height=300,left=350,top=170,status=no, toolbar=no,menubar=no");'><img src="/image/facebook_share.png" title="Поделиться на Facebook" alt="Поделиться на Facebook" width="124px" height="24px" /></span>
-           </div>
+              <ul class="list-unstyled">
+                {% if manufacturer %}
+                <li>{{ text_manufact }} <a href="{{ manufacturers }}">{{ manufacturer }}</a></li>
+                {% endif %}
+                <li>{{ text_stock }} {{ stock }}</li>
+              </ul>
+              {% if stock_status_id == 9 and ostatok <= 0 %}
+                <div id="product_unavailable">{{text_unavailable}}</div>
+              {% endif %}
+              {% if price %}
+                {% if stock_status_id != 9 or ostatok > 0 %}
+                <div class="price-block {% if ostatok < 1 %}price_gray{% endif %}">
+                  <div class="text-price">{{ text_price_1 }}</div>
+                  {% if not special %}
+                    <div class="price {% if ostatok < 1 %}price_gray{% endif %}">
+                        <div class="fn_price">{{ price }}</div>
+                        <div class="currency">{{ symbol_right }}</div> 
+                    </div>
+                  {% else %}
+                  {# <span style="text-decoration: line-through;">{{ price }}</span> #}
+                    <div class="price red-price">
+                      <div class="fn_price">{{ special }}</div>
+                      <div class="currency">{{ symbol_right }}</div>
+                    </div>
+                    
+                    <div class="old_price_box">
+                      <div class="fn_discount_label ">-15%</div>
+                      <div class="old_price">
+                        <span class="fn_old_price">{{ price }}</span>
+                        {{ symbol_right }}
+                      </div>
+                    </div>
+
+
+
+                  {% endif %}
+                
+                  {# {% if tax %}
+                  <span class="tax">{{ text_tax }} {{ tax }}</span>
+                  {% endif %} #}
+                </div>
+                  <ul class="list-unstyled">
+                    {# {% if points %}
+                    <li>{{ text_points }} {{ points }}</li>
+                    {% endif %} #}
+                    {% if discounts %}
+                    <li><b>{{ text_pri_pokupke }}</b></li>
+                    {% for discount in discounts %}
+                    <li>{{ discount.quantity }}{{ text_discount }}{{ discount.price }}</li>
+                    {% endfor %}
+                    {% endif %}
+                  </ul>
+                {% endif %}
+              {% endif %}
+              <div id="product"> {% if options %}
+                <h3 class="heading-title">{{ text_option }}</h3>
+                {% for option in options %}
+                {% if option.type == 'select' %}
+                <div class="form-group{% if option.required %} required {% endif %}">
+                  <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
+                  <select name="option[{{ option.product_option_id }}]" id="input-option{{ option.product_option_id }}" class="form-control">
+                    <option value="">{{ text_select }}</option>
+                    {% for option_value in option.product_option_value %}
+                    <option value="{{ option_value.product_option_value_id }}">{{ option_value.name }}
+                    {% if option_value.price %}
+                    ({{ option_value.price_prefix }}{{ option_value.price }})
+                    {% endif %} </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                {% endif %}
+                {% if option.type == 'radio' %}
+                <div class="form-group{% if option.required %} required {% endif %}">
+                  <label class="control-label">{{ option.name }}</label>
+                  <div id="input-option{{ option.product_option_id }}"> {% for option_value in option.product_option_value %}
+                    <div class="radio">
+                      <label>
+                        <input type="radio" name="option[{{ option.product_option_id }}]" value="{{ option_value.product_option_value_id }}" data-radiobutton="my" />
+                        {% if option_value.image %} <img src="{{ option_value.image }}" alt="{{ option_value.name }} {% if option_value.price %} {{ option_value.price_prefix }} {{ option_value.price }} {% endif %}" class="img-thumbnail" /> {% endif %}                  
+                        {{ option_value.name }}
+                        {% if option_value.price %}
+                        ({{ option_value.price_prefix }}{{ option_value.price }})
+                        {% endif %} </label>
+                    </div>
+                    {% endfor %} </div>
+                </div>
+                {% endif %}
+                {% if option.type == 'checkbox' %}
+                <div class="form-group{% if option.required %} required {% endif %}">
+                  <label class="control-label">{{ option.name }}</label>
+                  <div id="input-option{{ option.product_option_id }}"> {% for option_value in option.product_option_value %}
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="option[{{ option.product_option_id }}][]" value="{{ option_value.product_option_value_id }}" />
+                        {% if option_value.image %} <img src="{{ option_value.image }}" alt="{{ option_value.name }} {% if option_value.price %} {{ option_value.price_prefix }} {{ option_value.price }} {% endif %}" class="img-thumbnail" /> {% endif %}
+                        {{ option_value.name }}
+                        {% if option_value.price %}
+                        ({{ option_value.price_prefix }}{{ option_value.price }})
+                        {% endif %} </label>
+                    </div>
+                    {% endfor %} </div>
+                </div>
+                {% endif %}
+                {#
+                {% if option.type == 'text' %}
+                <div class="form-group{% if option.required %} required {% endif %}">
+                  <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
+                  <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" placeholder="{{ option.name }}" id="input-option{{ option.product_option_id }}" class="form-control" />
+                </div>
+                {% endif %}
+                {% if option.type == 'textarea' %}
+                <div class="form-group{% if option.required %} required {% endif %}">
+                  <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
+                  <textarea name="option[{{ option.product_option_id }}]" rows="5" placeholder="{{ option.name }}" id="input-option{{ option.product_option_id }}" class="form-control">{{ option.value }}</textarea>
+                </div>
+                {% endif %}
+                {% if option.type == 'file' %}
+                <div class="form-group{% if option.required %} required {% endif %}">
+                  <label class="control-label">{{ option.name }}</label>
+                  <button type="button" id="button-upload{{ option.product_option_id }}" data-loading-text="{{ text_loading }}" class="btn btn-default btn-block"><i class="fa fa-upload"></i> {{ button_upload }}</button>
+                  <input type="hidden" name="option[{{ option.product_option_id }}]" value="" id="input-option{{ option.product_option_id }}" />
+                </div>
+                {% endif %}
+                {% if option.type == 'date' %}
+                <div class="form-group{% if option.required %} required {% endif %}">
+                  <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
+                  <div class="input-group date">
+                    <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD" id="input-option{{ option.product_option_id }}" class="form-control" />
+                    <span class="input-group-btn">
+                    <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                    </span></div>
+                </div>
+                {% endif %}
+                {% if option.type == 'datetime' %}
+                <div class="form-group{% if option.required %} required {% endif %}">
+                  <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
+                  <div class="input-group datetime">
+                    <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD HH:mm" id="input-option{{ option.product_option_id }}" class="form-control" />
+                    <span class="input-group-btn">
+                    <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                    </span></div>
+                </div>
+                {% endif %}
+                {% if option.type == 'time' %}
+                <div class="form-group{% if option.required %} required {% endif %}">
+                  <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
+                  <div class="input-group time">
+                    <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="HH:mm" id="input-option{{ option.product_option_id }}" class="form-control" />
+                    <span class="input-group-btn">
+                    <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                    </span></div>
+                </div>
+                {% endif %} #}
+                {% endfor %}
+                {% endif %}
+                
+              {% if stock_status_id != 9 or ostatok > 0 %} {#показываем кнопки купить#}
+                
+                {# <div class="form-group">
+                  <label class="control-label" for="input-quantity">{{ entry_qty }}</label> #}
+                  <div class="add-block">
+
+                    <div class="quantity-block">
+                      <span class="minus">−</span>
+                      <input class="input_amount" type="text" name="quantity" value="{{ minimum }}" size="5" id="input-quantity"/>
+                      <span class="plus">+</span>
+                    </div>
+
+
+                    <input type="hidden" name="product_id" value="{{ product_id }}" />
+                    <div class="add">
+                        <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn-orange product_btn">{{ button_cart }}</button>
+                    </div>
+
+
+                    <div class="wishlist_comparison_box">
+                      <button type="button" data-toggle="tooltip" class="wishlist_button" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product_id }}');"></button>
+                      <button type="button" data-toggle="tooltip" class="comparison_button" title="{{ button_compare }}" onclick="compare.add('{{ product_id }}');"></button>
+                    </div>
+
+
+                  </div>
+                {# </div> #}
+                <div>{{ formcreator_id46 }}</div>
+                {% if minimum > 1 %}
+                <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
+                {% endif %}
+              {% else %}
+                <div></div>
+              {% endif %}</div>
+            
+            
+            
+              {#  {% if review_status %}
+                <div class="rating-social-block">
+                  <div class="rating">{% for i in 1..5 %}
+                    {% if rating < i %}<span class="fa fa-stack"><i class="fa fa-star-o fa-stack-1x"></i></span>{% else %}<span class="fa fa-stack"><i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span>{% endif %}
+                    {% endfor %}</div>
+                <div class="social-icon-block">
+                    <span onClick='open("https://www.facebook.com/sharer.php?u="+window.location.href, "displayWindow","width=520,height=300,left=350,top=170,status=no, toolbar=no,menubar=no");'><img src="/image/facebook_share.png" title="Поделиться на Facebook" alt="Поделиться на Facebook" width="124px" height="24px" /></span>
+                </div>
+                </div>
+                {% endif %} #}
+            </div>
           </div>
-          {% endif %} #}
         </div>
       </div>
       <div class="tabs-product">
@@ -410,185 +505,15 @@
         {% set i = i + 1 %}
         {% endfor %} </div>
         {% endif %}
-{#
-        {% if tags %}
-        <p>{{ text_tags }}
-        {% for i in 0..tags|length %}
-        {% if i < (tags|length - 1) %} <a href="{{ tags[i].href }}">{{ tags[i].tag }}</a>,
-        {% else %} <a href="{{ tags[i].href }}">{{ tags[i].tag }}</a> {% endif %}
-        {% endfor %} </p>
-        {% endif %}                       #}
-
-{#
-<input type="checkbox" id="side-checkbox" />
-<div class="side-panel" id="side-panel">
-    <label class="side-button-2" for="side-checkbox">+</label>    
-    <div class="side-title">Выдвижная панель:</div>
-    <p>Информация в панеле</p>
-    
-</div>
-#}
-   {#
-<div class="side-button-1-wr ">
-    <label class="side-button-1" for="side-checkbox">
-        <div class="side-b side-open">Открыть</div>
-        <div class="side-b side-close">Закрыть</div>
-    </label>
-</div>
-#}
-<div class="popup-fade"></div>
-<style>
-.popup-fade{
-  display:none;
-}
-.popup-fade:before {
-  content: '';
-  background: #000;
-  position: fixed; 
-  left: 0;
-  top: 0;
-  width: 100%; 
-  height: 100%;
-  opacity: 0.7;
-  z-index: 9999;
-}
-
-
-/* Оформление панели */
-#side-checkbox {
-    display: none;
-}
-.side-panel {
-    position: fixed;
-    z-index: 999999;
-    top: 0;
-    left: 100%;
-    background: #337AB7;
-    transition: all 0.5s;   
-    width: 320px;
-    height: 100vh;
-    box-shadow: -10px 0 20px rgba(0,0,0,0.4);
-    color: #FFF;
-    padding: 40px 20px;
-}
-.side-title {
-    font-size: 20px;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #BFE2FF;
-}
-/* Оформление кнопки на странице */
-.side-button-1-wr {
-    text-align: center; /* Контейнер для кнопки, чтобы было удобнее ее разместить */
-}
-.side-button-1 {
-    display: inline-block;
-}
-.side-button-1 .side-b {
-    margin: 10px;
-    text-decoration: none;
-    position: relative;
-    font-size: 20px;
-    line-height: 20px;
-    padding: 12px 30px;
-    color: #FFF;
-    font-weight: bold;
-    text-transform: uppercase; 
-    font-family: 'Roboto Condensed', Тahoma, sans-serif;
-    background: #337AB7;
-    cursor: pointer; 
-    border: 2px solid #BFE2FF;
-}
-.side-button-1 .side-b:hover,
-.side-button-1 .side-b:active,
-.side-button-1 .side-b:focus {
-    color: #FFF;
-}
-.side-button-1 .side-b:after,
-.side-button-1 .side-b:before {
-    position: absolute;
-    height: 4px;
-    left: 50%;
-    bottom: -6px;
-    content: "";
-    transition: all 280ms ease-in-out;
-    width: 0;
-}
-.side-button-1 .side-open:after,
-.side-button-1 .side-open:before {
-    background: green;
-}
-.side-button-1 .side-close:after,
-.side-button-1 .side-close:before {
-    background: red;
-}
-.side-button-1 .side-b:before {
-    top: -6px;
-}
-.side-button-1 .side-b:hover:after,
-.side-button-1 .side-b:hover:before {
-    width: 100%;
-    left: 0;
-}
-/* Переключатели кнопки 1 */
-.side-button-1 .side-close {
-    display: none;
-}
-#side-checkbox:checked + .side-panel + .side-button-1-wr .side-button-1 .side-open {
-    display: none;
-}
-#side-checkbox:checked + .side-panel + .side-button-1-wr .side-button-1 .side-close {
-    display: block;
-}
-#side-checkbox:checked + .side-panel {
-    left: calc(100% - 320px);
-}
-
-/* Оформление кнопки на панеле */
-.side-button-2 {
-    font-size: 30px;
-    border-radius: 20px;
-    position: absolute;
-    z-index: 1;
-    top: 8px;
-    right: 8px;
-    cursor: pointer;
-    transform: rotate(45deg);
-    color: #BFE2FF;    
-    transition: all 280ms ease-in-out;    
-}
-.side-button-2:hover {
-    transform: rotate(45deg) scale(1.1);    
-    color: #FFF;
-}
-</style>
-
-
  {{ content_bottom }}
 </div>
 <h2 style="display:none">{{ seo_h2 }}</h2>
 
+
+<style>
+</style>
+
 <script><!--
-
-  $('select[name=\'recurring_id\'], input[name="quantity"]').change(function(){
-    $.ajax({
-      url: 'index.php?route=product/product/getRecurringDescription',
-      type: 'post',
-      data: $('input[name=\'product_id\'], input[name=\'quantity\'], select[name=\'recurring_id\']'),
-      dataType: 'json',
-      beforeSend: function() {
-        $('#recurring-description').html('');
-      },
-      success: function(json) {
-        $('.alert-dismissible, .text-danger').remove();
-
-        if (json['success']) {
-          $('#recurring-description').html(json['success']);
-        }
-      }
-    });
-  });  
-
   $('#button-cart').on('click', function() {
     $.ajax({
       url: 'index.php?route=checkout/cart/add',
@@ -738,30 +663,79 @@
 //--></script>
 
 <script><!--
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function () {
+    // Функция для синхронизации высоты миниатюр с главным слайдером
+    function syncThumbsHeight() {
+        const mainSlider = document.querySelector('.fn_images_main');
+        const thumbsSlider = document.querySelector('.fn_images_nav');
 
-//  для боковой панели
-  $(document).mouseup(function (e) {
-    var container = $("#side-panel");
-    if (container.has(e.target).length === 0){
-        if($("#side-checkbox").prop('checked')){
-            //container.hide();
-            $("#side-checkbox").prop('checked',false);
-            $('.popup-fade').hide(); 
-            }
+        if (!mainSlider || !thumbsSlider) return;
+
+        // Если экран меньше 576px (мобилка, где слайдер горизонтальный снизу)
+        if (window.innerWidth < 576) {
+            thumbsSlider.style.height = ''; // Сбрасываем инлайн-высоту, отдав ее на откуп CSS
+            return;
+        }
+
+        // Для десктопов и планшетов (>= 576px) — синхронизируем высоту
+        const mainHeight = mainSlider.offsetHeight;
+        thumbsSlider.style.height = mainHeight + 'px';
     }
+
+    // 1. Инициализируем слайдер с миниатюрами
+    const galleryThumbs = new Swiper('.fn_images_nav', {
+        spaceBetween: 18,        // Расстояние между миниатюрами
+        slidesPerView: 'auto',        // Сколько миниатюр показывать по умолчанию
+        freeMode: true,          // Свободное перетаскивание
+        watchSlidesProgress: true, // Следить за прогрессом слайдов
+        direction: 'vertical',   // Вертикальное расположение (как на сайте-примере)
+        navigation: {
+            nextEl: '.fn_images_nav .swiper-button-next',
+            prevEl: '.fn_images_nav .swiper-button-prev',
+        },
+        pagination: {
+            el: '.fn_images_nav .swiper-pagination',
+            clickable: true,
+            dynamicBullets: true,
+        },
+        // Адаптивные настройки самого Swiper под мобилки
+        breakpoints: {
+            0: {
+                direction: 'horizontal', // На мобилках миниатюры крутятся горизонтально
+                spaceBetween: 12,
+                navigation: false,
+            },
+            577: {
+                direction: 'vertical',   // От 576px и выше — строго вертикально
+            }
+        }
+    });
+
+    // 2. Инициализируем главный слайдер и привязываем к нему миниатюры
+    const galleryMain = new Swiper('.fn_images_main', {
+        spaceBetween: 0,
+        navigation: {
+            nextEl: '.fn_images_main .swiper-button-next',
+            prevEl: '.fn_images_main .swiper-button-prev',
+        },
+        thumbs: {
+            swiper: galleryThumbs, // Связка с блоком миниатюр выше
+        },
+    });
+
+    // Вызываем синхронизацию высоты сразу после загрузки
+    syncThumbsHeight();
+
+    // И повторяем при изменении размера окна браузера (адаптив)
+    window.addEventListener('resize', syncThumbsHeight);
+
+    // Инициализация Fancybox для всех элементов с атрибутом data-fancybox
+    Fancybox.bind("[data-fancybox]", {
+      Thumbs: false,
+    });
 });
-$('#side-checkbox').click(function(){
-  if ($(this).prop('checked')){
-    $('.popup-fade').show();
-  } else {
-    $('.popup-fade').hide(); 
-  }
-});
 
-//
-
-
+{# $(document).ready(function() {
   $('.thumbnails').magnificPopup({
     type:'image',
     delegate: 'a',
@@ -769,7 +743,7 @@ $('#side-checkbox').click(function(){
       enabled: true
     }
   });
-});
+}); #}
 {#
 
   $('.date').datetimepicker({
@@ -792,9 +766,7 @@ $('#side-checkbox').click(function(){
 
 {# замена картинки при клике на опцию #}
 <script>
-    var widthBigImage = 500; //первоначальное значение ширины картинки 
-   //var idOption = '#input-option14'; // CSS селектор опции #input-option217, измените на ваш селектор
-    //var OptionRadio = '[name="option[13]"]';
+    {# var widthBigImage = 500; //первоначальное значение ширины картинки 
     var bigImage = document.querySelector('.thumbnails li a');
     var bigImageImg = bigImage.querySelector('img');
   
@@ -809,34 +781,15 @@ $('#side-checkbox').click(function(){
       hrefAllImages[i] = allImages[i].getAttribute('href');
     }
     $('.thumbnails .image-additional a').mouseenter(function(){
-        //console.log($(this).attr('href'));
         $('.thumbnails li a').removeClass('selected');
         $(this).addClass('selected');
 
-       // $('#main_image').fadeOut('fast');
         $('#main_image a img').attr('src', $(this).attr('href'));
-       // $('#main_image').fadeIn('fast');
-      });
-
-
-    /*
-    function changePicture() {
-      var numberOption = document.querySelector(idOption).options.selectedIndex-1;
-      if (numberOption == -1) numberOption = 0; 
-      var newPicture = hrefAllImages[numberOption];
-      bigImage.setAttribute('href', newPicture);
-      bigImageImg.setAttribute('src', newPicture);
-      bigImageImg.style.width = widthBigImage+'px';
-    } 
-    var Element = document.querySelector(idOption);
-    */
-    //if (Element) {   //проверка, есть ли опции на странице
-    //  document.querySelector(idOption).setAttribute('onchange', 'changePicture()');
-    //}
+    }); #}
 
     //для опций в виде RadioButton
     
-    var radio = document.querySelectorAll('input[data-radiobutton="my"]');
+    {# var radio = document.querySelectorAll('input[data-radiobutton="my"]');
      if (radio){
         for(i = 0; i<radio.length; i++){
           radio[i].onchange = checkRadio;
@@ -856,8 +809,7 @@ $('#side-checkbox').click(function(){
       bigImage.setAttribute('href', newPicture);
       bigImageImg.setAttribute('src', newPicture);
       bigImageImg.style.width = widthBigImage+'px';
-    }
+    } #}
 
 </script>
-
 {{ footer }} 

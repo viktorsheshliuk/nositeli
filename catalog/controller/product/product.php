@@ -281,43 +281,42 @@ class ControllerProductProduct extends Controller {
 
 			$this->load->model('tool/image');
 
+			// 1. Главное фото (для основного слайдера и превью главного фото)
 			if ($product_info['image']) {
-				$data['popup'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height'));
+				$data['popup'] = $this->model_tool_image->resize($product_info['image'], 800, 800);  // Для Fancybox
+				$data['thumb'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height'));  // Для главного слайдера
+				$data['small'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'));  // Для миниатюр
 			} else {
 				$data['popup'] = '';
+				$data['thumb'] = '';
+				$data['small'] = '';
 			}
 
-			 //og:image 
+			// og:image
 			$this->document->setOgimage($this->model_tool_image->resize($product_info['image'], 228, 228));
 
-
-			if ($product_info['image']) {
-				$data['thumb'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height'));
-			} else {
-				$data['thumb'] = '';
-			}
-
+			// 2. Дополнительные фото
 			$data['images'] = array();
 
 			$results = $this->model_catalog_product->getProductImages($this->request->get['product_id']);
 
 			foreach ($results as $result) {
 				$data['images'][] = array(
-					'popup' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height')),
-					'thumb' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'))
+					'popup' => $this->model_tool_image->resize($result['image'], 800, 800),  // Для Fancybox
+					'thumb' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')),  // Для главного слайдера
+					'small' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'))   // Для вертикальных миниатюр
 				);
 			}
 
 			if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
-				$data['price'] = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-				$this->document->setProductTotalvalue(round($product_info['price'],2)); // динамический ремаркетинг
+				$data['price'] = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency'], '', false);
 			} else {
 				$data['price'] = false;
 			}
 			$data['price'] = str_replace(".00","",$data['price']); //удаление нолей после запятой в цене товара   
+
 			if ((float)$product_info['special']) {
-				$data['special'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-				$this->document->setProductTotalvalue(round($product_info['special'],2)); // динамический ремаркетинг
+				$data['special'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency'], '', false);
 			} else {
 				$data['special'] = false;
 			}
@@ -327,6 +326,8 @@ class ControllerProductProduct extends Controller {
 			} else {
 				$data['tax'] = false;
 			}
+
+			$data['symbol_right'] = $this->currency->getSymbolRight($this->session->data['currency']);
 
 			$discounts = $this->model_catalog_product->getProductDiscounts($this->request->get['product_id']);
 

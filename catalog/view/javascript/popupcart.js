@@ -20,7 +20,7 @@ $(document).ready(function(){
 	$('body').append('<div id="load_cart"></div>');
 	$('#load_cart').load('index.php?route=extension/module/popupcart', function() {
 		add_class();
-		p_array();
+		//p_array();
 		
 		carousel();
 		
@@ -135,11 +135,11 @@ var cart = {
 						}
 						carousel();
 					});
-				if (options.length) {
-					replace_button(product_id, 1);
-				} else {
-					replace_button(product_id, 0);
-				}
+				// if (options.length) {
+				// 	replace_button(product_id, 1);
+				// } else {
+				// 	replace_button(product_id, 0);
+				// }
 			}	
 		}
 	});

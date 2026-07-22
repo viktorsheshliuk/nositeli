@@ -138,7 +138,7 @@ function carousel () {
 	});
 }
 
-function p_array() {
+{# function p_array() {
 	{% for product in products %}
 		{% if product.option %}
 			replace_button('{{product.id}}', 1);
@@ -163,5 +163,5 @@ function replace_button(product_id, options){
 			$('html, body').find('.'+product_id).attr('onclick', '$(\'#popupcart_extended\').popup(\'show\');').val(text).text(text).addClass('in_cart');
 		}
 	{% endif %}
-}
+} #}
 </script>
