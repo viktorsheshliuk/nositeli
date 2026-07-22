@@ -4618,13 +4618,14 @@ div.wrapper div.content-block div.product-thumb.transition div.caption p.price {
 }
 
 .module-block .html-module {
-
     padding: 25px;
-
     line-height: 25px;
-
     margin: 0;
-
+}
+#product-product .module-block .html-module {
+    padding: 0px; 
+    line-height: unset;
+    margin: 0;
 }
 
 @media (max-width: 768px) {
@@ -6804,6 +6805,124 @@ body.lock{overflow: hidden;}
 #product-product .product-wrapp .right-panel .price-block .price.price_gray  {
     color: #afafaf;
 }
+.product_delivery_payment {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.product_delivery_block {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 55%;
+}
+.product_payment_block {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 38%;
+    max-width: 340px;
+}
+.delivery_payment_ttl {
+    color: #5f5f5f;
+    font-weight: 500;
+    font-size: 23px;
+}
+.delivery_method {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.delivery_method_annotation {
+    color: #5b6770;
+}
+.delivery_method_annotation ul {
+    margin: 0;
+    padding: 0;
+}
+.delivery_method_top {
+    display: flex;
+    gap: 12px;
+}
+.delivery_method_image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    color: #fff;
+    background: #535e66;
+}
+.delivery_method_info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.delivery_method_name, .delivery_method_annotation .payment_method li {
+    color: #232221;
+    font-weight: 500;
+    font-size: 18px;
+}
+.delivery_method_image img {
+    -o-object-fit: cover;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+.delivery_method_annotation li {
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 12px;
+    font-size: 16px;
+    color: #5f5f5f;
+    padding-bottom: 8px;
+}
+.delivery_method_annotation li::before {
+    content: "";
+    position: relative;
+    width: 14px;
+    height: 2px;
+    background: #ff7a00;
+    flex-shrink: 0;
+}
+.payment_img_icon {
+    width: 100%;
+    gap: 10px;
+    margin-left: 30px;
+    align-items: stretch;
+}
+.payment_img_item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dfdfdf;
+    background: #eee;
+    border-radius: 4px;
+    padding: 4px 0;
+    width: 50px;
+}
+.payment_method {
+    align-items: flex-start;
+}
+.delivery_method_annotation .payment_method li {
+    flex-wrap: wrap;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -6830,24 +6949,30 @@ body.lock{overflow: hidden;}
 
 
 @media (max-width: 1366px){
+    .product_delivery_block {
+        width: 50%;
+    }
+    .product_payment_block {
+        width: 45%;
+    }
+    .product_delivery_block, .product_payment_block {
+        max-width: unset;
+    }
+    .product_delivery_payment {
+        gap: 16px;
+    }
     #product-product .product-wrapp .right-panel .add-block, .wishlist_comparison_box{
         gap: 16px;
     }
 }
 
 @media (max-width: 1200px){
-    /* .images {
-        width: 80px;
-        flex-shrink: 0;
+    .product_delivery_block, .product_payment_block {
+        width: 100%;
     }
-    .fn_images_nav .images_item .images_link {
-        width: 82px;
-        height: 82px;
+    .product_details_item {
+        padding: 0 12px 30px;
     }
-    .fn_images_nav .images_item .images_link img{
-        width: 80px;
-        height: 80px;
-    } */
     .product_btn{
         width: 200px;
     }
@@ -6875,6 +7000,12 @@ body.lock{overflow: hidden;}
 }
 
 @media (max-width: 991px){
+    .product_delivery_block, .product_payment_block {
+        width: 45%;
+    }
+    .product_delivery_payment {
+        gap: 0;
+    }
     .product_details_item {
         padding: 0 0 30px;
     }
@@ -6889,6 +7020,18 @@ body.lock{overflow: hidden;}
 }
 
 @media (max-width: 768px) {
+    .delivery_payment_ttl {
+        font-size: 20px;
+    }
+    .delivery_method_name {
+        font-size: 16px;
+    }
+    .product_delivery_payment {
+        gap: 24px;
+    }
+    .product_delivery_block, .product_payment_block {
+        width: 100%;
+    }
     .price-block .old_price{
         font-size: 16px;
     }
@@ -7189,6 +7332,6 @@ div.wrapper div.content-block div.product-thumb.transition div.caption p.price s
 }
 @media (min-width: 769px) and (max-width: 1758px){
     .wrapper {
-        padding: 5px;
+        padding: 10px;
     }
 }

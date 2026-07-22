@@ -481,6 +481,26 @@ class ControllerProductProduct extends Controller {
 			$data['recurrings'] = $this->model_catalog_product->getProfiles($this->request->get['product_id']);
 
 			$this->model_catalog_product->updateViewed($this->request->get['product_id']);
+
+			
+			$this->load->model('setting/module');
+			$module_info = $this->model_setting_module->getModule(65); //ID модуля HTML = 65
+
+			if ($module_info && !empty($module_info['status'])) {
+				
+				$language_id = $this->config->get('config_language_id');
+
+				if (isset($module_info['module_description'][$language_id])) {
+					
+					// $data['html_module_title'] = html_entity_decode($module_info['module_description'][$language_id]['title'], ENT_QUOTES, 'UTF-8');
+					
+					$data['html_module_content'] = html_entity_decode($module_info['module_description'][$language_id]['description'], ENT_QUOTES, 'UTF-8');
+				}
+				
+				$data['html_module_60'] = $this->load->controller('extension/module/html', $module_info);
+			} else {
+				$data['html_module_60'] = '';
+			}
 			
 			$data['column_left'] = $this->load->controller('common/column_left');
 			$data['column_right'] = $this->load->controller('common/column_right');
