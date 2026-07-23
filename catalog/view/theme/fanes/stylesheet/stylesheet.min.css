@@ -1559,13 +1559,13 @@ header #right-menu-language-select{
 
 }
 
-@media (max-width: 1024px) {
+/* @media (max-width: 1024px) {
 
     .content .column-left {
 
     display: none;
 
-}
+} */
 
 }
 .content .column-right {

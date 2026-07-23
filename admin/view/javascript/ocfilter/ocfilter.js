@@ -1,453 +1,821 @@
-var ocfilter = {
-	/**
-	   	URL GET Variables
-	**/
-	url: {},
-	/**
-	   	PHP Data (languages, filter params..)
-	**/
-	php: {},
-	/**
-	   	Initialization
-	**/
-	init: function() {
-		this.helper.setURLVars();
++function(global, $) {
+  'use strict';
+  
+  var SUMMERNOTE = {
+    placeholder: '',
+    emptyPara: '',
+    lang: 'en-US',
+    tabsize: 2,
+    height: 200,
+    disableDragAndDrop: false,
+    icons: {
+      caret: 'fa fa-caret-down',
+      magic: 'fa fa-magic',
+      bold: 'fa fa-bold',
+      underline: 'fa fa-underline',
+      eraser: 'fa fa-eraser',
+      font: 'fa fa-font',
+      unorderedlist: 'fa fa-list-ul',
+      orderedlist: 'fa fa-list-ol',
+      alignLeft: 'fa fa-align-left',
+      alignRight: 'fa fa-align-right',
+      alignCenter: 'fa fa-align-center',
+      alignJustify: 'fa fa-align-justify',
+      indent: 'fa fa-indent',
+      outdent: 'fa fa-outdent',
+      table: 'fa fa-table',
+      link: 'fa fa-link',
+      video: 'fa fa-video-camera',
+      arrowsAlt: 'fa fa-arrows-alt',
+      code: 'fa fa-code',
+      question: 'fa fa-info-circle',
+    },
+    toolbar: [
+      ['style', ['style']],
+      ['font', ['bold', 'underline', 'clear']],
+      ['color', ['color']],
+      ['para', ['ul', 'ol', 'paragraph']],
+      ['table', ['table']],
+      ['insert', ['link', 'image', 'video']],
+      ['view', ['fullscreen', 'codeview', 'help']]
+    ],
+    buttons: {
+      image: function(context) {
+        var ui = $.summernote.ui;
 
-	  /* OCFilter option values switcher */
-	  $(document).on('click', '.switcher .selected', function(e) {
-			var $this = $(this).parent('.switcher');
+        // create button
+        var button = ui.button({
+          contents: '<i class="fa fa-picture-o"></i>',
+          tooltip: $.summernote.lang[$.summernote.options.lang].image.image,
+          click: function () {
+            $('#modal-image').remove();
+          
+            $.ajax({
+              url: ocfilter.link('common/filemanager'),
+              dataType: 'html',
+              beforeSend: function() {
+                $('#button-image').prop('disabled', true).find('i').replaceWith('<i class="fa fa-circle-o-notch fa-spin"></i>');
+              },
+              complete: function() {
+                $('#button-image').prop('disabled', false).find('i').replaceWith('<i class="fa fa-upload"></i>');
+              },
+              success: function(html) {
+                $('body').append('<div id="modal-image" class="modal">' + html + '</div>');
+                
+                $('#modal-image').modal('show');
+                
+                $('#modal-image').delegate('a.thumbnail', 'click', function(e) {
+                  e.preventDefault();
+                  
+                  $(context.$note).summernote('insertImage', $(this).attr('href'));
+                                
+                  $('#modal-image').modal('hide');
+                });
+              }
+            });            
+          }
+        });
+      
+        return button.render();
+      }
+    }  
+  };
+   
+  var _filters = $.expr[":"];
+  
+  if (!_filters.focus) { 
+    _filters.focus = function(elem) {
+      return elem === document.activeElement && (elem.type || elem.href);
+    };
+  }   
+   
+  var OCFilter = function() {
+    var that = this;
+    
+    $.fn.autocomplete = this.autocomplete;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      $(that.startup.call(that)); 
+    }); 
+  };
+  
+  OCFilter.prototype.startup = function() {      
+    // Fix BS nested tabs
+    $('a[data-toggle="tab"]').on('hide.bs.tab', function() {
+      $($(this).attr('href')).removeClass('active');
+    }).on('show.bs.tab', function() {
+      $($(this).attr('href')).addClass('active');
 
-	    if (!$this.hasClass('active')) {
-	      $('.switcher').removeClass('active');
-	      $this.addClass('active');
-	    } else {
-	      $this.removeClass('active');
-	    }
-	  });
-
-	  $(document).on('change', '.switcher input[type=\'checkbox\']', function() {
-	    var $this = $(this), selected = $this.parents('.switcher').find('.selected'), text = $this.parent('label').text(), length = selected.find('span').length, counter = selected.find('strong').length;
-
-			if (counter) {
-	      selected.find('strong').text($this.parents('.switcher').find('.values input[name*=\'[options_id][]\']:checked').length);
-			} else {
-		    if ($this.prop('checked')) {
-	        selected.append('<span id="v-' + this.value + '">' + text + '</span>').find('b').remove();
-		    } else {
-		      if (length === 1) {
-		        $('#v-' + this.value).replaceWith('<b>' + ocfilter.php.text_select + '</b>');
-		      } else {
-		        $('#v-' + this.value).remove();
-		      }
-		    }
-			}
-	  });
-
-	  $(document).click(function(e){
-	    if (!$(e.target).parents('.switcher').length) $('.switcher.active').removeClass('active');
-	    if (!$(e.target).parents('#colorbox').length) {
-				$('#colorbox').remove();
-	      $('a.color-handler').removeClass('active');
-			}
-	  });
-
-		/* Floating Actions list */
-		var actions = $('#list-actions'), scrolled = false, timeout = null;
-
-		$(window).on('scroll', function() {
-			if (window.pageYOffset > 35 && !scrolled) {
-				scrolled = true;
-
-				actions.addClass('scrolled');
-			} else if (window.pageYOffset < 35 && scrolled) {
-				scrolled = false;
-
-				actions.removeClass('scrolled');
-			}
-		});
-
-		$('.list input[name*=\'selected\'], .list thead input:first').on('change', function() {
-			clearTimeout(timeout);
-
-			actions.addClass('change');
-
-			timeout = setTimeout(function(){ actions.removeClass('change'); }, 230);
-
-		  $('strong > span', actions).text($('input[name*=\'selected\']:checked').length);
-		});
-
-		/* Subfields */
-
-		$('.with-subfield').on('change', function(e){
-			var $this = $(this), tag = e.target.nodeName.toLowerCase(), subfield = $this.attr('data-subfield');
-
-			if (tag == 'input') {
-				if (this.checked) {
-	        $('.sf-' + subfield).addClass('visible');
-				} else {
-	        $('.sf-' + subfield).removeClass('visible');
-				}
-			} else if (tag == 'select') {
-				$('.' + subfield).removeClass('visible');
-
-				if (this.value) {
-	        $('.sf-' + this.value.replace(/\_/g, '-')).addClass('visible');
-				}
-			}
-		});
-	},
-	/**
-	   	OCFilter List
-	**/
-	list: {
-		init: function () {
-			$('tr.filter input').keydown(function(e) {
-				if (e.keyCode == 13) ocfilter.list.filter();
-			});
-
-			$('table input.edit, table select.edit').on('change', function(){
-				var e = $(this), type = e.attr('type'), post = {
-					field: encodeURIComponent(e.attr('name')),
-					value: (type == 'checkbox' ? (this.checked ? 1 : 0) : encodeURIComponent(this.value)),
-					option_id: e.attr('for')
-				};
-
-				e.fadeTo(250, .3);
-
-				$.post('index.php?route=extension/module/ocfilter/editImmediately&user_token=' + ocfilter.url['user_token'], post, function(json){
-					if (json['status'] === true) {
-						e.fadeTo(250, 1).css('border', '1px solid #4BB349');
-
-						if (type == 'checkbox') {
-							var span = e.next('span');
-
-							span.text(span.text() == ocfilter.php.text_enabled ? ocfilter.php.text_disabled : ocfilter.php.text_enabled);
-						}
-					} else {
-						e.fadeTo(250, 1).css('border', '1px solid #E2302F');
-					}
-			  }, 'json');
-			});
-		},
-		filter: function () {
-			var $this = ocfilter, url = 'index.php?route=extension/module/ocfilter/filter&user_token=' + $this.url['user_token'], params = {};
-
-			for (var i = 0; i < $this.php.filter_get.length; i++) {
-				var key = $this.php.filter_get[i];
-
-				params[key] = $('[name="' + key + '"]').val();
-
-			  if (params[key] != '') {
-					url += '&' + key + '=' + encodeURIComponent(params[key]);
-				}
-			}
-
-			window.location = url;
-		}
-	},
-	/**
-	   	OCFilter Form
-	**/
-	form: {
-		init: function() {
-			/* Color picker by SooR. 12-07-2013 */
-
-			var colorbox = [], colors = ['f00', 'ff0', '0f0', '0ff', '00f', 'f0f', 'fff', 'ebebeb', 'e1e1e1', 'd7d7d7', 'cccccc', 'c2c2c2', 'b7b7b7', 'acacac', 'a0a0a0', '959595', 'ee1d24', 'fff100', '00a650', '00aeef', '2f3192', 'ed008c', '898989', '7d7d7d', '707070', '626262', '555', '464646', '363636', '262626', '111', '000', 'f7977a', 'fbad82', 'fdc68c', 'fff799', 'c6df9c', 'a4d49d', '81ca9d', '7bcdc9', '6ccff7', '7ca6d8', '8293ca', '8881be', 'a286bd', 'bc8cbf', 'f49bc1', 'f5999d', 'f16c4d', 'f68e54', 'fbaf5a', 'fff467', 'acd372', '7dc473', '39b778', '16bcb4', '00bff3', '438ccb', '5573b7', '5e5ca7', '855fa8', 'a763a9', 'ef6ea8', 'f16d7e', 'ee1d24', 'f16522', 'f7941d', 'fff100', '8fc63d', '37b44a', '00a650', '00a99e', '00aeef', '0072bc', '0054a5', '2f3192', '652c91', '91278f', 'ed008c', 'ee105a', '9d0a0f', 'a1410d', 'a36209', 'aba000', '588528', '197b30', '007236', '00736a', '0076a4', '004a80', '003370', '1d1363', '450e61', '62055f', '9e005c', '9d0039', '790000', '7b3000', '7c4900', '827a00', '3e6617', '045f20', '005824', '005951', '005b7e', '003562', '002056', '0c004b', '30004a', '4b0048', '7a0045', '7a0026'];
-
-	    colorbox.push('<div id="colorbox">');
-
-			for (var i = 0; i < colors.length; i++) {
-	      colorbox.push('<a href="#' + colors[i] + '" style="background-color: #' + colors[i] + ';"><i style="background-color: #' + colors[i] + ';"></i></a>');
-			}
-
-			colorbox.push('</div>');
-
-	    colorbox = colorbox.join('');
-
-			$(document).on('click', 'a.color-handler', function(){
-				$('#colorbox').remove();
-	      $('a.color-handler').not(this).removeClass('active');
-
-				var $this = $(this);
-
-				$this.toggleClass('active');
-
-				if ($this.hasClass('active')) {
-					$this.after(colorbox);
-		 		}
-
-				return false;
-			});
-
-	    $(document).on('click', '#colorbox a', function(){
-				var $this = $(this), color = $this.attr('href').substr(1), value = $this.parents('li');
-
-				value.find('input[name*=\'[color]\']').val(color);
-	   		value.find('.color-handler').css('background', '#' + color);
-
-				return false;
-			});
-
-			$(document).on('click', 'a.image-handler', function(e) {
-        e.preventDefault();
-
-    		$('.popover').popover('hide', function() {
-    			$('.popover').remove();
-    		});
-
-    		var element = this;
-
-    		$(element).popover({
-    			html: true,
-    			placement: 'left',
-    			trigger: 'manual',
-    			content: function() {
-    				return '<button type="button" id="button-image" class="btn btn-primary"><i class="fa fa-pencil"></i></button> <button type="button" id="button-clear" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>';
-    			}
-    		});
-
-    		$(element).popover('show');
-
-    		$('#button-image').on('click', function() {
-    			$('#modal-image').remove();
-
-    			$.ajax({
-    				url: 'index.php?route=common/filemanager&user_token=' + getURLVar('user_token') + '&target=' + $(element).closest('li').find('input[name$=\'[image]\']').attr('id') + '&thumb=' + $(element).attr('id'),
-    				dataType: 'html',
-    				beforeSend: function() {
-    					$('#button-image i').replaceWith('<i class="fa fa-circle-o-notch fa-spin"></i>');
-    					$('#button-image').prop('disabled', true);
-    				},
-    				complete: function() {
-    					$('#button-image i').replaceWith('<i class="fa fa-pencil"></i>');
-    					$('#button-image').prop('disabled', false);
-    				},
-    				success: function(html) {
-    					$('body').append('<div id="modal-image" class="modal">' + html + '</div>');
-
-    					$('#modal-image').modal('show');
-    				}
-    			});
-
-    			$(element).popover('hide', function() {
-    				$('.popover').remove();
-    			});
-    		});
-
-    		$('#button-clear').on('click', function() {
-          $(element).find('img').attr('src', '');
-
-    			$(element).closest('li').find('input[name$=\'[image]\']').attr('value', '');
-
-    			$(element).popover('hide', function() {
-    				$('.popover').remove();
-    			});
-    		});
-			});
-
-			/* Numeric values clone for another name fields */
-		 	if (ocfilter.php.languages.length > 1) {
-				$(document).on('keyup', '.value-name', function() {
-					var $this = $(this), fields = $this.parents('.fields').find('input[name*=\'[name]\']').not(this), text = this.value, numeric = /^\d/g.test(text);
-
-					if (numeric) fields.val(text);
-				});
-			}
-
-			$(document).on('change', 'input[name=\'color\']', function(){
-				if (this.checked) {
-					$('a.color-handler').addClass('visible');
-				} else {
-          $('a.color-handler.visible').removeClass('visible');
-				}
-
-        ocfilter.php.color = this.checked;
+     // $(this).closest('.nav').parent().find('.tab-content > .tab-pane').removeClass('active');
+    });
+    
+    $('[data-toggle="popover"]').each(function() {
+      var options = $.extend({}, $(this).data());
+      
+      if (!options.trigger) {
+        options.trigger = 'hover';
+      }
+      
+      options.html = true;
+      
+      options.template = '<div class="popover ocf-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>';
+      
+      $(this).popover(options);
+    });
+  
+    $(document).on('click.dismiss-popover', function(e) {
+      $('[data-toggle="popover"], [aria-describedby^="popover"]').each(function() {        
+        //the 'is' for buttons that trigger popups
+        //the 'has' for icons within a button that triggers a popup
+        if (($(this).popover().data().trigger == 'click' || ($(this).data('bs.popover').filters || { trigger: '' }).trigger == 'click') && !$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+          (($(this).popover('hide').data('bs.popover') || {}).inState || {}).click = false  // fix for BS 3.3.6
+        }
       });
+    });
+    
+    $(document).on('click', '[data-dismiss="popover"]', function(e) {
+      $('[aria-describedby="' + $(this).closest('.popover').attr('id') + '"]').popover('hide');
+    });
+    
+    $('[data-trigger="onclick"]').trigger('click');
 
-      $(document).on('change', 'input[name=\'image\']', function(){
-    		if (this.checked) {
-					$('a.image-handler').addClass('visible');
-				} else {
-          $('a.image-handler.visible').removeClass('visible');
-				}
+    $('select[data-selected]').each(function() {
+      $(this).val($(this).attr('data-selected')).trigger('change');  
+    });
+    
+    $('[data-checked]').each(function() {
+      $(this).find('input').prop('checked', false).parent('.btn').removeClass('active'); 
+      
+      $(this).find('input[value="' + $(this).attr('data-checked') + '"]').prop('checked', true).trigger('change').parent('.btn').addClass('active'); 
+    });    
 
-        ocfilter.php.image = this.checked;
-			});
-		},
+    // Indicate "on" buttons
+    var markCheckedBtn = function() {
+      $(this).closest('[data-toggle="buttons"]').find('.btn').removeClass('btn-info');
 
-		valueRow: $('#sortable li').length,
+      if ((this.value - 0) > 0) {
+        $(this).closest('.btn').addClass('btn-info');
+      }
+    };
 
-	  deleteValue: function(value) {
-	    value.parent('li').remove();
+    $('[data-toggle="buttons"] input[type="radio"]').on('change', markCheckedBtn).filter(':checked').each(markCheckedBtn);
+   
+    // Extended sort
+    $('.ocf-sort-order').on('click', function(e) {
+      e.stopPropagation();
 
-			this.valueRow--;
-	  },
+      var $target = $(e.target);
+           
+      if ($target.is('.ocf-input-placeholder')) {
+        $target = $target.prev();
+        
+        $('input[name="' + $target.attr('name') + '"][type="radio"]').prop('checked', false);
+        
+        $target.prop('disabled', false).focus();      
+      } else if ($target.is('[type="radio"]')) {
+        $('input[name="' + $target.attr('name') + '"][type="number"]').prop('disabled', true);
+      }
+    });
+     
+    // Get #column-left transition-duration 
+    var $columnLeft = $('#column-left');
+    
+    if (!$columnLeft.length) {
+      $columnLeft = $('#column-left-fix');
+    }
+    
+    if ($columnLeft.length) {
+      var
+        columnWidth = $columnLeft.width(),
+        cssDuration = $columnLeft.css('transition-duration'),
+        transitionDuration = parseFloat(cssDuration.replace(/[^0-9\.]+/g, ''));
 
-	  addValue: function() {
-			var html = [];
-
-			html.push('<li>');
-			html.push('	<a class="delete" onclick="ocfilter.form.deleteValue($(this));">Delete</a>');
-			html.push('	<div class="fields">');
-			html.push('		<input type="hidden" name="ocfilter_option_value[insert][' + this.valueRow + '][color]" value="" />');
-			html.push('		<input type="hidden" name="ocfilter_option_value[insert][' + this.valueRow + '][image]" value="" id="value-image-' + this.valueRow + '" />');
-			html.push('		<input type="number" name="ocfilter_option_value[insert][' + this.valueRow + '][sort_order]" value="' + this.valueRow + '" />');
-
-			for (var i = 0; i < ocfilter.php.languages.length; i++) {
-				var language = ocfilter.php.languages[i];
-
-				html.push('	<label><input type="text" class="value-name" name="ocfilter_option_value[insert][' + this.valueRow + '][language][' + language.language_id + '][name]" value="" size="80" placeholder="Значение опции #' + this.valueRow + '" />&nbsp;<img src="language/' + language.code + '/' + language.code + '.png" title="' + language.name + '" /></label>');
-			}
-
-			html.push('	</div>');
-			html.push('	<a href="#" class="color-handler' + (ocfilter.php.color ? ' visible' : '') + '" title="' + ocfilter.php.text_select_color + '"></a>');
-			html.push('	<a href="#" class="image-handler' + (ocfilter.php.image ? ' visible' : '') + '" title="' + ocfilter.php.text_browse_image + '" id="value-image-thumb-' + this.valueRow + '"><img src="" alt="" /><i class="fa fa-fw fa-picture-o"></i></a>');
-		  html.push('</li>');
-
-      $('#sortable').append(html.join(''));
-
-    	this.valueRow++;
-	  }
-	},
-	/**
-	   	OCFilter Product Form
-	**/
-	productForm: {
-		category_id: null,
-		product_id: null,
-		length: null,
-		init: function() {
-      $('a[href=\'#tab-links\']').parent('li').after('<li><a href="#tab-ocfilter" data-toggle="tab">' + ocfilter.php.tab_ocfilter + '</a></li>');
-			$('#tab-links').after('<div class="tab-pane" id="tab-ocfilter"><h2>' + ocfilter.php.ocfilter_select_category + '</h2></div>');
-
-      $('a[href=\'#tab-general\']').tab('show');
-
-			if (undefined !== ocfilter.url['product_id']) {
-				this.product_id = ocfilter.url['product_id'];
-			}
-
-      this.length = $('#product-category div, input[type=\'checkbox\'][name=\'product_category[]\']:checked').length;
-
-	  	setInterval(function() {
-				var length = $('#product-category div, input[type=\'checkbox\'][name=\'product_category[]\']:checked').length;
-
-				if (ocfilter.productForm.length != length) {
-					ocfilter.productForm.length = length;
-
-					ocfilter.productForm.update();
-				}
-			}, 500);
-
-      this.update();
-		},
-		update: function() {
-      if ($('input[type=\'checkbox\'][name=\'product_category[]\']:checked:last').length > 0) {
-			  this.category_id = $('input[name=\'product_category[]\']:checked:last').val();
-      } else if ($('input[type=\'hidden\'][name=\'product_category[]\']:last').length > 0) {
-			  this.category_id = $('input[name=\'product_category[]\']:last').val();
+      if (/[0-9\.]+?s$/.test(cssDuration)) {
+        transitionDuration *= 1000;
       }
 
-			var html = [], get = {
-				user_token: ocfilter.url['user_token'],
-				category_id: this.category_id
-			};
+      if (transitionDuration) {
+        $columnLeft.data('transition-duration', transitionDuration);
+      } else {
+        function checkColumnLeft() {
+          if (columnWidth != $columnLeft.width()) {
+            columnWidth = $columnLeft.width();
 
-			if (this.product_id) {
-				get.product_id = this.product_id;
-			}
+            $columnLeft.trigger('resize');
+          }
 
-      if (!get.category_id) {
-      	$('#tab-ocfilter').html('<h2>' + ocfilter.php.ocfilter_select_category + '</h2>');
-
-				return;
-			}
-
-      $.get('index.php?route=extension/module/ocfilter/callback', get, function(json) {
-        if (json.message) {
-          $('#tab-ocfilter').html('<h2>' + json.message + '</h2>');
-
-					return;
-				}
-
-				html.push('<table class="form product-ocfilter-values">');
-
-				for (var i = 0; i < json.options.length; i++) {
-          var option = json.options[i], values = [], selecteds = [];
-
-          html.push('<tr' + (!option.status ? ' class="disabled"' : '') + '>');
-          html.push('<td width="20%">' + option.name + '</td><td width="80%">');
-
-          if (option.type == 'slide' || option.type == 'slide_dual') {
-						html.push('<input type="hidden" name="ocfilter_product_option[' + option.option_id + '][values][0][selected]" value="1" />');
-						html.push('<input type="text" name="ocfilter_product_option[' + option.option_id + '][values][0][slide_value_min]" value="' + option.slide_value_min + '" size="5" class="slide-value-min" />&nbsp;&mdash;&nbsp;<input type="text" name="ocfilter_product_option[' + option.option_id + '][values][0][slide_value_max]" value="' + option.slide_value_max + '" size="5" class="slide-value-max" />' + option.postfix + '');
-					} else {
-						if (option.values) {
-							for (var j in option.values) {
-	              var value = option.values[j];
-
-	              if (value.selected) {
-	                selecteds.push('<span id="v-' + value.value_id + '">' + value.name + option.postfix + '</span>');
-	              }
-
-	              values.push('<div>');
-
-                values.push(' <label><input type="checkbox" name="ocfilter_product_option[' + option.option_id + '][values][' + value.value_id + '][selected]" value="' + value.value_id + '"' + (value.selected ? ' checked="checked"' : '') + ' />' + value.name + option.postfix + '</label>');
-
-                values.push('</div>');
-							}
-
-	            if (!selecteds.length) selecteds = ['<b>' + ocfilter.php.text_select + '</b>'];
-
-	            html.push('<div class="switcher"><div class="selected">' + selecteds.join('') + '</div><div class="values">' + values.join('') + '</div>');
-	          }
-					}
-
-          html.push('</td></tr>');
+          setTimeout(checkColumnLeft, 1000);
         }
 
-        html.push('</table>');
+        checkColumnLeft();
+      }    
+    }   
+    
+    // BTN & Popover
+    $('.form-group-popover input').on('change', function(e, isTrigger) {
+      var $btn = $(this).parent(), $nav = $(this).closest('.form-group-popover');
 
-      	$('#tab-ocfilter').html(html.join(''));
-      }, 'json');
+      $nav.find('.popover').popover('hide');
+
+      $btn.popover({
+        animation: false,
+        content: function() {
+          return $btn.data().content
+        },
+        container: $nav,
+        viewport: { selector: $nav, padding: 15 },
+        html: true,
+        placement: 'right',
+        trigger: 'manual'
+      }).popover('show');
+    });
+
+    var checkNavPopover = function() {
+      $('.form-group-popover:visible input:checked').trigger('change', [ true ]);
+    };
+
+    $('.collapse').on('shown.bs.collapse', function() {
+      if ($(this).find('.form-group-popover').length > 0) {
+        checkNavPopover();
+      }
+    });
+
+    $('.nav-tabs a').on('shown.bs.tab', checkNavPopover);
+
+    if ($('#column-left').data('transition-duration')) {
+      $('#column-left').on('bsTransitionEnd', checkNavPopover).emulateTransitionEnd($('#column-left').data('transition-duration'));
+    } else {
+      $('#column-left').on('resize', checkNavPopover);
     }
-	},
-	/**
-	   	Helpers
-	**/
-	helper: {
-		setURLVars: function() {
-			var vars = window.location.href.replace(window.location.hash, '').split('?')[1].split('&'), $this = ocfilter;
 
-			for (var i = 0; i < vars.length; i++) {
-				var parts = vars[i].split('=');
+    checkNavPopover();       
+     
+    // New features 
+    var openedTime = localStorage.getItem('ocfOpenedTime') - 0;
 
-				ocfilter.url[parts[0]] = parts[1];
-			}
-		}
-	}
-};
+    if (!openedTime) {
+      openedTime = new Date().getTime();
 
-$(function(){
-  ocfilter.init();
+      localStorage.setItem('ocfOpenedTime', openedTime);
+    }
 
-	/**
-	   	OCFilter List
-	**/
-  if (ocfilter.url['route'] == 'extension/module/ocfilter/filter') {
-		ocfilter.list.init();
-	}
+    if ((openedTime + (24 * 60 * 60 * 1000 * 5)) > new Date().getTime()) {
+      $('[new-feature]').addClass('new-feature');
+    }      
+    
+    // Init Product Form
+    var route = this.getURLParam('route');
+      
+    if (route.substring(0, 16) == 'catalog/product/') {
+      this.initProduct();
+    }        
+  };
+  
+  OCFilter.prototype.getSummernoteOptions = function() {
+    return SUMMERNOTE;
+  };
+  
+  OCFilter.prototype.getURLParam = function(key) {
+    if (this.url) {
+      return 'undefined' != typeof this.url[key] && this.url[key];
+    } else {
+      this.url = {};
+    }
 
-	/**
-	   	OCFilter Form
-	**/
-	if (ocfilter.url['route'] == 'extension/module/ocfilter/addFilter' || ocfilter.url['route'] == 'extension/module/ocfilter/editFilter') {
-		ocfilter.form.init();
-	}
+    var urlQueryParts = [], urlPart;    
+    
+    if (global.location.search) {
+      urlQueryParts = global.location.search.substring(1).split('&');
+      
+      for (var i = 0, len = urlQueryParts.length; i < len; i++) {
+        urlPart = urlQueryParts[i].split('=');
+        
+        if (urlPart[0] && urlPart[1]) {
+          this.url[urlPart[0]] = urlPart[1];
+        }
+      }
+    }
+    
+    return this.getURLParam(key);
+  };
+  
+  OCFilter.prototype.link = function(route, params) {
+    var url = '';
+    
+    url += 'index.php?route=' + route;
+    
+    if (this.getURLParam('user_token')) {
+      url += '&user_token=' + this.getURLParam('user_token');
+    } else if (this.getURLParam('token')) {
+      url += '&token=' + this.getURLParam('token');
+    }    
+    
+    if (params) {
+      if ($.isPlainObject(params)) {
+        for (var i in params) {
+          if (params.hasOwnProperty(i)) {
+            url += '&' + i + '=' + encodeURIComponent(params[i]); 
+          }
+        }
+      } else {
+        url += '&' + params.replace(/(^[&?])|([&?]$)/g, ''); 
+      }      
+    }
+    
+    return url;
+  };
+  
+  // https://www.sanwebe.com/2014/04/select-all-text-in-element-on-click#:~:text=To%20select%20all%20text%20inside,the%20range%20of%20the%20element.  
+  OCFilter.prototype.selectText = function(el) {
+    var sel, range;
 
-	/**
-			OCFilter Product Form
-	**/
-  if (ocfilter.url['route'] == 'catalog/product/add' || ocfilter.url['route'] == 'catalog/product/edit') {
-    ocfilter.productForm.init();
-	}
-});
+    if (window.getSelection && document.createRange) { //Browser compatibility
+      sel = window.getSelection();
+      
+      if (sel.toString() == '') { //no text selection
+        window.setTimeout(function() {
+          range = document.createRange(); //range object
+          range.selectNodeContents(el); //sets Range
+          sel.removeAllRanges(); //remove all ranges from selection
+          sel.addRange(range);//add Range to a Selection.
+        }, 1);
+      }
+    } else if (document.selection) { //older ie
+      sel = document.selection.createRange();
+      
+      if (sel.text == '') { //no text selection
+        range = document.body.createTextRange();//Creates TextRange object
+        range.moveToElementText(el);//sets Range
+        range.select(); //make selection.
+      }
+    }
+  };
+  
+  OCFilter.prototype.initProduct = function() {
+    var that = this;
+
+    $('a[href="#tab-links"]').parent().after('<li><a href="#tab-ocfilter" data-toggle="tab"><i class="fa fa-sliders" aria-hidden="true"></i> OCFilter</a></li>');
+    
+    $('#tab-links').after('<div class="tab-pane" id="tab-ocfilter"></div>');    
+    
+    $('a[href="#tab-general"]').tab('show');    
+    
+    $('[form="form-product"][type="submit"]').on('click', function(e) {
+      if ('localStorage' in window) {
+        var ocfilter_product_filter = {}, filter_key;
+        
+        $('[name^="ocfilter_filter"]').serializeArray().forEach(function(item) {
+          filter_key = item.name.match(/^ocfilter_filter\[(.+?)\]/)[1];
+          
+          if ('undefined' == typeof ocfilter_product_filter[filter_key] && /\[(min|max)\]$/.test(item.name)) {
+            ocfilter_product_filter[filter_key] = {};            
+          }
+          
+          if (/\[min\]$/.test(item.name)) {
+            ocfilter_product_filter[filter_key].min = item.value;
+          } else if (/\[max\]$/.test(item.name)) {
+            ocfilter_product_filter[filter_key].max = item.value;                   
+          } else {
+            if ('undefined' == typeof ocfilter_product_filter[filter_key]) {
+              ocfilter_product_filter[filter_key] = [ item.value ];
+            } else {
+              ocfilter_product_filter[filter_key].push(item.value);
+            }
+          }
+        });                              
+               
+        localStorage.setItem('ocfilter_product_filter', JSON.stringify(ocfilter_product_filter));
+      }     
+    });
+    
+    if ($('.alert-danger').length < 1 && 'localStorage' in window) {
+      localStorage.removeItem('ocfilter_product_filter');      
+    }
+    
+    function getCategoryId() {
+      var category_id = [];
+      
+      $('input[type="checkbox"][name="product_category[]"]:checked, input[type="hidden"][name="product_category[]"], select[name="main_category_id"]').each(function(i) {
+        $(this).val() > 0 && category_id.push($(this).val());
+      });
+      
+      return $.unique(category_id);
+    }    
+    
+    var options = {
+      product_id: this.getURLParam('product_id'),
+      category_id: getCategoryId(),
+      container: '#tab-ocfilter'
+    };
+   
+    if ($('.alert-danger').length > 0 && 'localStorage' in window && localStorage.getItem('ocfilter_product_filter')) {
+      options.selected = JSON.parse(localStorage.getItem('ocfilter_product_filter')) || ''; 
+  
+      localStorage.removeItem('ocfilter_product_filter');
+    }   
+   
+    this.category_length = $('#product-category div').length;
+
+    var category_length;
+
+    $('a[href="#tab-ocfilter"]').on('click', function() {
+      category_length = $('#product-category div').length;
+
+      if (that.category_length != category_length) {
+        that.category_length = category_length;
+      
+        that.getRelationForm($.extend({}, options, { category_id: getCategoryId() }));
+      }
+    });
+
+    $('input[type="checkbox"][name="product_category[]"], select[name="main_category_id"]').on('change', function() {         
+      that.getRelationForm($.extend({}, options, { category_id: getCategoryId() }));
+    });
+
+    this.getRelationForm(options);   
+  };
+  
+  OCFilter.prototype.getRelationForm = function(options) {
+    var that = this;
+
+    (function init(parent, options) {       
+      if (parent.ready) {
+        return;
+      }
+      
+      parent.ready = true;
+      
+      // Values Dropdown select
+      $(options.eventContainer || options.container).on('click', function(e) {
+        var $target = $(e.target), $menu = $target.closest('.ocf-filter-dm');
+
+        if ($menu.length > 0) {
+          e.stopPropagation();
+           
+          var text = [];
+          var $label = $menu.closest('.dropdown').find('.dropdown-label');
+          var $menuItem = $target.closest('li');
+          var $input = $menuItem.find('input');
+                    
+          if (e.target != $input.get(0)) {
+            $input.prop('checked', !$input.prop('checked')).trigger('change');
+          }
+
+          $menuItem.toggleClass('active', $input.prop('checked'));
+
+          $menu.find('input:checked').each(function(i) {
+            text.push($.trim($(this).next().text()));
+          });
+
+          if (text.length) {
+            $label.addClass('label-selected').html('<span class="label label-ocf-value">' + text.join('</span><span class="label label-ocf-value">') + '</span>');
+          } else {
+            $label.removeClass('label-selected').html($label.attr('data-default'));
+          }
+          
+          if (!$target.is('input')) {
+            return false;  
+          }
+        } else if ($target.is('.ocf-input-placeholder')) {
+          // Remove disabled attribute on slider inputs         
+          e.stopPropagation();
+          e.preventDefault();
+          
+          var $group = $target.closest('.form-group');
+          
+          if ($group.find('input[name^="ocfilter_filter"][value="0"]:checked').length < 1) {
+            $group.find('input[type="number"][disabled]').prop('disabled', false);
+            
+            $target.prev().focus();
+          }          
+        } else if ($target.parent('.remove-autocomplete-value').length > 0) {
+          // Remove autocomplete values label with input
+          e.stopPropagation();    
+          
+          $target.parent().remove();
+          
+          options.onSelect && options.onSelect();
+        }
+      })
+
+      // Add disabled attribute on empty value slider inputs
+      .on('focusout', '[name$="[min]"], [name$="[max]"]', function(e) {
+        setTimeout(function(that) {         
+          var $group = $(that).closest('.form-group');
+
+          if ($group.find('input[type="number"]:focus').length < 1 && ($group.find('input[name$="[min]"]').val().length + $group.find('input[name$="[max]"]').val().length) < 1) {
+            $group.find('input[type="number"]').prop('disabled', true);  
+          }          
+        }, 100, this);       
+      })
+      
+      // Select "all values"
+      .on('change', 'input[type="checkbox"][name^="ocfilter_filter"][value="0"]', function(e) {
+        if ($(this).prop('disabled')) {
+          return false;
+        }
+        
+        var $group = $(this).closest('.form-group');
+        
+        if ($group.hasClass('ocf-form-group-slider')) {
+          if (this.checked) {
+            $group.find('input[type="number"]').prop('disabled', true).addClass('disabled');    
+          } else {
+            $group.find('input[type="number"]').removeClass('disabled');
+            
+            if ($group.find('input[name$="[min]"]').val().length > 0 || $group.find('input[name$="[max]"]').val().length > 0) {
+              $group.find('input[type="number"]').prop('disabled', false);                 
+            }
+          }          
+        } else if ($group.hasClass('ocf-form-group-autocomplete')) {
+          $group.find('input[name="filter_value_name"]').prop('disabled', this.checked);    
+          $group.find('.label-ocf-list').toggleClass('disabled', this.checked);
+        } else {
+          $group.find('.dropdown-toggle').toggleClass('disabled', this.checked);
+        }  
+      })   
+
+      // Set values autocomplete
+      .on('focus', 'input[name="filter_value_name"]', function() {
+        if ($(this).data('autocomplete')) {
+          return;
+        }
+
+        $(this).data('autocomplete', true).autocomplete({
+          'before': function() {
+            $(this).parent().find('.input-group-addon').find('i').attr('class', 'fa fa-refresh fa-spin');  
+          },
+          'source': function(request, response) {
+            var $this = $(this), data = {
+              filter_key: $(this).attr('data-filter-key'),
+              filter_name: request
+            };
+                                                            
+            $.ajax({
+              url: ocfilter.link('extension/module/ocfilter/filter/autocompleteValues'),
+              dataType: 'json',
+              data: data,
+              success: function(json) {
+                response($.map(json, function(item) {
+                  return {
+                    label: item['name'],
+                    value: item['value_id'],
+                    filter_key: item['filter_key'],
+                  }
+                }));
+                
+                $this.parent().find('.input-group-addon').find('i').attr('class', 'fa fa-question-circle');
+              }
+            });
+          },
+          'select': function(item) {
+            var $labelList = $($(this).attr('data-target'));
+          
+            $(this).val('');
+            
+            $labelList.find('[value="' + item.value + '"]').parent().remove();
+            $labelList.append('<span class="label label-ocf-value remove-autocomplete-value" title="' + item.label + '"><input type="hidden" name="ocfilter_filter[' + item.filter_key + '][]" value="' + item.value + '" /> <span>' + item.label + '</span> <i class="fa fa-times-circle"></i></span>');
+          
+            options.onSelect && options.onSelect();     
+          }
+        });
+      });      
+    })(this, options);
+
+    var html = [], data = { category_id: options.category_id };
+    
+    if ('undefined' != typeof options.product_id) {
+      data.product_id = options.product_id;
+    }
+    
+    if ('undefined' != typeof options.page_id) {
+      data.page_id = options.page_id;
+    }    
+    
+    if (options.selected) {
+      data.selected = options.selected;
+    }
+    
+    if (options.ignore_slide) {
+      data.ignore_slide = 1;
+    }
+
+    if (options.allow_group) {
+      data.allow_group = 1;
+    }    
+
+    $(options.container).html('<div style="text-align: center; padding-top: 5rem; padding-bottom: 5rem;"><i class="fa fa-refresh fa-spin fa-3x fa-fw"></i></div>');
+
+    $.get(this.link('extension/module/ocfilter/filter/relation'), data, function(response) {
+      $(options.container).html(response);
+           
+      options.onLoad && options.onLoad();            
+    });
+  };
+  
+  OCFilter.prototype.buldMaskVarsList = function(options) {
+    var 
+      $maskVarsList = $(options.container).html('<li>' + options.textDefault + '</li>'),
+      $formGroups = $(options.relationContainer).find('.form-group'),
+      added = [],
+      html = '';
+  
+    function addMaskVar($formGroup) {
+      var filter_key = $formGroup.attr('data-ocfilter-filter-key'), text = $formGroup.find('.control-label').text();
+      
+      if (added.indexOf(filter_key) > -1) {
+        return;
+      }
+      
+      added.push(filter_key);
+      
+      html += '\
+      <li> \
+        <div class="media"> \
+          <div class="media-left"> \
+            <kbd onclick="ocfilter.selectText(this);">{F' + filter_key + '}</kbd> \
+          </div> \
+          <div class="media-body media-middle">' + text + '</div> \
+        </div> \
+        <div class="media mt-0"> \
+          <div class="media-left"> \
+            <kbd onclick="ocfilter.selectText(this);">{F' + filter_key + '|L}</kbd> \
+          </div> \
+          <div class="media-body media-middle">' + text.toLowerCase() + '</div> \
+        </div> \
+      </li>';
+    };
+  
+    $formGroups.has('input[name^="ocfilter_filter"][type="hidden"]').each(function() {
+      var $formGroup = $(this);
+      
+      if ($formGroup.find('input[name^="ocfilter_filter"][type="checkbox"][value="group"]:checked').length < 1 && $formGroup.find('input[name^="ocfilter_filter"][type="hidden"]').length > 1) {
+        addMaskVar($formGroup);
+      }
+    });
+    
+    $formGroups.has('input[name^="ocfilter_filter"][type="checkbox"]:checked').each(function() {
+      var $formGroup = $(this);
+      
+      if ($formGroup.find('input[name^="ocfilter_filter"][type="checkbox"][value="group"]:checked').length < 1 && ($formGroup.find('input[name^="ocfilter_filter"][type="checkbox"]:checked').length > 1 || $formGroup.find('input[name^="ocfilter_filter"][type="checkbox"]:checked').val() < 1)) {
+        addMaskVar($formGroup);
+      }
+    });
+
+    $formGroups.has('input[name$="[min]"]:not([disabled])').each(function() {
+      var $formGroup = $(this), min = $formGroup.find('input[name$="[min]"]').val(), max = $formGroup.find('input[name$="[max]"]').val();
+      
+      if (min.length && max.length && min != max) {
+        addMaskVar($formGroup);
+      }
+    });    
+    
+    if (html) {
+      $maskVarsList.html(html);
+    }  
+  };  
+    
+  // Optimize, without focus and blur delay
+  OCFilter.prototype.autocomplete = function(option) {
+    return this.each(function() {     
+      var $this = $(this);
+      var $dropdown = $('<ul class="dropdown-menu" />');
+      
+      this.timer = null;
+      this.items = [];
+      this.mouseDownOnItem = false;
+
+      $.extend(this, option);
+      
+      this.placement = option.placement || 'left';
+      
+      if (this.placement == 'right') {
+        $dropdown.addClass('dropdown-menu-right').css({ 'min-width': '100%' });
+      }
+
+      $this.attr('autocomplete', 'off').on('focus', function() {
+        this.mouseDownOnItem = false;
+        
+        if ($this.data().value != $this.val()) {
+          this.request('focus');
+        } else {
+          this.show();
+        }   
+      }).on('blur', function() {
+        if (!this.mouseDownOnItem) {
+          this.hide();
+        }
+      }).on('keyup', function(e) {
+        if (e.which == 27) {
+          this.hide();
+        } else {
+          this.request('keyup');
+        }
+      });
+
+      // Click
+      this.click = function(e) {
+        if (e.type == 'mousedown') {
+          this.mouseDownOnItem = true;
+                    
+          return;
+        }
+        
+        this.mouseDownOnItem = false;
+        
+        this.hide();
+                
+        e.preventDefault();
+
+        var value = $(e.target).parent().attr('data-value');
+
+        if (value && this.items[value]) {
+          this.select(this.items[value]);
+        }
+      };
+
+      // Show
+      this.show = function() {
+        var pos = $this.position();
+
+        $dropdown.css({
+          top: pos.top + $this.outerHeight(),
+          left: (this.placement == 'right' ? 'auto' : pos.left)
+        }).show();
+      };
+
+      // Hide
+      this.hide = function() {
+        $dropdown.hide();
+      };
+
+      // Request
+      this.request = function(eventType) {
+        clearTimeout(this.timer);
+        
+        this.before && this.before();
+        
+        if (eventType == 'focus') {
+          this.source($(this).val(), $.proxy(this.response, this));
+        } else {
+          this.timer = setTimeout(function(object) {
+            object.source($(object).val(), $.proxy(object.response, object));
+          }, 450, this);
+        }
+      };
+
+      // Response
+      this.response = function(json) {
+        $this.data().value = $this.val();
+        
+        var html = '';
+        var category = {};
+        var name;
+        var i = 0, j = 0;
+
+        if (json.length) {
+          for (i = 0; i < json.length; i++) {
+            // update element items
+            this.items[json[i]['value']] = json[i];
+
+            if (!json[i]['category']) {
+              // ungrouped items
+              html += '<li data-value="' + json[i]['value'] + '"><a href="#">' + json[i]['label'] + '</a></li>';
+            } else {
+              // grouped items
+              name = json[i]['category'];
+              if (!category[name]) {
+                category[name] = [];
+              }
+
+              category[name].push(json[i]);
+            }
+          }
+
+          for (name in category) {
+            html += '<li class="dropdown-header">' + name + '</li>';
+
+            for (j = 0; j < category[name].length; j++) {
+              html += '<li data-value="' + category[name][j]['value'] + '"><a href="#">&nbsp;&nbsp;&nbsp;' + category[name][j]['label'] + '</a></li>';
+            }
+          }
+        }
+
+        if (html) {
+          this.show();
+        } else {
+          this.hide();
+        }
+
+        $dropdown.html(html);
+      };
+
+      $dropdown.on('mousedown click', '> li > a', $.proxy(this.click, this));
+      
+      $this.after($dropdown);
+    });
+  };
+  
+  global.ocfilter = new OCFilter;
+  global.ocfilter.Constructor = OCFilter;       
+}(window, jQuery);
