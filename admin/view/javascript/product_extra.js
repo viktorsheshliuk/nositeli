@@ -132,6 +132,21 @@ $(document).ready(function($) {
 					var ul = $(cCell).children().get(0);
 					//remove first element
 					$(select.children().get(0)).html("-- Select None --");
+
+					// Create container with close button
+					var container = $('<div class="category-popover-container" style="position:relative;padding-top:25px;"></div>');
+					var closeBtn = $('<button type="button" class="close popover-close" aria-label="Close" style="position:absolute;top:0;right:0;z-index:10;">&times;</button>');
+					
+					closeBtn.on('click', function(e){
+						e.stopPropagation();
+						var cell = $(cCell);
+						cell.popover('destroy');
+						cell.removeData('popovered');
+						$('body').removeData('categoryCell');
+					});
+					
+					container.append(closeBtn);
+
 					$(select).on('change', function(){
 						$.get(link, {type: 'change_category', category_id: $(this).val().join(','), product_id: $(cCell).parents('tr').attr('data-id')}, function(response){
 							if(response == 'done'){
@@ -152,7 +167,8 @@ $(document).ready(function($) {
 						$(select).find('option[value="'+v+'"]').prop('selected', true);	
 					});
 					
-					return select;
+					container.append(select);
+					return container;
 				}
 			}).popover('show');
 			$(cCell).data('popovered', true);
