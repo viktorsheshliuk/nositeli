@@ -1559,15 +1559,6 @@ header #right-menu-language-select{
 
 }
 
-/* @media (max-width: 1024px) {
-
-    .content .column-left {
-
-    display: none;
-
-} */
-
-}
 .content .column-right {
     /* background: white; */
     flex-basis: 28%;
@@ -7000,6 +6991,10 @@ body.lock{overflow: hidden;}
 }
 
 @media (max-width: 991px){
+    #column-left {
+        display: none;
+    } 
+
     .product_delivery_block, .product_payment_block {
         width: 45%;
     }
