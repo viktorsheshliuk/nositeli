@@ -38,7 +38,8 @@ $_['text_benefits']     	   = 'Преимущества:';
 $_['text_pri_pokupke']         = 'Цена при покупке:';
 $_['text_ean']     	 		   = 'Штрих-код:';
 $_['text_unavailable']		   = 'Товар снят с производства или больше недоступен к продаже';
-$_['text_price_1']               = 'Цена:';
+$_['text_price_1']             = 'Цена:';
+$_['text_reviews_title']       = 'Отзывы';
 
 // Entry
 $_['entry_qty']                = 'Кол-во';
@@ -50,7 +51,7 @@ $_['entry_bad']                = 'Плохо';
 
 // Tabs
 $_['tab_description']          = 'Описание';
-$_['tab_attribute']            = 'Характеристики';
+$_['tab_attribute']            = 'Характеристики товара';
 $_['tab_review']               = 'Отзывов (%s)';
 
 // Error

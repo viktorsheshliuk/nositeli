@@ -6903,11 +6903,68 @@ body.lock{overflow: hidden;}
 .delivery_method_annotation .payment_method li {
     flex-wrap: wrap;
 }
-
-
-
-
-
+.product_details_item h2{
+    margin-bottom: 30px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #232221;
+}
+.features {
+    list-style: none;
+    margin: 0;
+    position: relative;
+    padding: 0;
+}
+.features li {
+    padding: 0;
+    margin-bottom: 7px;
+    overflow: hidden;
+    background-color: #fff;
+    align-items: flex-start;
+    display: flex;
+    gap: 8px;
+}
+.product_details .features li {
+    background-color: rgba(0,0,0,0);
+    margin-bottom: 14px;
+}
+.features__wrap {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+.features__name {
+    color: #5f5f5f;
+    font-size: 16px;
+    font-weight: 500;
+}
+.product_details_item .features__name {
+    flex-shrink: 0;
+    flex-grow: 1;
+    max-width: 300px;
+    white-space: unset !important;
+}
+.features .features__wrap div:not(.features_dash) {
+    white-space: unset;
+}
+.features_dash, .cart_dash {
+    width: 100%;
+    border-bottom: 1px dashed #ccc;
+    position: relative;
+    display: block;
+}
+.features__value {
+    width: 370px;
+    flex-shrink: 0;
+    color: #5f5f5f;
+    font-size: 16px;
+}
+.features__value a{
+    color: inherit;
+    text-decoration: underline;
+}
 
 
 
@@ -6940,6 +6997,9 @@ body.lock{overflow: hidden;}
 
 
 @media (max-width: 1366px){
+    .product_details_item .features__name {
+        max-width: 260px;
+    }
     .product_delivery_block {
         width: 50%;
     }
@@ -6991,6 +7051,9 @@ body.lock{overflow: hidden;}
 }
 
 @media (max-width: 991px){
+    .features__value {
+        width: 360px;
+    }
     #column-left {
         display: none;
     } 
@@ -7015,6 +7078,9 @@ body.lock{overflow: hidden;}
 }
 
 @media (max-width: 768px) {
+    .features__value {
+        width: 240px;
+    }
     .delivery_payment_ttl {
         font-size: 20px;
     }
@@ -7080,6 +7146,25 @@ body.lock{overflow: hidden;}
 
 
 @media (max-width: 576px){
+    .product_details_item .features__value {
+        font-size: 14px;
+        max-width: 180px;
+        flex-shrink: 0;
+        flex-grow: 1;
+        width: unset !important;
+        word-break: break-all;
+        white-space: normal !important;
+    }
+    .product_details_item .features__name {
+        flex-shrink: 0;
+        flex-grow: 1;
+        max-width: 200px;
+        white-space: unset !important;
+    }
+    .product_details_item h2 {
+        font-size: 23px;
+        margin-bottom: 24px;
+    }
     /* Скрываем стрелки */
     .fn_images_nav .swiper-button-prev,
     .fn_images_nav .swiper-button-next {

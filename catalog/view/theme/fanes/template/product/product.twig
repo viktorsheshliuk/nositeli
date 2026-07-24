@@ -339,9 +339,6 @@
               {% else %}
                 <div></div>
               {% endif %}</div>
-            
-            
-            
               {#  {% if review_status %}
                 <div class="rating-social-block">
                   <div class="rating">{% for i in 1..5 %}
@@ -353,14 +350,124 @@
                 </div>
                 {% endif %} #}
             </div>
-
             {{ html_module_60 }}
+            {# Характеристики #}
+             {% if attribute_groups %}
+            <div id="features" class="product_details_item">
+              <h2>{{ tab_attribute }}</h2>
+              <ul class="d-flex features mobile_tab__content flex-column features_bottom">
+              {% for attribute_group in attribute_groups %}
+                {% for attribute in attribute_group.attribute %}
+                  <li class="features__item">
+                      <div class="features__wrap">
+                          <div class="features__name"> <span>{{ attribute.name }}</span> </div>
+                          <div class="features_dash"></div>
+                          <div class="features__value ">{% if attribute.href %}<a href="{{ attribute.href }}">{{ attribute.text }}</a>{% else %}{{ attribute.text }}{% endif %}</div>
+                      </div>
+                  </li>
+                {% endfor %}
+              {% endfor %} 
+
+              {% if ean %}
+                <li class="features__item">
+                    <div class="features__wrap">
+                      <div class="features__name"> <span>{{ text_ean }}</span> </div>
+                      <div class="features_dash"></div>
+                      <div class="features__value ">{{ ean }}</div>
+                    </div>
+                </li>
+              {% endif %}      
+                  {# ToDO показать /скрыть характеристики #}
+                  {# <ul class="features_hidden">
+                      <li class="features__item">
+                          <div class="features__wrap">
+                              <div class="features__name"> <span>Матеріали:</span> </div>
+                              <div class="features_dash"></div>
+                              <div class="features__value ">
+                                  ABS </div>
+                          </div>
+                      </li>
+                      <li class="features__item">
+                          <div class="features__wrap">
+                              <div class="features__name"> <span>Колір:</span> </div>
+                              <div class="features_dash"></div>
+                              <div class="features__value ">
+                                  Чорний </div>
+                          </div>
+                      </li>
+                      
+                  </ul>
+                  <li>
+                      <div class="show_more" data-language="comparison_all">Всі характеристики</div>
+                  </li> #}  
+              </ul>
+            </div>
+            {% endif  %}
+            {# Описание #}
+            {# ToDo Readmore #}
+            <div id="description" class="product_details_item">
+              <h2>{{ tab_description }}</h2>
+              <div class="fn_readmore" {# data-readmore="" aria-expanded="false" id="rmjs-1" style="max-height: none; height: 300px;" #}>
+                  <div class="product_content_description">
+                    {{ description }}
+                  </div>
+              </div>
+              {# <a href="#" data-language="about_read_more" data-readmore-toggle="rmjs-1" aria-controls="rmjs-1"><span>Читати більше</span></a> #}
+          </div>
+          {# Отзывы #}
+          {% if review_status %}
+          <div id="comments" class="product_details_item">
+          <h2>{{ text_reviews_title }}</h2>
+            <form class="form-horizontal" id="form-review">
+                  <div id="review"></div>
+                  <div class="heading-title">{{ text_write }}</div>
+                  {% if review_guest %}
+                  <div class="form-group required">
+                    <div class="col-sm-12">
+                      <label class="control-label" for="input-name">{{ entry_name }}</label>
+                      <input type="text" name="name" value="{{ customer_name }}" id="input-name" class="form-control" />
+                    </div>
+                  </div>
+                  <div class="form-group required">
+                    <div class="col-sm-12">
+                      <label class="control-label" for="input-review">{{ entry_review }}</label>
+                      <textarea name="text" rows="5" id="input-review" class="form-control"></textarea>
+                      <div class="help-block">{{ text_note }}</div>
+                    </div>
+                  </div>
+                  <div class="form-group required">
+                    <div class="col-sm-12">
+                      <label class="control-label">{{ entry_rating }}</label>
+                      &nbsp;&nbsp;&nbsp; {{ entry_bad }}&nbsp;
+                      <input type="radio" name="rating" value="1" />
+                      &nbsp;
+                      <input type="radio" name="rating" value="2" />
+                      &nbsp;
+                      <input type="radio" name="rating" value="3" />
+                      &nbsp;
+                      <input type="radio" name="rating" value="4" />
+                      &nbsp;
+                      <input type="radio" name="rating" value="5" />
+                      &nbsp;{{ entry_good }}</div>
+                  </div>
+                  {{ captcha }}
+                  <div class="buttons clearfix">
+                    <div class="pull-right">
+                      <button type="button" id="button-review" data-loading-text="{{ text_loading }}" class="btn btn-primary">{{ button_continue }}</button>
+                    </div>
+                  </div>
+                  {% else %}
+                  {{ text_login }}
+                  {% endif %}
+            </form>
+          </div>
+          {% endif %}
 
 
           </div>
         </div>
       </div>
-      <div class="tabs-product">
+      {# <div class="tabs-product">
          <ul class="nav nav-tabs">
             <li class="active"><a href="#tab-description" data-toggle="tab">{{ tab_description }}</a></li>
             {% if attribute_groups or 1>0 %}
@@ -370,8 +477,8 @@
             <li><a href="#tab-review" data-toggle="tab">{{ tab_review }}</a></li>
             {% endif %}
           </ul>
-          <div class="tab-content">
-            <div class="tab-pane active" id="tab-description">{{ description }}</div>
+          {#<div class="tab-content">
+             <div class="tab-pane active" id="tab-description">{{ description }}</div>
             {% if attribute_groups or 1>0 %}
             <div class="tab-pane" id="tab-specification">
               <table class="table table-bordered">
@@ -381,30 +488,19 @@
                     <td>{{ text_ean }}</td>
                     <td>{{ ean }}</td>
                   </tr>
-                 {# </tbody> #} 
                   {% endif %}              
                 {% for attribute_group in attribute_groups %}
-               {# <tbody>  #}
-                
                 {% for attribute in attribute_group.attribute %}
                 <tr>
                   <td>{{ attribute.name }}</td>
                   <td>{{ attribute.text }}</td>
                 </tr>
                 {% endfor %}
-                {#  </tbody> #}
-                {% endfor %}
-
-  {#             {% for attribute in attribute_ocfilter %}
-                <tr>
-                 <td>{{ attribute.option }}</td>
-                  <td>{{ attribute.value }}</td>  
-                </tr>
-                {% endfor %}                                      
-  #}              </tbody>
+                {% endfor %}   
+              </tbody>
               </table>
             </div>
-            {% endif %}
+            {% endif %} 
             {% if review_status %}
             <div class="tab-pane" id="tab-review">
               <form class="form-horizontal" id="form-review">
@@ -450,8 +546,9 @@
                 {% endif %}
               </form>
             </div>
-            {% endif %}</div>
-      </div>
+            {% endif %}
+          </div>
+      </div> #}
       
         {% if tags %}
         <p>{{ text_tags }}
