@@ -6959,6 +6959,16 @@ body.lock{overflow: hidden;}
 .product__heading {
     font-size: 50px;
 }
+.tab_product_img {
+    margin-right: 15px;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+}
+.tab_product_img picture {
+    display: flex;
+}
 
 
 
@@ -7043,6 +7053,9 @@ body.lock{overflow: hidden;}
 }
 
 @media (max-width: 1024px) {
+    .tab_product_img {
+        display: none;
+    }
     .tabs_product_card {
         max-width: 440px;
     }
@@ -7067,6 +7080,9 @@ body.lock{overflow: hidden;}
 }
 
 @media (max-width: 991px){
+    .tab_product_img {
+        display: none;
+    }
     .product__heading {
         font-size: 38px;
         margin: 0;
