@@ -6984,9 +6984,9 @@ body.lock{overflow: hidden;}
 
 
 @media (min-width: 992px) {
-    .product_details {
+    /* #product-product .product-wrapp .right-panel {
         margin-top: -4px;
-    }
+    } */
 }
 @media(min-width:577px){
     .fn_images_nav .swiper-button-prev {
