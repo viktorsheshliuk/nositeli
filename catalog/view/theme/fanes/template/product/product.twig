@@ -43,16 +43,24 @@
         <div class="mobile_tabs_prod">
             <div class="tabs_buttons">
               <a class="tabs__link selected" href="{{ product_link }}#main">
-                <span data-language="product_main">{{ tab_product }}</span>
+                <span>{{ tab_product }}</span>
               </a>
+              {% if attribute_groups %}
               <a class="tabs__link" href="{{ product_link }}#features">
-                <span data-language="product_features">{{ tab_attribute_2 }}</span>
+                <span>{{ tab_attribute_2 }}</span>
               </a>
+              {% endif %}
+              {% if description %}
               <a class="tabs__link" href="{{ product_link }}#description">
-                <span data-language="product_description">{{ tab_description }}</span>
+                <span>{{ tab_description }}</span>
               </a>
+              {% endif %}
+              {% if review_status %}
               <a id="fn_tab_comments" class="tabs__link" href="{{ product_link }}#comments">
-              <span data-language="product_comments">{{ tab_review }}</span> </a>
+                <span>{{ tab_review }}</span>
+              </a>
+              {% endif %}
+
             </div>
             <div class="tabs_product_card fn_cart_tabs">
               <div class="tab_product_img">
@@ -187,7 +195,6 @@
                   
                   <!-- Пагинация (опционально) -->
                   <div class="swiper-pagination"></div>
-                
                   <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span> 
                 </div>
             {% endif %}
@@ -242,13 +249,7 @@
                         </div>
                       </div>
 
-
-
                     {% endif %}
-                  
-                    {# {% if tax %}
-                    <span class="tax">{{ text_tax }} {{ tax }}</span>
-                    {% endif %} #}
                   </div>
                     <ul class="list-unstyled">
                       {# {% if points %}
@@ -465,6 +466,7 @@
               {% endif  %}
               {# Описание #}
               {# ToDo Readmore #}
+              {% if description %}
               <div id="description" class="product_details_item">
                 <h2>{{ tab_description }}</h2>
                 <div class="fn_readmore" {# data-readmore="" aria-expanded="false" id="rmjs-1" style="max-height: none; height: 300px;" #}>
@@ -474,6 +476,7 @@
                 </div>
                 {# <a href="#" data-language="about_read_more" data-readmore-toggle="rmjs-1" aria-controls="rmjs-1"><span>Читати більше</span></a> #}
             </div>
+            {% endif %}
             {# Отзывы #}
             {% if review_status %}
             <div id="comments" class="product_details_item">
