@@ -6451,13 +6451,13 @@ footer .foot-wrapp {
 @media (max-width: 834px) {
 
     footer .foot-wrapp .col-footer {
+        flex-basis: 100%
+    }
 
-    flex-basis: 100%}
-
-div.tabs-product #tab-description iframe{
-    width: 100%;
-    height: auto;
-}
+    #description iframe{
+        width: 100%;
+        height: auto;
+    }
 }
 footer .foot-wrapp .col-footer h5 {
 
