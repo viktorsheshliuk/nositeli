@@ -406,6 +406,7 @@ class ControllerProductProduct extends Controller {
 			}
 
 			$data['share'] = $this->url->link('product/product', 'product_id=' . (int)$this->request->get['product_id']);
+			$data['product_link'] = $this->url->link('product/product', 'product_id=' . (int)$this->request->get['product_id']);
 
 			$data['attribute_groups'] = $this->model_catalog_product->getProductAttributes($this->request->get['product_id']);
 			//$data['attribute_ocfilter'] = $this->model_catalog_product->getProductOcFilterOptionValue($this->request->get['product_id']);

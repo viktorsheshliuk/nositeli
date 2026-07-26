@@ -1,18 +1,18 @@
 {{ header }}
-<div class="container-fluid">
+<div class="container">
      <!-- Breadcrumbs :: Start-->
         <div class="breadcrumbs">
-          <div class="container-fluid___">
+          {# <div class="container111"> #}
             <ul class="breadcrumb">
-      {% for i,breadcrumb in breadcrumbs %}
-        {% if (i + 1 < (breadcrumbs)|length) %} 
-        <li><a class="breadcrumbs__link" href="{{ breadcrumb['href'] }}"><span>{{ breadcrumb['text'] }}</span></a></li>
-        {% else %} 
-        <li>{{ breadcrumb['text'] }}</li>
-        {% endif %}
-      {% endfor %}
+            {% for i,breadcrumb in breadcrumbs %}
+              {% if (i + 1 < (breadcrumbs)|length) %} 
+              <li><a class="breadcrumbs__link" href="{{ breadcrumb['href'] }}"><span>{{ breadcrumb['text'] }}</span></a></li>
+              {% else %} 
+              <li>{{ breadcrumb['text'] }}</li>
+              {% endif %}
+            {% endfor %}
             </ul>
-          </div>
+          {# </div> #}
         </div>
         <!-- Breadcrumbs :: End-->
   {% if error_warning %}

@@ -50,7 +50,9 @@ $_['entry_captcha'] = 'Введіть код, зазначений на карт
 // Tabs
 $_['tab_description'] = 'Опис';
 $_['tab_attribute'] = 'Характеристики товару';
-$_['tab_review'] = 'Відгуків (%s)';
+$_['tab_attribute_2'] = 'Характеристики';
+$_['tab_review'] = 'Відгуки (%s)';
+$_['tab_product']              = 'Все про товар';
 $_['button_continue'] = 'Відправити відгук';
 
 // Error

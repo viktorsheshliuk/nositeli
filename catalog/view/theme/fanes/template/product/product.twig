@@ -21,404 +21,549 @@
      {% endfor %}
     }
 </script>
-<div class="content-block">
-    <ul class="breadcrumb">
-    {% for key, breadcrumb in breadcrumbs %}
-    {% if key + 1 < breadcrumbs|length %}
-    	<li>
-    		<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
-    	</li>
-    {% else %}
-    	<li> {{ breadcrumb.text }}</li>
-    {% endif %}
-    {% endfor %}
-    </ul>
-  
-<div class="content">
-  {{ column_left }}
-    {# {% if column_left and column_right %}
-    {% set class = 'thumbnails-block small' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'thumbnails-block small' %}
-    {% else %}
-    {% set class = 'thumbnails-block' %}
-    {% endif %} #}
-    <div id="product-product" class="content-center">
-     {{ content_top }}
-      <h1 class="heading-title">{{ heading_title }}</h1>
-      <div class="product-wrapp">
-        <div class="left-panel {#{{ class }}#}">
-          <div class="product_all_images">
-          {% if thumb or images %}
+<div class="container">
+  <ul class="breadcrumb">
+      {% for key, breadcrumb in breadcrumbs %}
+      {% if key + 1 < breadcrumbs|length %}
+        <li>
+          <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+        </li>
+      {% else %}
+        <li> {{ breadcrumb.text }}</li>
+      {% endif %}
+      {% endfor %}
+  </ul>
+</div>
+<div class="container">
+  <h1 class="product__heading">{{ heading_title }}</h1>
+</div>
 
-            {# <ul class="thumbnails">
-              {% if thumb %}
-              <li id="main_image"><a class="thumbnail" href="{{ popup }}" title="{{ heading_title }}"><img src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" width="{{main_image_width}}" height="{{main_image_height}}" /></a></li>
-              {% endif %}
-              {% if images %}
-              <li class="image-additional"><a class="thumbnail" href="{{ popup }}" title="{{ heading_title }}"> <img src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" width="{{additional_image_width}}px"/></a></li>
-              {% for image in images %}
-              <li class="image-additional"><a class="thumbnail" href="{{ image.popup }}" title="{{ heading_title }}"> <img src="{{ image.thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" /></a></li>
-              {% endfor %}
-              {% endif %}
-            </ul> #}
-
-              <!-- 1. Главный слайдер -->
-              <div class="fn_images_main swiper">
-                <div class="swiper-wrapper">
-                  
-                  <!-- Главное (основное) фото -->
-                  {% if thumb %}
-                    <a class="images_link swiper-slide" href="{{ popup }}" data-fancybox="group" title="{{ heading_title }}" data-caption="{{ heading_title }} #1">
-                      <img class="fn_image" src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
-                    </a>
-                  {% endif %}
-                  
-                  <!-- Дополнительные фото -->
-                  {% if images %}
-                    {% for image in images %}
-                      <a class="images_link swiper-slide" href="{{ image.popup }}" data-fancybox="group" data-caption="{{ heading_title }} #{{ loop.index + 1 }}" title="{{ heading_title }}">
-                        <img src="{{ image.thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
-                      </a>
-                    {% endfor %}
-                  {% endif %}
-                  
-                </div>
-                <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+<div class="tabs_navigation_product">
+    <div class="container">
+        <div class="mobile_tabs_prod">
+            <div class="tabs_buttons">
+              <a class="tabs__link selected" href="{{ product_link }}#main">
+                <span data-language="product_main">{{ tab_product }}</span>
+              </a>
+              <a class="tabs__link" href="{{ product_link }}#features">
+                <span data-language="product_features">{{ tab_attribute_2 }}</span>
+              </a>
+              <a class="tabs__link" href="{{ product_link }}#description">
+                <span data-language="product_description">{{ tab_description }}</span>
+              </a>
+              <a id="fn_tab_comments" class="tabs__link" href="{{ product_link }}#comments">
+              <span data-language="product_comments">{{ tab_review }}</span> </a>
+            </div>
+            <div class="tabs_product_card fn_cart_tabs">
+              <div class="tab_product_img">
+                <picture>
+                  <source srcset="{{ small }}">
+                  <img loading="lazy" class="lazy loading" src="{{ small }}" alt="{{ heading_title }} - фото" title="{{ heading_title }}">
+                </picture>
               </div>
-
-              <!-- 2. Блок миниатюр (превью) -->
-              <div class="fn_images_nav images clearfix swiper swiper-thumbs">
-                <div class="swiper-wrapper">
-                  
-                  <!-- Миниатюра для главного фото -->
-                  {% if thumb %}
-                    <div class="images_item swiper-slide">
-                      <a class="images_link">
-                        <img src="{{ small }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
-                      </a>
+              <div class="tab_product_info justify-content-between">
+                <span class="product_tab_name" data-product="7337">{{ heading_title }}</span>
+              </div>
+              <div class="tab_details_price">
+                  <div class="tab_old_price ">
+                    <div class="boxed_old_price">
+                      <span class="fn_old_price"></span>
+                      <span class="currency">{{ symbol_right }}</span>
                     </div>
-                  {% endif %}
-                  
-                  <!-- Миниатюры для дополнительных фото -->
-                  {% if images %}
-                    {% for image in images %}
+                    <div class="fn_discount_label ">-15%</div>
+                  </div>
+                  <div class="tab_price price--red">
+                    <span class="fn_price"></span>
+                    <span class="currency">{{ symbol_right }}</span>
+                  </div>
+              </div>
+                {# <form class="fn_variants" action="cart">
+                    <select name="variant" class="fn_variant variant_select hidden">
+                        <option value="27072" data-price="253" data-stock="5" data-cprice="297" data-sku="HV-MS626GT, black" data-units="шт">Бездротова миша HAVIT HV-MS626GT Black (1200 DPI, 3 кл) </option>
+                    </select>
+                    <div class="fn_is_stock">
+                      <button class="product_button_tab buy prod_btn " type="submit">
+                              <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13.4286 28.0001C13.9566 28.0001 14.3846 27.5721 14.3846 27.0441C14.3846 26.5161 13.9566 26.0881 13.4286 26.0881C12.9007 26.0881 12.4727 26.5161 12.4727 27.0441C12.4727 27.5721 12.9007 28.0001 13.4286 28.0001Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M26.8114 27.9998C27.3394 27.9998 27.7674 27.5718 27.7674 27.0439C27.7674 26.5159 27.3394 26.0879 26.8114 26.0879C26.2835 26.0879 25.8555 26.5159 25.8555 27.0439C25.8555 27.5718 26.2835 27.9998 26.8114 27.9998Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M5.78125 6.96875H9.60511L12.473 23.2202H27.7685" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M12.4744 19.3956H27.3779C27.4885 19.3957 27.5956 19.3574 27.6812 19.2874C27.7667 19.2173 27.8253 19.1198 27.847 19.0114L29.5677 10.4077C29.5816 10.3383 29.5799 10.2668 29.5628 10.1981C29.5456 10.1295 29.5134 10.0655 29.4686 10.0108C29.4237 9.95608 29.3673 9.91202 29.3033 9.88178C29.2393 9.85155 29.1694 9.83589 29.0987 9.83594H10.5625" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                            <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14.0811 36.5724C14.5337 36.5724 14.9005 36.2055 14.9005 35.753C14.9005 35.3005 14.5337 34.9336 14.0811 34.9336C13.6286 34.9336 13.2617 35.3005 13.2617 35.753C13.2617 36.2055 13.6286 36.5724 14.0811 36.5724Z" stroke="#FF7A00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M25.5538 36.5724C26.0063 36.5724 26.3732 36.2055 26.3732 35.753C26.3732 35.3005 26.0063 34.9336 25.5538 34.9336C25.1012 34.9336 24.7344 35.3005 24.7344 35.753C24.7344 36.2055 25.1012 36.5724 25.5538 36.5724Z" stroke="#FF7A00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M7.52734 18.5449H10.8049L13.2631 32.4747H26.3735" stroke="#FF7A00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M13.2638 29.1979H26.0382C26.133 29.198 26.2248 29.1652 26.2981 29.1051C26.3714 29.0451 26.4217 28.9615 26.4403 28.8686L27.9152 21.494C27.9271 21.4345 27.9256 21.3732 27.9109 21.3143C27.8962 21.2555 27.8687 21.2007 27.8302 21.1538C27.7917 21.1069 27.7434 21.0691 27.6885 21.0432C27.6337 21.0173 27.5738 21.0039 27.5132 21.0039H11.625" stroke="#FF7A00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <rect x="22" y="5" width="20" height="20" rx="10" fill="#FF7A00"></rect>
+                                <rect x="22" y="5" width="20" height="20" rx="10" stroke="white" stroke-width="2"></rect>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M28 15.6259L28.8837 14.7824L31.5549 17.332L33.0012 15.9538L32.9863 15.9396L37.1163 12L38 12.8435L35.6948 15.0438L35.7097 15.058L31.5798 18.9976L31.5599 18.9762L31.535 19L28 15.6259Z" fill="#F3F4F4"></path>
+                            </svg>
+                      </button>
+                    </div>
+                </form> #}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+  <div class="content">
+    {{ column_left }}
+      {# {% if column_left and column_right %}
+      {% set class = 'thumbnails-block small' %}
+      {% elseif column_left or column_right %}
+      {% set class = 'thumbnails-block small' %}
+      {% else %}
+      {% set class = 'thumbnails-block' %}
+      {% endif %} #}
+      <div id="product-product" class="content-center">
+      {{ content_top }}
+        {# <h1 class="heading-title">{{ heading_title }}</h1> #}
+        <div class="product-wrapp">
+          <div class="left-panel {#{{ class }}#}">
+            <div class="product_all_images">
+            {% if thumb or images %}
+                <!-- 1. Главный слайдер -->
+                <div class="fn_images_main swiper">
+                  <div class="swiper-wrapper">
+                    
+                    <!-- Главное (основное) фото -->
+                    {% if thumb %}
+                      <a class="images_link swiper-slide" href="{{ popup }}" data-fancybox="group" title="{{ heading_title }}" data-caption="{{ heading_title }} #1">
+                        <img class="fn_image" src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
+                      </a>
+                    {% endif %}
+                    
+                    <!-- Дополнительные фото -->
+                    {% if images %}
+                      {% for image in images %}
+                        <a class="images_link swiper-slide" href="{{ image.popup }}" data-fancybox="group" data-caption="{{ heading_title }} #{{ loop.index + 1 }}" title="{{ heading_title }}">
+                          <img src="{{ image.thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
+                        </a>
+                      {% endfor %}
+                    {% endif %}
+                    
+                  </div>
+                  <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                </div>
+
+                <!-- 2. Блок миниатюр (превью) -->
+                <div class="fn_images_nav images clearfix swiper swiper-thumbs">
+                  <div class="swiper-wrapper">
+                    
+                    <!-- Миниатюра для главного фото -->
+                    {% if thumb %}
                       <div class="images_item swiper-slide">
                         <a class="images_link">
-                          <img src="{{ image.small }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
+                          <img src="{{ small }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
                         </a>
                       </div>
-                    {% endfor %}
+                    {% endif %}
+                    
+                    <!-- Миниатюры для дополнительных фото -->
+                    {% if images %}
+                      {% for image in images %}
+                        <div class="images_item swiper-slide">
+                          <a class="images_link">
+                            <img src="{{ image.small }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
+                          </a>
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                    
+                  </div>
+                  
+                  <!-- Навигация (стрелки) -->
+                  <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide">
+                    <svg width="10" height="21" viewBox="0 0 10 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 20L1 10.5L9 1" stroke="currentColor" stroke-linecap="round"></path>
+                    </svg>
+                  </div>
+                  <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide">
+                    <svg width="10" height="21" viewBox="0 0 10 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 20L1 10.5L9 1" stroke="currentColor" stroke-linecap="round"></path>
+                    </svg>
+                  </div>
+                  
+                  <!-- Пагинация (опционально) -->
+                  <div class="swiper-pagination"></div>
+                
+                  <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span> 
+                </div>
+            {% endif %}
+            </div>
+          </div>
+        
+          <div class="right-panel">
+            <div class="product_details"> 
+              <div class="product_details_item">
+                <div class="product_header_wrapper">
+                  <div class="available">
+                    <span class="no_stock fn_not_stock {% if ostatok > 0 %}hidden{% endif %}">{{ text_outstock }}</span>
+                    <span class="in_stock fn_in_stock {% if ostatok < 1 %}hidden{% endif %}">{{ text_instock }}</span>
+                  </div>
+                  <div class="rating_wrapper">
+                  </div>
+                  <div class="product_code">
+                    {{ text_model }}
+                    <span class="product_code_nubmer">{{ model }}</span> 
+                  </div>
+                </div>
+                <ul class="list-unstyled">
+                  {% if manufacturer %}
+                  <li>{{ text_manufact }} <a href="{{ manufacturers }}">{{ manufacturer }}</a></li>
+                  {% endif %}
+                  <li>{{ text_stock }} {{ stock }}</li>
+                </ul>
+                {% if stock_status_id == 9 and ostatok <= 0 %}
+                  <div id="product_unavailable">{{text_unavailable}}</div>
+                {% endif %}
+                {% if price %}
+                  {% if stock_status_id != 9 or ostatok > 0 %}
+                  <div class="price-block {% if ostatok < 1 %}price_gray{% endif %}">
+                    <div class="text-price">{{ text_price_1 }}</div>
+                    {% if not special %}
+                      <div class="price {% if ostatok < 1 %}price_gray{% endif %}">
+                          <div class="fn_price">{{ price }}</div>
+                          <div class="currency">{{ symbol_right }}</div> 
+                      </div>
+                    {% else %}
+                    {# <span style="text-decoration: line-through;">{{ price }}</span> #}
+                      <div class="price red-price">
+                        <div class="fn_price">{{ special }}</div>
+                        <div class="currency">{{ symbol_right }}</div>
+                      </div>
+                      
+                      <div class="old_price_box">
+                        <div class="fn_discount_label ">-15%</div>
+                        <div class="old_price">
+                          <span class="fn_old_price">{{ price }}</span>
+                          {{ symbol_right }}
+                        </div>
+                      </div>
+
+
+
+                    {% endif %}
+                  
+                    {# {% if tax %}
+                    <span class="tax">{{ text_tax }} {{ tax }}</span>
+                    {% endif %} #}
+                  </div>
+                    <ul class="list-unstyled">
+                      {# {% if points %}
+                      <li>{{ text_points }} {{ points }}</li>
+                      {% endif %} #}
+                      {% if discounts %}
+                      <li><b>{{ text_pri_pokupke }}</b></li>
+                      {% for discount in discounts %}
+                      <li>{{ discount.quantity }}{{ text_discount }}{{ discount.price }}</li>
+                      {% endfor %}
+                      {% endif %}
+                    </ul>
+                  {% endif %}
+                {% endif %}
+                <div id="product"> {% if options %}
+                  <h3 class="heading-title">{{ text_option }}</h3>
+                  {% for option in options %}
+                  {% if option.type == 'select' %}
+                  <div class="form-group{% if option.required %} required {% endif %}">
+                    <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
+                    <select name="option[{{ option.product_option_id }}]" id="input-option{{ option.product_option_id }}" class="form-control">
+                      <option value="">{{ text_select }}</option>
+                      {% for option_value in option.product_option_value %}
+                      <option value="{{ option_value.product_option_value_id }}">{{ option_value.name }}
+                      {% if option_value.price %}
+                      ({{ option_value.price_prefix }}{{ option_value.price }})
+                      {% endif %} </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  {% endif %}
+                  {% if option.type == 'radio' %}
+                  <div class="form-group{% if option.required %} required {% endif %}">
+                    <label class="control-label">{{ option.name }}</label>
+                    <div id="input-option{{ option.product_option_id }}"> {% for option_value in option.product_option_value %}
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="option[{{ option.product_option_id }}]" value="{{ option_value.product_option_value_id }}" data-radiobutton="my" />
+                          {% if option_value.image %} <img src="{{ option_value.image }}" alt="{{ option_value.name }} {% if option_value.price %} {{ option_value.price_prefix }} {{ option_value.price }} {% endif %}" class="img-thumbnail" /> {% endif %}                  
+                          {{ option_value.name }}
+                          {% if option_value.price %}
+                          ({{ option_value.price_prefix }}{{ option_value.price }})
+                          {% endif %} </label>
+                      </div>
+                      {% endfor %} </div>
+                  </div>
+                  {% endif %}
+                  {% if option.type == 'checkbox' %}
+                  <div class="form-group{% if option.required %} required {% endif %}">
+                    <label class="control-label">{{ option.name }}</label>
+                    <div id="input-option{{ option.product_option_id }}"> {% for option_value in option.product_option_value %}
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="option[{{ option.product_option_id }}][]" value="{{ option_value.product_option_value_id }}" />
+                          {% if option_value.image %} <img src="{{ option_value.image }}" alt="{{ option_value.name }} {% if option_value.price %} {{ option_value.price_prefix }} {{ option_value.price }} {% endif %}" class="img-thumbnail" /> {% endif %}
+                          {{ option_value.name }}
+                          {% if option_value.price %}
+                          ({{ option_value.price_prefix }}{{ option_value.price }})
+                          {% endif %} </label>
+                      </div>
+                      {% endfor %} </div>
+                  </div>
+                  {% endif %}
+                  {#
+                  {% if option.type == 'text' %}
+                  <div class="form-group{% if option.required %} required {% endif %}">
+                    <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
+                    <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" placeholder="{{ option.name }}" id="input-option{{ option.product_option_id }}" class="form-control" />
+                  </div>
+                  {% endif %}
+                  {% if option.type == 'textarea' %}
+                  <div class="form-group{% if option.required %} required {% endif %}">
+                    <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
+                    <textarea name="option[{{ option.product_option_id }}]" rows="5" placeholder="{{ option.name }}" id="input-option{{ option.product_option_id }}" class="form-control">{{ option.value }}</textarea>
+                  </div>
+                  {% endif %}
+                  {% if option.type == 'file' %}
+                  <div class="form-group{% if option.required %} required {% endif %}">
+                    <label class="control-label">{{ option.name }}</label>
+                    <button type="button" id="button-upload{{ option.product_option_id }}" data-loading-text="{{ text_loading }}" class="btn btn-default btn-block"><i class="fa fa-upload"></i> {{ button_upload }}</button>
+                    <input type="hidden" name="option[{{ option.product_option_id }}]" value="" id="input-option{{ option.product_option_id }}" />
+                  </div>
+                  {% endif %}
+                  {% if option.type == 'date' %}
+                  <div class="form-group{% if option.required %} required {% endif %}">
+                    <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
+                    <div class="input-group date">
+                      <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD" id="input-option{{ option.product_option_id }}" class="form-control" />
+                      <span class="input-group-btn">
+                      <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                      </span></div>
+                  </div>
+                  {% endif %}
+                  {% if option.type == 'datetime' %}
+                  <div class="form-group{% if option.required %} required {% endif %}">
+                    <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
+                    <div class="input-group datetime">
+                      <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD HH:mm" id="input-option{{ option.product_option_id }}" class="form-control" />
+                      <span class="input-group-btn">
+                      <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                      </span></div>
+                  </div>
+                  {% endif %}
+                  {% if option.type == 'time' %}
+                  <div class="form-group{% if option.required %} required {% endif %}">
+                    <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
+                    <div class="input-group time">
+                      <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="HH:mm" id="input-option{{ option.product_option_id }}" class="form-control" />
+                      <span class="input-group-btn">
+                      <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                      </span></div>
+                  </div>
+                  {% endif %} #}
+                  {% endfor %}
                   {% endif %}
                   
-                </div>
-                
-                <!-- Навигация (стрелки) -->
-                <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide">
-                  <svg width="10" height="21" viewBox="0 0 10 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 20L1 10.5L9 1" stroke="currentColor" stroke-linecap="round"></path>
-                  </svg>
-                </div>
-                <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide">
-                  <svg width="10" height="21" viewBox="0 0 10 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 20L1 10.5L9 1" stroke="currentColor" stroke-linecap="round"></path>
-                  </svg>
-                </div>
-                
-                <!-- Пагинация (опционально) -->
-                <div class="swiper-pagination"></div>
-               
-                <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span> 
-              </div>
-          {% endif %}
-          </div>
-        </div>
-      
-        <div class="right-panel">
-          <div class="product_details"> 
-            <div class="product_details_item">
-              <div class="product_header_wrapper">
-                <div class="available">
-                  <span class="no_stock fn_not_stock {% if ostatok > 0 %}hidden{% endif %}">{{ text_outstock }}</span>
-                  <span class="in_stock fn_in_stock {% if ostatok < 1 %}hidden{% endif %}">{{ text_instock }}</span>
-                </div>
-                <div class="rating_wrapper">
-                </div>
-                <div class="product_code">
-                  {{ text_model }}
-                  <span class="product_code_nubmer">{{ model }}</span> 
-                </div>
-              </div>
-              <ul class="list-unstyled">
-                {% if manufacturer %}
-                <li>{{ text_manufact }} <a href="{{ manufacturers }}">{{ manufacturer }}</a></li>
-                {% endif %}
-                <li>{{ text_stock }} {{ stock }}</li>
-              </ul>
-              {% if stock_status_id == 9 and ostatok <= 0 %}
-                <div id="product_unavailable">{{text_unavailable}}</div>
-              {% endif %}
-              {% if price %}
-                {% if stock_status_id != 9 or ostatok > 0 %}
-                <div class="price-block {% if ostatok < 1 %}price_gray{% endif %}">
-                  <div class="text-price">{{ text_price_1 }}</div>
-                  {% if not special %}
-                    <div class="price {% if ostatok < 1 %}price_gray{% endif %}">
-                        <div class="fn_price">{{ price }}</div>
-                        <div class="currency">{{ symbol_right }}</div> 
-                    </div>
-                  {% else %}
-                  {# <span style="text-decoration: line-through;">{{ price }}</span> #}
-                    <div class="price red-price">
-                      <div class="fn_price">{{ special }}</div>
-                      <div class="currency">{{ symbol_right }}</div>
-                    </div>
-                    
-                    <div class="old_price_box">
-                      <div class="fn_discount_label ">-15%</div>
-                      <div class="old_price">
-                        <span class="fn_old_price">{{ price }}</span>
-                        {{ symbol_right }}
+                {% if stock_status_id != 9 or ostatok > 0 %} {#показываем кнопки купить#}
+                  
+                  {# <div class="form-group">
+                    <label class="control-label" for="input-quantity">{{ entry_qty }}</label> #}
+                    <div class="add-block">
+
+                      <div class="quantity-block">
+                        <span class="minus">−</span>
+                        <input class="input_amount" type="text" name="quantity" value="{{ minimum }}" size="5" id="input-quantity"/>
+                        <span class="plus">+</span>
                       </div>
+
+
+                      <input type="hidden" name="product_id" value="{{ product_id }}" />
+                      <div class="add">
+                          <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn-orange product_btn">{{ button_cart }}</button>
+                      </div>
+
+
+                      <div class="wishlist_comparison_box">
+                        <button type="button" data-toggle="tooltip" class="wishlist_button" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product_id }}');"></button>
+                        <button type="button" data-toggle="tooltip" class="comparison_button" title="{{ button_compare }}" onclick="compare.add('{{ product_id }}');"></button>
+                      </div>
+
+
                     </div>
-
-
-
+                  {# </div> #}
+                  <div>{{ formcreator_id46 }}</div>
+                  {% if minimum > 1 %}
+                  <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
                   {% endif %}
-                
-                  {# {% if tax %}
-                  <span class="tax">{{ text_tax }} {{ tax }}</span>
-                  {% endif %} #}
-                </div>
-                  <ul class="list-unstyled">
-                    {# {% if points %}
-                    <li>{{ text_points }} {{ points }}</li>
-                    {% endif %} #}
-                    {% if discounts %}
-                    <li><b>{{ text_pri_pokupke }}</b></li>
-                    {% for discount in discounts %}
-                    <li>{{ discount.quantity }}{{ text_discount }}{{ discount.price }}</li>
-                    {% endfor %}
-                    {% endif %}
-                  </ul>
-                {% endif %}
-              {% endif %}
-              <div id="product"> {% if options %}
-                <h3 class="heading-title">{{ text_option }}</h3>
-                {% for option in options %}
-                {% if option.type == 'select' %}
-                <div class="form-group{% if option.required %} required {% endif %}">
-                  <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-                  <select name="option[{{ option.product_option_id }}]" id="input-option{{ option.product_option_id }}" class="form-control">
-                    <option value="">{{ text_select }}</option>
-                    {% for option_value in option.product_option_value %}
-                    <option value="{{ option_value.product_option_value_id }}">{{ option_value.name }}
-                    {% if option_value.price %}
-                    ({{ option_value.price_prefix }}{{ option_value.price }})
-                    {% endif %} </option>
-                    {% endfor %}
-                  </select>
-                </div>
-                {% endif %}
-                {% if option.type == 'radio' %}
-                <div class="form-group{% if option.required %} required {% endif %}">
-                  <label class="control-label">{{ option.name }}</label>
-                  <div id="input-option{{ option.product_option_id }}"> {% for option_value in option.product_option_value %}
-                    <div class="radio">
-                      <label>
-                        <input type="radio" name="option[{{ option.product_option_id }}]" value="{{ option_value.product_option_value_id }}" data-radiobutton="my" />
-                        {% if option_value.image %} <img src="{{ option_value.image }}" alt="{{ option_value.name }} {% if option_value.price %} {{ option_value.price_prefix }} {{ option_value.price }} {% endif %}" class="img-thumbnail" /> {% endif %}                  
-                        {{ option_value.name }}
-                        {% if option_value.price %}
-                        ({{ option_value.price_prefix }}{{ option_value.price }})
-                        {% endif %} </label>
-                    </div>
-                    {% endfor %} </div>
-                </div>
-                {% endif %}
-                {% if option.type == 'checkbox' %}
-                <div class="form-group{% if option.required %} required {% endif %}">
-                  <label class="control-label">{{ option.name }}</label>
-                  <div id="input-option{{ option.product_option_id }}"> {% for option_value in option.product_option_value %}
-                    <div class="checkbox">
-                      <label>
-                        <input type="checkbox" name="option[{{ option.product_option_id }}][]" value="{{ option_value.product_option_value_id }}" />
-                        {% if option_value.image %} <img src="{{ option_value.image }}" alt="{{ option_value.name }} {% if option_value.price %} {{ option_value.price_prefix }} {{ option_value.price }} {% endif %}" class="img-thumbnail" /> {% endif %}
-                        {{ option_value.name }}
-                        {% if option_value.price %}
-                        ({{ option_value.price_prefix }}{{ option_value.price }})
-                        {% endif %} </label>
-                    </div>
-                    {% endfor %} </div>
-                </div>
-                {% endif %}
-                {#
-                {% if option.type == 'text' %}
-                <div class="form-group{% if option.required %} required {% endif %}">
-                  <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-                  <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" placeholder="{{ option.name }}" id="input-option{{ option.product_option_id }}" class="form-control" />
-                </div>
-                {% endif %}
-                {% if option.type == 'textarea' %}
-                <div class="form-group{% if option.required %} required {% endif %}">
-                  <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-                  <textarea name="option[{{ option.product_option_id }}]" rows="5" placeholder="{{ option.name }}" id="input-option{{ option.product_option_id }}" class="form-control">{{ option.value }}</textarea>
-                </div>
-                {% endif %}
-                {% if option.type == 'file' %}
-                <div class="form-group{% if option.required %} required {% endif %}">
-                  <label class="control-label">{{ option.name }}</label>
-                  <button type="button" id="button-upload{{ option.product_option_id }}" data-loading-text="{{ text_loading }}" class="btn btn-default btn-block"><i class="fa fa-upload"></i> {{ button_upload }}</button>
-                  <input type="hidden" name="option[{{ option.product_option_id }}]" value="" id="input-option{{ option.product_option_id }}" />
-                </div>
-                {% endif %}
-                {% if option.type == 'date' %}
-                <div class="form-group{% if option.required %} required {% endif %}">
-                  <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-                  <div class="input-group date">
-                    <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD" id="input-option{{ option.product_option_id }}" class="form-control" />
-                    <span class="input-group-btn">
-                    <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
-                    </span></div>
-                </div>
-                {% endif %}
-                {% if option.type == 'datetime' %}
-                <div class="form-group{% if option.required %} required {% endif %}">
-                  <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-                  <div class="input-group datetime">
-                    <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD HH:mm" id="input-option{{ option.product_option_id }}" class="form-control" />
-                    <span class="input-group-btn">
-                    <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                    </span></div>
-                </div>
-                {% endif %}
-                {% if option.type == 'time' %}
-                <div class="form-group{% if option.required %} required {% endif %}">
-                  <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-                  <div class="input-group time">
-                    <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="HH:mm" id="input-option{{ option.product_option_id }}" class="form-control" />
-                    <span class="input-group-btn">
-                    <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                    </span></div>
-                </div>
-                {% endif %} #}
-                {% endfor %}
-                {% endif %}
-                
-              {% if stock_status_id != 9 or ostatok > 0 %} {#показываем кнопки купить#}
-                
-                {# <div class="form-group">
-                  <label class="control-label" for="input-quantity">{{ entry_qty }}</label> #}
-                  <div class="add-block">
-
-                    <div class="quantity-block">
-                      <span class="minus">−</span>
-                      <input class="input_amount" type="text" name="quantity" value="{{ minimum }}" size="5" id="input-quantity"/>
-                      <span class="plus">+</span>
-                    </div>
-
-
-                    <input type="hidden" name="product_id" value="{{ product_id }}" />
-                    <div class="add">
-                        <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn-orange product_btn">{{ button_cart }}</button>
-                    </div>
-
-
-                    <div class="wishlist_comparison_box">
-                      <button type="button" data-toggle="tooltip" class="wishlist_button" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product_id }}');"></button>
-                      <button type="button" data-toggle="tooltip" class="comparison_button" title="{{ button_compare }}" onclick="compare.add('{{ product_id }}');"></button>
-                    </div>
-
-
+                {% else %}
+                  <div></div>
+                {% endif %}</div>
+                {#  {% if review_status %}
+                  <div class="rating-social-block">
+                    <div class="rating">{% for i in 1..5 %}
+                      {% if rating < i %}<span class="fa fa-stack"><i class="fa fa-star-o fa-stack-1x"></i></span>{% else %}<span class="fa fa-stack"><i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span>{% endif %}
+                      {% endfor %}</div>
+                  <div class="social-icon-block">
+                      <span onClick='open("https://www.facebook.com/sharer.php?u="+window.location.href, "displayWindow","width=520,height=300,left=350,top=170,status=no, toolbar=no,menubar=no");'><img src="/image/facebook_share.png" title="Поделиться на Facebook" alt="Поделиться на Facebook" width="124px" height="24px" /></span>
                   </div>
-                {# </div> #}
-                <div>{{ formcreator_id46 }}</div>
-                {% if minimum > 1 %}
-                <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
-                {% endif %}
-              {% else %}
-                <div></div>
-              {% endif %}</div>
-              {#  {% if review_status %}
-                <div class="rating-social-block">
-                  <div class="rating">{% for i in 1..5 %}
-                    {% if rating < i %}<span class="fa fa-stack"><i class="fa fa-star-o fa-stack-1x"></i></span>{% else %}<span class="fa fa-stack"><i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span>{% endif %}
-                    {% endfor %}</div>
-                <div class="social-icon-block">
-                    <span onClick='open("https://www.facebook.com/sharer.php?u="+window.location.href, "displayWindow","width=520,height=300,left=350,top=170,status=no, toolbar=no,menubar=no");'><img src="/image/facebook_share.png" title="Поделиться на Facebook" alt="Поделиться на Facebook" width="124px" height="24px" /></span>
-                </div>
-                </div>
-                {% endif %} #}
-            </div>
-            {{ html_module_60 }}
-            {# Характеристики #}
-             {% if attribute_groups %}
-            <div id="features" class="product_details_item">
-              <h2>{{ tab_attribute }}</h2>
-              <ul class="d-flex features mobile_tab__content flex-column features_bottom">
-              {% for attribute_group in attribute_groups %}
-                {% for attribute in attribute_group.attribute %}
+                  </div>
+                  {% endif %} #}
+              </div>
+              {{ html_module_60 }}
+              {# Характеристики #}
+              {% if attribute_groups %}
+              <div id="features" class="product_details_item">
+                <h2>{{ tab_attribute }}</h2>
+                <ul class="d-flex features mobile_tab__content flex-column features_bottom">
+                {% for attribute_group in attribute_groups %}
+                  {% for attribute in attribute_group.attribute %}
+                    <li class="features__item">
+                        <div class="features__wrap">
+                            <div class="features__name"> <span>{{ attribute.name }}</span> </div>
+                            <div class="features_dash"></div>
+                            <div class="features__value ">{% if attribute.href %}<a href="{{ attribute.href }}">{{ attribute.text }}</a>{% else %}{{ attribute.text }}{% endif %}</div>
+                        </div>
+                    </li>
+                  {% endfor %}
+                {% endfor %} 
+
+                {% if ean %}
                   <li class="features__item">
                       <div class="features__wrap">
-                          <div class="features__name"> <span>{{ attribute.name }}</span> </div>
-                          <div class="features_dash"></div>
-                          <div class="features__value ">{% if attribute.href %}<a href="{{ attribute.href }}">{{ attribute.text }}</a>{% else %}{{ attribute.text }}{% endif %}</div>
+                        <div class="features__name"> <span>{{ text_ean }}</span> </div>
+                        <div class="features_dash"></div>
+                        <div class="features__value ">{{ ean }}</div>
                       </div>
                   </li>
-                {% endfor %}
-              {% endfor %} 
-
-              {% if ean %}
-                <li class="features__item">
-                    <div class="features__wrap">
-                      <div class="features__name"> <span>{{ text_ean }}</span> </div>
-                      <div class="features_dash"></div>
-                      <div class="features__value ">{{ ean }}</div>
-                    </div>
-                </li>
-              {% endif %}      
-                  {# ToDO показать /скрыть характеристики #}
-                  {# <ul class="features_hidden">
-                      <li class="features__item">
-                          <div class="features__wrap">
-                              <div class="features__name"> <span>Матеріали:</span> </div>
-                              <div class="features_dash"></div>
-                              <div class="features__value ">
-                                  ABS </div>
-                          </div>
-                      </li>
-                      <li class="features__item">
-                          <div class="features__wrap">
-                              <div class="features__name"> <span>Колір:</span> </div>
-                              <div class="features_dash"></div>
-                              <div class="features__value ">
-                                  Чорний </div>
-                          </div>
-                      </li>
-                      
-                  </ul>
-                  <li>
-                      <div class="show_more" data-language="comparison_all">Всі характеристики</div>
-                  </li> #}  
-              </ul>
-            </div>
-            {% endif  %}
-            {# Описание #}
-            {# ToDo Readmore #}
-            <div id="description" class="product_details_item">
-              <h2>{{ tab_description }}</h2>
-              <div class="fn_readmore" {# data-readmore="" aria-expanded="false" id="rmjs-1" style="max-height: none; height: 300px;" #}>
-                  <div class="product_content_description">
-                    {{ description }}
-                  </div>
+                {% endif %}      
+                    {# ToDO показать /скрыть характеристики #}
+                    {# <ul class="features_hidden">
+                        <li class="features__item">
+                            <div class="features__wrap">
+                                <div class="features__name"> <span>Матеріали:</span> </div>
+                                <div class="features_dash"></div>
+                                <div class="features__value ">
+                                    ABS </div>
+                            </div>
+                        </li>
+                        <li class="features__item">
+                            <div class="features__wrap">
+                                <div class="features__name"> <span>Колір:</span> </div>
+                                <div class="features_dash"></div>
+                                <div class="features__value ">
+                                    Чорний </div>
+                            </div>
+                        </li>
+                        
+                    </ul>
+                    <li>
+                        <div class="show_more" data-language="comparison_all">Всі характеристики</div>
+                    </li> #}  
+                </ul>
               </div>
-              {# <a href="#" data-language="about_read_more" data-readmore-toggle="rmjs-1" aria-controls="rmjs-1"><span>Читати більше</span></a> #}
+              {% endif  %}
+              {# Описание #}
+              {# ToDo Readmore #}
+              <div id="description" class="product_details_item">
+                <h2>{{ tab_description }}</h2>
+                <div class="fn_readmore" {# data-readmore="" aria-expanded="false" id="rmjs-1" style="max-height: none; height: 300px;" #}>
+                    <div class="product_content_description">
+                      {{ description }}
+                    </div>
+                </div>
+                {# <a href="#" data-language="about_read_more" data-readmore-toggle="rmjs-1" aria-controls="rmjs-1"><span>Читати більше</span></a> #}
+            </div>
+            {# Отзывы #}
+            {% if review_status %}
+            <div id="comments" class="product_details_item">
+            <h2>{{ text_reviews_title }}</h2>
+              <form class="form-horizontal" id="form-review">
+                    <div id="review"></div>
+                    <div class="heading-title">{{ text_write }}</div>
+                    {% if review_guest %}
+                    <div class="form-group required">
+                      <div class="col-sm-12">
+                        <label class="control-label" for="input-name">{{ entry_name }}</label>
+                        <input type="text" name="name" value="{{ customer_name }}" id="input-name" class="form-control" />
+                      </div>
+                    </div>
+                    <div class="form-group required">
+                      <div class="col-sm-12">
+                        <label class="control-label" for="input-review">{{ entry_review }}</label>
+                        <textarea name="text" rows="5" id="input-review" class="form-control"></textarea>
+                        <div class="help-block">{{ text_note }}</div>
+                      </div>
+                    </div>
+                    <div class="form-group required">
+                      <div class="col-sm-12">
+                        <label class="control-label">{{ entry_rating }}</label>
+                        &nbsp;&nbsp;&nbsp; {{ entry_bad }}&nbsp;
+                        <input type="radio" name="rating" value="1" />
+                        &nbsp;
+                        <input type="radio" name="rating" value="2" />
+                        &nbsp;
+                        <input type="radio" name="rating" value="3" />
+                        &nbsp;
+                        <input type="radio" name="rating" value="4" />
+                        &nbsp;
+                        <input type="radio" name="rating" value="5" />
+                        &nbsp;{{ entry_good }}</div>
+                    </div>
+                    {{ captcha }}
+                    <div class="buttons clearfix">
+                      <div class="pull-right">
+                        <button type="button" id="button-review" data-loading-text="{{ text_loading }}" class="btn btn-primary">{{ button_continue }}</button>
+                      </div>
+                    </div>
+                    {% else %}
+                    {{ text_login }}
+                    {% endif %}
+              </form>
+            </div>
+            {% endif %}
+
+
+            </div>
           </div>
-          {# Отзывы #}
-          {% if review_status %}
-          <div id="comments" class="product_details_item">
-          <h2>{{ text_reviews_title }}</h2>
-            <form class="form-horizontal" id="form-review">
+        </div>
+        {# <div class="tabs-product">
+          <ul class="nav nav-tabs">
+              <li class="active"><a href="#tab-description" data-toggle="tab">{{ tab_description }}</a></li>
+              {% if attribute_groups or 1>0 %}
+              <li><a href="#tab-specification" data-toggle="tab">{{ tab_attribute }}</a></li>
+              {% endif %}
+              {% if review_status %}
+              <li><a href="#tab-review" data-toggle="tab">{{ tab_review }}</a></li>
+              {% endif %}
+            </ul>
+            {#<div class="tab-content">
+              <div class="tab-pane active" id="tab-description">{{ description }}</div>
+              {% if attribute_groups or 1>0 %}
+              <div class="tab-pane" id="tab-specification">
+                <table class="table table-bordered">
+                  <tbody>
+                    {% if ean %}
+                    <tr>
+                      <td>{{ text_ean }}</td>
+                      <td>{{ ean }}</td>
+                    </tr>
+                    {% endif %}              
+                  {% for attribute_group in attribute_groups %}
+                  {% for attribute in attribute_group.attribute %}
+                  <tr>
+                    <td>{{ attribute.name }}</td>
+                    <td>{{ attribute.text }}</td>
+                  </tr>
+                  {% endfor %}
+                  {% endfor %}   
+                </tbody>
+                </table>
+              </div>
+              {% endif %} 
+              {% if review_status %}
+              <div class="tab-pane" id="tab-review">
+                <form class="form-horizontal" id="form-review">
                   <div id="review"></div>
                   <div class="heading-title">{{ text_write }}</div>
                   {% if review_guest %}
@@ -459,109 +604,26 @@
                   {% else %}
                   {{ text_login }}
                   {% endif %}
-            </form>
-          </div>
+                </form>
+              </div>
+              {% endif %}
+            </div>
+        </div> #}
+        
+          {% if tags %}
+          <p>{{ text_tags }}
+          {% for i in 0..tags|length %}
+          {% if i < (tags|length - 1) %} <a href="{{ tags[i].href }}">{{ tags[i].tag }}</a>,
+          {% else %} <a href="{{ tags[i].href }}">{{ tags[i].tag }}</a> {% endif %}
+          {% endfor %} </p>
           {% endif %}
-
-
-          </div>
-        </div>
       </div>
-      {# <div class="tabs-product">
-         <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab-description" data-toggle="tab">{{ tab_description }}</a></li>
-            {% if attribute_groups or 1>0 %}
-            <li><a href="#tab-specification" data-toggle="tab">{{ tab_attribute }}</a></li>
-            {% endif %}
-            {% if review_status %}
-            <li><a href="#tab-review" data-toggle="tab">{{ tab_review }}</a></li>
-            {% endif %}
-          </ul>
-          {#<div class="tab-content">
-             <div class="tab-pane active" id="tab-description">{{ description }}</div>
-            {% if attribute_groups or 1>0 %}
-            <div class="tab-pane" id="tab-specification">
-              <table class="table table-bordered">
-              	<tbody>
-                  {% if ean %}
-                  <tr>
-                    <td>{{ text_ean }}</td>
-                    <td>{{ ean }}</td>
-                  </tr>
-                  {% endif %}              
-                {% for attribute_group in attribute_groups %}
-                {% for attribute in attribute_group.attribute %}
-                <tr>
-                  <td>{{ attribute.name }}</td>
-                  <td>{{ attribute.text }}</td>
-                </tr>
-                {% endfor %}
-                {% endfor %}   
-              </tbody>
-              </table>
-            </div>
-            {% endif %} 
-            {% if review_status %}
-            <div class="tab-pane" id="tab-review">
-              <form class="form-horizontal" id="form-review">
-                <div id="review"></div>
-                <div class="heading-title">{{ text_write }}</div>
-                {% if review_guest %}
-                <div class="form-group required">
-                  <div class="col-sm-12">
-                    <label class="control-label" for="input-name">{{ entry_name }}</label>
-                    <input type="text" name="name" value="{{ customer_name }}" id="input-name" class="form-control" />
-                  </div>
-                </div>
-                <div class="form-group required">
-                  <div class="col-sm-12">
-                    <label class="control-label" for="input-review">{{ entry_review }}</label>
-                    <textarea name="text" rows="5" id="input-review" class="form-control"></textarea>
-                    <div class="help-block">{{ text_note }}</div>
-                  </div>
-                </div>
-                <div class="form-group required">
-                  <div class="col-sm-12">
-                    <label class="control-label">{{ entry_rating }}</label>
-                    &nbsp;&nbsp;&nbsp; {{ entry_bad }}&nbsp;
-                    <input type="radio" name="rating" value="1" />
-                    &nbsp;
-                    <input type="radio" name="rating" value="2" />
-                    &nbsp;
-                    <input type="radio" name="rating" value="3" />
-                    &nbsp;
-                    <input type="radio" name="rating" value="4" />
-                    &nbsp;
-                    <input type="radio" name="rating" value="5" />
-                    &nbsp;{{ entry_good }}</div>
-                </div>
-                {{ captcha }}
-                <div class="buttons clearfix">
-                  <div class="pull-right">
-                    <button type="button" id="button-review" data-loading-text="{{ text_loading }}" class="btn btn-primary">{{ button_continue }}</button>
-                  </div>
-                </div>
-                {% else %}
-                {{ text_login }}
-                {% endif %}
-              </form>
-            </div>
-            {% endif %}
-          </div>
-      </div> #}
-      
-        {% if tags %}
-        <p>{{ text_tags }}
-        {% for i in 0..tags|length %}
-        {% if i < (tags|length - 1) %} <a href="{{ tags[i].href }}">{{ tags[i].tag }}</a>,
-        {% else %} <a href="{{ tags[i].href }}">{{ tags[i].tag }}</a> {% endif %}
-        {% endfor %} </p>
-        {% endif %}
-     </div>
-    {{ column_right }}
+      {{ column_right }}
+  </div>
 </div>
 
- {% if products %}
+<div class="container">
+  {% if products %}
       <div style="line-height: 70px;text-align: center;text-transform: uppercase;font-family:'Oswald', sans-serif;color: #222830;">{{ text_related }}</div>
       <div class="row" id="related_products"> {% set i = 0 %}
         {% for product in products %}
@@ -600,14 +662,10 @@
         {% endif %}
         {% set i = i + 1 %}
         {% endfor %} </div>
-        {% endif %}
+  {% endif %}
  {{ content_bottom }}
 </div>
 <h2 style="display:none">{{ seo_h2 }}</h2>
-
-
-<style>
-</style>
 
 <script><!--
   $('#button-cart').on('click', function() {

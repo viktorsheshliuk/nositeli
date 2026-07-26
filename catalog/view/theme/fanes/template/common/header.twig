@@ -67,38 +67,41 @@
 </head>
 <body>
     <div class="modal-fon fade"></div> {# фон для мобильного меню #}   
-    <div class="wrapper">
-     <header>
+    {# <div class="wrapper"> #}
+    <div class="container">
+      <header>
         <div class="header-block justify-content-end">
-            {# <div class="logo">
-           <div id="logo">
-          {% if logo %}
-            {% if home == og_url %}
-              <img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" class="img-responsive" />
+              {# <div class="logo">
+            <div id="logo">
+            {% if logo %}
+              {% if home == og_url %}
+                <img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" class="img-responsive" />
+              {% else %}
+                <a href="{{ home }}"><img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" class="img-responsive" /></a>
+              {% endif %}
             {% else %}
-              <a href="{{ home }}"><img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" class="img-responsive" /></a>
+              <h1><a href="{{ home }}">{{ name }}</a></h1>
             {% endif %}
-          {% else %}
-            <h1><a href="{{ home }}">{{ name }}</a></h1>
-          {% endif %}
-                </div>
-            </div>
-            <div class="contact-block">
-                 <div class="contact">
-                    <span class="email"><i class="fa fa-envelope-o" aria-hidden="true"></i>{{ email }}</span> 
-                     {# <span class="tel"><i class="fa fa-phone" aria-hidden="true"></i>{{telephone}} <a href="viber://chat?number=%2B380675783876" target="_blank" style="color: #7c529d;">Viber</a></span> #}
-                  <!--   <span class="tel2"><i class="fa fa-phone" aria-hidden="true"></i>+38 (096) </span> -->
-          {#           <span class="open">
-                         {% if open %}
-                  <i class="fa fa-clock-o" aria-hidden="true"></i>{{ open }}
-                  {% endif %}
-                     </span>
-                 </div>
-            </div> #}
-    <ul class="right-menu">
-        {# <li>{{ cart }}</li> #}
-        <li id="right-menu-language-select">{{language}}</li>
-        </ul>
-      </div>
- </header>
- {{ menu }}
+                  </div>
+              </div>
+              <div class="contact-block">
+                  <div class="contact">
+                      <span class="email"><i class="fa fa-envelope-o" aria-hidden="true"></i>{{ email }}</span> 
+                      {# <span class="tel"><i class="fa fa-phone" aria-hidden="true"></i>{{telephone}} <a href="viber://chat?number=%2B380675783876" target="_blank" style="color: #7c529d;">Viber</a></span> 
+                      <span class="open">
+                        {% if open %}
+                        <i class="fa fa-clock-o" aria-hidden="true"></i>{{ open }}
+                        {% endif %}
+                      </span>
+                  </div>
+              </div> #}
+          <ul class="right-menu">
+              {# <li>{{ cart }}</li> #}
+            <li id="right-menu-language-select">{{language}}</li>
+          </ul>
+        </div>
+      </header>
+    {{ menu }}  
+    </div>  
+ <main>
+ 
