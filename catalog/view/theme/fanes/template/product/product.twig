@@ -72,19 +72,25 @@
               <div class="tab_product_info justify-content-between">
                 <span class="product_tab_name" data-product="7337">{{ heading_title }}</span>
               </div>
+              {% if price %}
               <div class="tab_details_price">
+
                   <div class="tab_old_price ">
+                    {% if special %}
                     <div class="boxed_old_price">
-                      <span class="fn_old_price"></span>
+                      <span class="fn_old_price">{% if special %}{{ price }}{% endif %}</span>
                       <span class="currency">{{ symbol_right }}</span>
                     </div>
-                    <div class="fn_discount_label ">-15%</div>
+                    {% endif %}
+                    <div class="fn_discount_label ">{{ discount_percent }}</div>
                   </div>
-                  <div class="tab_price price--red">
-                    <span class="fn_price"></span>
+                  <div class="tab_price {% if special %}price--red{% endif %}">
+                    <span class="fn_price">{% if special %}{{ special }}{% else %}{{ price }}{% endif %}</span>
                     <span class="currency">{{ symbol_right }}</span>
                   </div>
+
               </div>
+              {% endif %}
                 {# <form class="fn_variants" action="cart">
                     <select name="variant" class="fn_variant variant_select hidden">
                         <option value="27072" data-price="253" data-stock="5" data-cprice="297" data-sku="HV-MS626GT, black" data-units="шт">Бездротова миша HAVIT HV-MS626GT Black (1200 DPI, 3 кл) </option>

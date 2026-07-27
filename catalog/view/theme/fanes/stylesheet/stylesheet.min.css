@@ -6989,6 +6989,44 @@ body.lock{overflow: hidden;}
     display: flex;
     flex-direction: column;
 }
+.tab_old_price {
+    color: #afafaf;
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+}
+.boxed_old_price {
+    position: relative;
+}
+.boxed_old_price::after {
+    border-bottom: 1px solid #afafaf;
+    content: "";
+    left: 0;
+    position: absolute;
+    top: 48%;
+    width: 100%;
+    -webkit-transform: rotate(-10deg);
+    transform: rotate(-10deg);
+}
+.tab_price.price--red {
+    color: var(--color-red);
+}
+.tab_price .currency {
+    margin-left: 5px;
+}
+.tab_old_price .fn_discount_label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-red);
+}
+.tab_price {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    font-size: 23px;
+    color: #121212;
+}
 
 
 
@@ -7106,6 +7144,13 @@ body.lock{overflow: hidden;}
 }
 
 @media (max-width: 991px){
+    .tab_price {
+        font-size: 18px;
+    }
+    .tab_old_price {
+        font-size: 13px;
+        gap: 4px;
+    }
     .tab_details_price {
         margin: 0 12px;
     }
