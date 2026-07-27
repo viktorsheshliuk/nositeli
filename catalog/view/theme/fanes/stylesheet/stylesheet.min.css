@@ -3124,6 +3124,9 @@ header #right-menu-language-select{
     align-items: flex-end;
     gap: 5px;
 }
+.product-wrapp .price-block .price .fn_price{
+    margin-bottom: -4px;
+}
 .product-wrapp .price-block .price.red-price {
     color: var(--color-red);
 }
