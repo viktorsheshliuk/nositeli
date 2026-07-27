@@ -7027,6 +7027,19 @@ body.lock{overflow: hidden;}
     font-size: 23px;
     color: #121212;
 }
+.tabs__link::after {
+    content: "";
+    height: 4px;
+    position: absolute;
+    bottom: -4px;
+    background: #ff7a00;
+    width: 0px;
+    left: 0;
+    transition: all .3s ease;
+}
+.tabs__link.selected::after {
+    width: 100%;
+}
 
 
 
