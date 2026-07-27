@@ -66,7 +66,7 @@
               <div class="tab_product_img">
                 <picture>
                   <source srcset="{{ small }}">
-                  <img loading="lazy" class="lazy loading" src="{{ small }}" alt="{{ heading_title }} - фото" title="{{ heading_title }}">
+                  <img loading="lazy" class="lazy loading img-responsive" src="{{ small }}" alt="{{ heading_title }} - фото" title="{{ heading_title }}">
                 </picture>
               </div>
               <div class="tab_product_info justify-content-between">
@@ -203,7 +203,7 @@
         
           <div class="right-panel">
             <div class="product_details"> 
-              <div class="product_details_item">
+              <div class="product_details_item" id="main">
                 <div class="product_header_wrapper">
                   <div class="available">
                     <span class="no_stock fn_not_stock {% if ostatok > 0 %}hidden{% endif %}">{{ text_outstock }}</span>
@@ -242,7 +242,7 @@
                       </div>
                       
                       <div class="old_price_box">
-                        <div class="fn_discount_label ">-15%</div>
+                        <div class="fn_discount_label ">{{ discount_percent }}</div>
                         <div class="old_price">
                           <span class="fn_old_price">{{ price }}</span>
                           {{ symbol_right }}
@@ -890,7 +890,97 @@ document.addEventListener('DOMContentLoaded', function () {
     Fancybox.bind("[data-fancybox]", {
       Thumbs: false,
     });
+
+
+
+    // 1. Инициализация: делаем первую вкладку активной при загрузке
+    $(".tabs_navigation_product .container").find(".tabs_buttons").children().first().addClass("selected");
+
+    // 2. Плавная прокрутка при клике на вкладку
+    $(document).on("click", ".tabs__link", function(e) {
+        e.preventDefault();
+        
+        let headerHeight = $(".header__bottom").outerHeight() || 0;
+        let navHeight = $(".tabs_navigation_product").outerHeight() || 0;
+        let targetHref = $(this).attr("href");
+        
+        if (!targetHref || targetHref.indexOf("#") === -1) return;
+        
+        let targetId = targetHref.split("#")[1];
+        if (!targetId) return;
+        
+        let $targetElement = $("#" + targetId);
+        if ($targetElement.length > 0) {
+            // Вычисляем позицию с учетом высоты шапки, липкой панели и небольшого отступа (56px)
+            let scrollTo = $targetElement.offset().top - headerHeight - navHeight - 56;
+            
+            $("body, html").animate({
+                scrollTop: scrollTo
+            }, 800);
+        }
+    });
+
+    // 3. Фиксация шапки и панели при скролле
+    $(window).on("load scroll", function() {
+        let scrollTop = $(document).scrollTop();
+        // Проверяем, находимся ли мы на странице товара
+        let isProductPage = $("body").hasClass("product-product");
+
+        if (scrollTop < 140) {
+            $(".header__bottom, .header__catalog").removeClass("fixed");
+            $(".main").css("padding-top", "0");
+            if (isProductPage) {
+                $(".tabs_navigation_product").removeClass("fixed");
+                $(".tabs_product_card").removeClass("show");
+            }
+        } else {
+            $(".header__bottom, .header__catalog").addClass("fixed");
+            if (isProductPage) {
+                if (scrollTop < 370) {
+                    $(".tabs_navigation_product").removeClass("fixed");
+                    $(".tabs_product_card").removeClass("show");
+                    $(".main").css("padding-top", "50px");
+                } else {
+                    $(".tabs_navigation_product").addClass("fixed");
+                    $(".tabs_product_card").addClass("show");
+                    $(".main").css("padding-top", "114px"); // Подстройте это значение под высоту ваших фиксированных элементов
+                }
+            } else {
+                $(".main").css("padding-top", "50px");
+            }
+        }
+    });
+
+    // 4. Автоматическая подсветка активной вкладки при скролле
+    $(window).on("load scroll", function() {
+        let $detailsItems = $(".product_details_item"); // Блоки с контентом (Описание, Характеристики, Отзывы)
+        let $navLinks = $(".tabs__link"); // Ссылки в панели навигации
+        let headerHeight = $(".header__bottom").outerHeight() || 0;
+        let navHeight = $(".tabs_navigation_product").outerHeight() || 0;
+        let currentScroll = $(document).scrollTop() + headerHeight + navHeight + 70;
+
+        $detailsItems.each(function() {
+            let $item = $(this);
+            let itemTop = $item.offset().top;
+            let itemBottom = itemTop + $item.outerHeight();
+
+            if (currentScroll >= itemTop && currentScroll < itemBottom) {
+                let itemId = $item.attr("id");
+                if (itemId) {
+                    $navLinks.removeClass("selected");
+                    $navLinks.each(function() {
+                        let href = $(this).attr("href");
+                        if (href && href.endsWith("#" + itemId)) {
+                            $(this).addClass("selected");
+                        }
+                    });
+                }
+            }
+        });
+    });
+
 });
+
 
 {# $(document).ready(function() {
   $('.thumbnails').magnificPopup({

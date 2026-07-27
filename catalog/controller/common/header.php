@@ -118,6 +118,9 @@ class ControllerCommonHeader extends Controller {
 		$data['cart'] = $this->load->controller('common/cart');
 		$data['menu'] = $this->load->controller('common/menu');
 
+		$route = isset($this->request->get['route']) ? $this->request->get['route'] : 'common/home';
+		$data['body_class'] = str_replace('/', '-', $route);
+
 		return $this->load->view('common/header', $data);
 	}
 }

@@ -317,6 +317,10 @@ class ControllerProductProduct extends Controller {
 
 			if ((float)$product_info['special']) {
 				$data['special'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency'], '', false);
+
+				if ($data['price'] > $data['special'] || $data['price'] !== 0){
+					$data['discount_percent'] = '-'. round(($data['price'] - $data['special']) / $data['price'] * 100) . '%';
+				}	
 			} else {
 				$data['special'] = false;
 			}
