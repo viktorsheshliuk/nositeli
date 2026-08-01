@@ -763,7 +763,7 @@ header #right-menu-language-select{
 .nav-menu {
 /*    background: #424242;*/
     display: flex;
-    padding: 10px 0px;
+    /* padding: 10px 0px; */
     margin: 0 auto;
     position: relative;
 }
