@@ -1,54 +1,65 @@
-{# {% if languages|length > 1 %}
-<div class="languages-block">
-  <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-language">
-     <div class="laguages-title">
+
+{# <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-language">
+  <button id="btn__language" class="btn dropdown-toggle" data-toggle="dropdown" aria-label="Language">
+    <span class="d-flex align-items-center">
       {% for language in languages %}
-      {% if language.code == code %} 
-      <img src="catalog/language/{{ language.code }}/{{ language.code }}.png" alt="{{ language.name }}" title="{{ language.name }}">
-      {% endif %}
+        {% if language.code == code %}
+          <span class="language__name">{{ language.code|slice(3) }}</span>
+        {% endif %}
       {% endfor %}
-      {{ text_language }}</div>
-      <ul>
-        {% for language in languages %}
-        <li>
-          <button class="language-select" type="button" name="{{ language.code }}"><img src="catalog/language/{{ language.code }}/{{ language.code }}.png" alt="{{ language.name }}" title="{{ language.name }}" /> {{ language.name }}</button>
-        </li>
-        {% endfor %}
-      </ul>
-    <input type="hidden" name="code" value="" />
-    <input type="hidden" name="redirect" value="{{ redirect }}" />
-  </form>
-</div>
-{% endif %} #}
-{# <div class="btn-group"> #}
-    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-language">
-    <button id="btn__language" class="btn dropdown-toggle" data-toggle="dropdown" aria-label="Language">
-        <span class="d-flex align-items-center">
-            {% for language in languages %}
-            {% if language.code == code %}
-            <span class="language__name">
-                {{ language.code|slice(3) }}
-            </span>
-            {% endif %}
-            {% endfor %}
-            <span class="">
-                <svg class="d-block ft-icon-24 text-gray-500 darker-on-hover" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-                    <path transform="translate(0 2)" d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z" fill="#adb5bd"/>
-                </svg>
-            </span>
-        </span>
-    </button>
-    <div class="dropdown-menu language-dropdown-menu">
-        <div id="ft-form-language">
-            {% for language in languages %}
-            {% if language.code != code %}
-              <button class="language-select" type="button" name="{{ language.code }}">{{ language.name }}</button>
-            
-            {% endif %}
-            {% endfor %}
-        </div>
+      <span class="">
+        <svg class="d-block ft-icon-24 text-gray-500 darker-on-hover" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+          <path transform="translate(0 2)" d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z" fill="#adb5bd" />
+        </svg>
+      </span>
+    </span>
+  </button>
+  <div class="dropdown-menu language-dropdown-menu">
+    <div id="ft-form-language">
+      {% for language in languages %}
+        {% if language.code != code %}
+          <button class="language-select" type="button" name="{{ language.code }}">{{ language.name }}</button>
+        {% endif %}
+      {% endfor %}
     </div>
-    <input type="hidden" name="code" value="" />
-    <input type="hidden" name="redirect" value="{{ redirect }}" />
-  </form>  
-{# </div> #}
+  </div>
+  <input type="hidden" name="code" value="" />
+  <input type="hidden" name="redirect" value="{{ redirect }}" />
+</form> #}
+
+
+{# <div class="informer languages">
+  <div class="fn_switch lang_switch">
+    <span class="informer_name">ua</span>
+    <i class="angle_icon tablet-hidden"></i>
+    <div class="dropdown">
+      <a class="dropdown_item active" href="https://videx.ua/comparison"><span class="">ua</span></a>
+      <a class="dropdown_item" href="https://videx.ua/en/comparison"><span class="">en</span></a>
+    </div>
+  </div>
+</div> #}
+<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-language">
+  <div class="informer languages">
+    <div class="fn_switch lang_switch">
+      {# Текущий выбранный язык #}
+      {% for language in languages %}
+        {% if language.code == code %}
+          <span class="informer_name">{{ language.code|slice(-2) }}</span>
+        {% endif %}
+      {% endfor %}
+      <i class="angle_icon tablet-hidden"></i>
+      {# Выпадающий список языков #}
+      <div class="dropdown">
+        {% for language in languages %}
+          <a class="dropdown_item {% if language.code == code %}active{% endif %}" 
+             href="javascript:void(0);" 
+             onclick="$('#form-language input[name=\'code\']').val('{{ language.code }}').parent().submit();">
+            <span>{{ language.code|slice(-2) }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <input type="hidden" name="code" value="" />
+  <input type="hidden" name="redirect" value="{{ redirect }}" />
+</form>

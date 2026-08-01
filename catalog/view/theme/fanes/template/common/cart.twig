@@ -1,78 +1,136 @@
-<div id="cart"> {# ниже класс adds нужен для всплывающей корзины fanes #}
-    <button id="desktop_cart" class="dropdown-toggle" data-placement="bottom" data-toggle="modal" data-loading-text="{{ text_loading }}">
-    {#<a href="" class=" adds#} {#icon-link dropdown-toggle" data-placement="bottom" data-toggle="modal" data-loading-text="{{ text_loading }}" >#}
-    
-      <span class="desktop_cart_box">
-        <span class="svg">
-          <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_359_289)">
-          <path d="M4.5 19.0827C4.5 19.6131 4.71071 20.1218 5.08579 20.4969C5.46086 20.872 5.96957 21.0827 6.5 21.0827C7.03043 21.0827 7.53914 20.872 7.91421 20.4969C8.28929 20.1218 8.5 19.6131 8.5 19.0827C8.5 18.5522 8.28929 18.0435 7.91421 17.6685C7.53914 17.2934 7.03043 17.0827 6.5 17.0827C5.96957 17.0827 5.46086 17.2934 5.08579 17.6685C4.71071 18.0435 4.5 18.5522 4.5 19.0827Z" stroke="#2A2727" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.5 19.0827C15.5 19.6131 15.7107 20.1218 16.0858 20.4969C16.4609 20.872 16.9696 21.0827 17.5 21.0827C18.0304 21.0827 18.5391 20.872 18.9142 20.4969C19.2893 20.1218 19.5 19.6131 19.5 19.0827C19.5 18.5522 19.2893 18.0435 18.9142 17.6685C18.5391 17.2934 18.0304 17.0827 17.5 17.0827C16.9696 17.0827 16.4609 17.2934 16.0858 17.6685C15.7107 18.0435 15.5 18.5522 15.5 19.0827Z" stroke="#2A2727" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 17.0827H6.5V3.08268H4.5" stroke="#2A2727" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 5.08268L20.5 6.08268L19.5 13.0827H6.5" stroke="#2A2727" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="clip0_359_289"><rect width="24" height="24" fill="white" transform="translate(0.5 0.0826797)"/></clipPath></defs>
-          </svg>
-          <span id="cart-total">{{text_items}}</span>
-      </span>  
-      <span id="text_cart">{{ text_cart }}</span>
-    {# </a> #}
-  </button>
-  <div id="myModal" class="modal fade">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
-        <div class="modal-title">{{text_items}}</div>
+{# <div id="cart_informer" class="header_informers__item d-flex align-items-center justify-content-center cart_informer button--blick">
+  <a href="cart" class="cart_info d-flex align-items-center informers_item">
+    <div class="informers_icon d-flex">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 2H3.87668L6.03418 14.6058H17.5409M5.87264 11.6969H17.3121C17.3969 11.6969 17.4792 11.6678 17.5448 11.6145C17.6105 11.5613 17.6554 11.4871 17.6721 11.4046L18.9929 4.85931C19.0035 4.80653 19.0022 4.75206 18.9891 4.69984C18.9759 4.64762 18.9512 4.59895 18.9168 4.55733C18.8823 4.51571 18.839 4.4822 18.7899 4.45919C18.7408 4.43619 18.6872 4.42428 18.6329 4.42432H4.4051M7.3227 17.2727C7.3227 17.6744 6.99598 18 6.59295 18C6.18992 18 5.86321 17.6744 5.86321 17.2727C5.86321 16.8711 6.18992 16.5455 6.59295 16.5455C6.99598 16.5455 7.3227 16.8711 7.3227 17.2727ZM17.5393 17.2727C17.5393 17.6744 17.2126 18 16.8096 18C16.4065 18 16.0798 17.6744 16.0798 17.2727C16.0798 16.8711 16.4065 16.5455 16.8096 16.5455C17.2126 16.5455 17.5393 16.8711 17.5393 17.2727Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span class="cart_title">{{ text_shopping_cart }}</span>
+        <span class="cart_counter menu_counter">1</span>
       </div>
-    <ul>
-    {% if products or vouchers %}
-    <li>
-      <table class="table">
-        {% for product in products %}
-        <tr>
-          <td class="text-center">{% if product.thumb %} <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-thumbnail" /></a> {% endif %}</td>
-          <td class="text-left"><a href="{{ product.href }}">{{ product.name }}</a> {% if product.option %}
-            {% for option in product.option %} <br />
-            - <small>{{ option.name }} {{ option.value }}</small> {% endfor %}
-            {% endif %}
-            {% if product.recurring %} <br />
-            - <small>{{ text_recurring }} {{ product.recurring }}</small> {% endif %}</td>
-          <td class="text-right">x {{ product.quantity }}</td>
-          <td class="text-right">{{ product.total }}</td>
-          <td class="text-center"><button type="button" onclick="cart.remove('{{ product.cart_id }}');" title="{{ button_remove }}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i></button></td>
-        </tr>
-        {% endfor %}
-        {% for voucher in vouchers %}
-        <tr>
-          <td class="text-center"></td>
-          <td class="text-left">{{ voucher.description }}</td>
-          <td class="text-right">x&nbsp;1</td>
-          <td class="text-right">{{ voucher.amount }}</td>
-          <td class="text-center text-danger"><button type="button" onclick="voucher.remove('{{ voucher.key }}');" title="{{ button_remove }}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i></button></td>
-        </tr>
-        {% endfor %}
-      </table>
-    </li>
-    <li>
-      <div class="results">
-        <table class="table-result">
-          {% for total in totals %}
-          <tr>
-            <td class="text-left"><strong>{{ total.title }}</strong></td>
-            <td class="text-right">{{ total.text }}</td>
-          </tr>
-          {% endfor %}
-        </table>
-      </div>
-      <div class="cart-btn">
-         <a type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-home" aria-hidden="true"></i> Продолжить покупки</a>
-         <a class="btn btn-primary" href="{{ cart }}"><i class="fa fa-shopping-cart"></i> {{ text_cart }}</a>
-         <a class="btn btn-primary" href="{{ checkout }}"><i class="fa fa-share"></i> {{ text_checkout }}</a>
-      </div>
-    </li>
-    {% else %}
-    <li>
-      <p class="text-center">{{ text_empty }}</p>
-    </li>
-    {% endif %}
-  </ul>
-    </div>
-  </div>
-</div> 
-</div>
+      <span class="cart_total fn_discount" data-discount="0"><span class="total_sum_header">0,00</span><br /> грн</span>
+    </a>
+</div> #}
 
+
+<div id="cart" class="header_informers__item d-flex align-items-center justify-content-center cart_informer button--blick">
+  
+  <!-- Кнопка/ссылка корзины (внешний вид от донора, логика модального окна от вашей) -->
+  <button id="desktop_cart" class="dropdown-toggle cart_info d-flex align-items-center informers_item" data-placement="bottom" data-toggle="modal" data-loading-text="{{ text_loading }}" style="background: none; border: none; padding: 0; cursor: pointer;">
+    
+    <div class="informers_icon d-flex align-items-center">
+      <!-- Иконка корзины от донора -->
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 2H3.87668L6.03418 14.6058H17.5409M5.87264 11.6969H17.3121C17.3969 11.6969 17.4792 11.6678 17.5448 11.6145C17.6105 11.5613 17.6554 11.4871 17.6721 11.4046L18.9929 4.85931C19.0035 4.80653 19.0022 4.75206 18.9891 4.69984C18.9759 4.64762 18.9512 4.59895 18.9168 4.55733C18.8823 4.51571 18.839 4.4822 18.7899 4.45919C18.7408 4.43619 18.6872 4.42428 18.6329 4.42432H4.4051M7.3227 17.2727C7.3227 17.6744 6.99598 18 6.59295 18C6.18992 18 5.86321 17.6744 5.86321 17.2727C5.86321 16.8711 6.18992 16.5455 6.59295 16.5455C6.99598 16.5455 7.3227 16.8711 7.3227 17.2727ZM17.5393 17.2727C17.5393 17.6744 17.2126 18 16.8096 18C16.4065 18 16.0798 17.6744 16.0798 17.2727C16.0798 16.8711 16.4065 16.5455 16.8096 16.5455C17.2126 16.5455 17.5393 16.8711 17.5393 17.2727Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      
+      <!-- Текст "Кол-во товаров" или название -->
+      <span class="cart_title ml-2">{{ text_shopping_cart|default('Корзина') }}</span>
+      
+      <!-- Счетчик товаров (ваш id="cart-total" нужен для AJAX-обновления OpenCart) -->
+      <span class="cart_counter menu_counter" id="cart-total">{{ text_items }}</span>
+    </div>
+
+    <!-- Общая сумма (берется из последней строки totals или выводится динамически) -->
+    <span class="cart_total fn_discount" data-discount="0">
+      <span class="total_sum_header">
+        {% if totals %}
+          {{ totals|last.text }}
+        {% else %}
+          0,00
+        {% endif %}
+      </span>
+    </span>
+
+  </button>
+
+  <!-- Модальное окно корзины (ваша рабочая логика OpenCart) -->
+  <div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i></button>
+          <div class="modal-title">{{ text_items }}</div>
+        </div>
+        <ul>
+          {% if products or vouchers %}
+          <li>
+            <table class="table">
+              {% for product in products %}
+              <tr>
+                <td class="text-center">{% if product.thumb %} <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-thumbnail" /></a> {% endif %}</td>
+                <td class="text-left"><a href="{{ product.href }}">{{ product.name }}</a> {% if product.option %}
+                  {% for option in product.option %} <br />
+                  - <small>{{ option.name }} {{ option.value }}</small> {% endfor %}
+                  {% endif %}
+                  {% if product.recurring %} <br />
+                  - <small>{{ text_recurring }} {{ product.recurring }}</small> {% endif %}</td>
+                <td class="text-right">x {{ product.quantity }}</td>
+                <td class="text-right">{{ product.total }}</td>
+                <td class="text-center"><button type="button" onclick="cart.remove('{{ product.cart_id }}');" title="{{ button_remove }}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i></button></td>
+              </tr>
+              {% endfor %}
+              {% for voucher in vouchers %}
+              <tr>
+                <td class="text-center"></td>
+                <td class="text-left">{{ voucher.description }}</td>
+                <td class="text-right">x&nbsp;1</td>
+                <td class="text-right">{{ voucher.amount }}</td>
+                <td class="text-center text-danger"><button type="button" onclick="voucher.remove('{{ voucher.key }}');" title="{{ button_remove }}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i></button></td>
+              </tr>
+              {% endfor %}
+            </table>
+          </li>
+          <li>
+            <div class="results">
+              <table class="table-result">
+                {% for total in totals %}
+                <tr>
+                  <td class="text-left"><strong>{{ total.title }}</strong></td>
+                  <td class="text-right">{{ total.text }}</td>
+                </tr>
+                {% endfor %}
+              </table>
+            </div>
+            <div class="cart-btn">
+               <a type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-home" aria-hidden="true"></i> Продолжить покупки</a>
+               <a class="btn btn-primary" href="{{ cart }}"><i class="fa fa-shopping-cart"></i> {{ text_cart }}</a>
+               <a class="btn btn-primary" href="{{ checkout }}"><i class="fa fa-share"></i> {{ text_checkout }}</a>
+            </div>
+          </li>
+          {% else %}
+          <li>
+            <p class="text-center">{{ text_empty }}</p>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div> 
+</div>
+<script>
+  function updateCartState() {
+    var $cart = $('#cart');
+    var $counter = $('#cart-total');
+    var cartText = $counter.text();
+    
+    // Проверяем, есть ли цифра больше 0 в тексте (например, "2 товара" или "1")
+    var matches = cartText.match(/\d+/);
+    var count = matches ? parseInt(matches[0]) : 0;
+
+    if (count > 0) {
+      $cart.addClass('with_products');
+      $counter.show(); // Показываем счетчик
+    } else {
+      $cart.removeClass('with_products');
+      $counter.hide(); // Скрываем счетчик, если 0
+    }
+  }
+
+  $(document).ready(function() {
+    updateCartState();
+  });
+
+  $(document).ajaxComplete(function(event, xhr, settings) {
+    setTimeout(updateCartState, 200);
+  });
+</script>

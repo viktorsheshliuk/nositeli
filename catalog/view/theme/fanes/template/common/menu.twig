@@ -1,16 +1,16 @@
 <div class="nav-menu align-items-center" id="desktop-menu">
-        <div class="burger-menu">
+        {#<div class="burger-menu">
             <div class="line"></div>
             <div class="line"></div>
             <div class="line"></div>
         </div>
 
-        <div class="toggler-block">
+         <div class="toggler-block">
              <button class="toggler">
              <span class="icon"></span>
              </button>
              <span class="text-category">{{ text_category }}</span>
-         </div>
+         </div> #}
         <div class="menu-block">
         {% if categories %}
             <ul class="menu">
@@ -38,7 +38,7 @@
         {% endif %}
         </div>
 <ul class="right-l align-items-center">
-     <li id="new_products"><a  href="/new-products"><i class="fa fa-plus-circle" aria-hidden="true"></i><span class="link-text">
+     {# <li id="new_products"><a  href="/new-products"><i class="fa fa-plus-circle" aria-hidden="true"></i><span class="link-text">
          {{ text_new_products }} 
      </span></a></li>
      <li id="manufacturrer"><a  href="{{ manufacturer }}"><i class="fa fa-cogs" aria-hidden="true"></i><span class="link-text">
@@ -46,7 +46,7 @@
      </span></a></li>
        <li id="special"><a href="{{ special }}"><i class="fa fa-percent" aria-hidden="true"></i><span class="link-text">
            {{ text_special }}
-       </span></a></li>
+       </span></a></li> #}
      {# <li id="blog-drop">{{ blog_menu }}</li> #}
 {#         <li id="infodrop">
            <a href="{{information }}" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-info-circle" aria-hidden="true"></i><span class="link-text">
@@ -58,17 +58,17 @@
           {% endfor %}
             </ul>
         </li> #}
-        <li><a href="{{ contact }}"><i class="fa fa-phone" aria-hidden="true"></i><span class="link-text">
+        {# <li><a href="{{ contact }}"><i class="fa fa-phone" aria-hidden="true"></i><span class="link-text">
             {{ text_contact }}
-        </span></a></li>
+        </span></a></li> 
         <li id="search-block">
-       <a class="icon-link" href="" data-toggle="dropdown"><i class="fa fa-search" aria-hidden="true"></i></a>
-        <div id="search" class="dropdown-menu">
+            <a class="icon-link" href="" data-toggle="dropdown"><i class="fa fa-search" aria-hidden="true"></i></a>
+            <div id="search" class="dropdown-menu">
                  {{search}}
-             </div>
+            </div>
         </li>
         <li id="acc" class="account-dropdown" >
-             <button class="icon-link" id="account-menu" {# data-placement="bottom" #} data-toggle="dropdown"{# title="{{text_account}}" onclick="return false" #}>
+             <button class="icon-link" id="account-menu" data-toggle="dropdown">
                 <span class="desktop_account_box d-flex flex-column align-items-center">
                   <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12.5 11.625C14.8242 11.625 16.7188 9.55469 16.7188 7.03516C16.7188 4.53516 14.834 2.57227 12.5 2.57227C10.1855 2.57227 8.28125 4.57422 8.28125 7.05469C8.29102 9.56445 10.1758 11.625 12.5 11.625ZM12.5 10.1504C11.0742 10.1504 9.85352 8.7832 9.85352 7.05469C9.85352 5.35547 11.0547 4.04688 12.5 4.04688C13.9551 4.04688 15.1465 5.33594 15.1465 7.03516C15.1465 8.76367 13.9355 10.1504 12.5 10.1504ZM6.35742 20.6582H18.6328C20.2539 20.6582 21.0254 20.1699 21.0254 19.0957C21.0254 16.5371 17.793 12.8359 12.5 12.8359C7.19727 12.8359 3.96484 16.5371 3.96484 19.0957C3.96484 20.1699 4.73633 20.6582 6.35742 20.6582ZM5.89844 19.1836C5.64453 19.1836 5.53711 19.1152 5.53711 18.9102C5.53711 17.3086 8.01758 14.3105 12.5 14.3105C16.9727 14.3105 19.4531 17.3086 19.4531 18.9102C19.4531 19.1152 19.3555 19.1836 19.1016 19.1836H5.89844Z" fill="#2A2727" stroke="#2A2727" stroke-width="0.5"/>
@@ -77,23 +77,6 @@
              </span>   
              </button>
           <div id="account-link" class="dropdown-menu">
-     {#        <ul class="accounts-link">
-                {% if logged %}
-                <li><a href="{{account}}"><i class="fa fa-user-circle-o" aria-hidden="true"></i> {{text_account}}</a></li>
-                <li><a href="{{order}}"><i class="fa fa-history" aria-hidden="true"></i> {{text_order}}</a></li>
-                <li><a href="{{transaction}}"><i class="fa fa-money" aria-hidden="true"></i> {{text_transaction}}</a></li>
-                <li><a href="{{logout}}"><i class="fa fa-sign-out" aria-hidden="true"></i> {{text_logout}}</a></li>
-                {% else %}
-                <li><a href="{{login}}"><i class="fa fa-sign-in" aria-hidden="true"></i> {{text_login}}</a></li>
-                <li><a href="{{register}}"><i class="fa fa-user-plus" aria-hidden="true"></i> {{text_register}}</a></li>
-               {% endif %}
-               <li><a href="{{ wishlist }}" id="wishlist-total" title="{{ text_wishlist }}"><i class="fa fa-heart"></i> {{ text_wishlist }}</a></li>
-               <li><a href="{{ compare }}" id="compare-total" class="btn btn-link"><i class="fa fa-bar-chart" aria-hidden="true"></i> {{ text_compare }}</a></li>
-            </ul> #}
-          {#  <div class="settings">
-               {{currency}}
-               {{language}}
-          </div> #}
            {% if logged %}
             <a href="{{logout}}"><i class="fa fa-sign-out" aria-hidden="true"></i> {{text_logout}}</a>
            {% else %} 
@@ -102,7 +85,7 @@
            {% endif %}
           </div>
         </li>
-        <li style="flex-grow: 0">{{ desktop_cart }}</li>
+        <li style="flex-grow: 0">{{ desktop_cart }}</li>#}
 </ul>
 </div>
 <div class="mobile-menu">

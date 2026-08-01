@@ -93,6 +93,11 @@ class ControllerCommonHeader extends Controller {
 		
 		$data['home'] = $this->url->link('common/home');
 		$data['wishlist'] = $this->url->link('account/wishlist', '', true);
+		$data['compare'] = $this->url->link('product/compare', '', true);
+		$data['special'] = $this->url->link('product/special', '', true);
+		$data['new_products'] = $this->url->link('catalog/alllatest', '', true);
+		
+		$data['delivery_payment'] = $this->url->link('information/information', 'information_id=6', '', true);
 		$data['logged'] = $this->customer->isLogged();
 		$data['account'] = $this->url->link('account/account', '', true);
 		$data['register'] = $this->url->link('account/register', '', true);
@@ -105,10 +110,11 @@ class ControllerCommonHeader extends Controller {
 		$data['checkout'] = $this->url->link('checkout/checkout', '', true);
 		$data['contact'] = $this->url->link('information/contact');
 		$data['telephone'] = $this->config->get('config_telephone');
+		$data['desktop_cart'] = $this->load->controller('common/cart');
 		
 		$data['language'] = $this->load->controller('common/language');
 		$data['currency'] = $this->load->controller('common/currency');
-		$data['currency'] = $this->load->controller('common/currency');
+		// $data['currency'] = $this->load->controller('common/currency');
 		if ($this->config->get('configblog_blog_menu')) {
 			$data['blog_menu'] = $this->load->controller('blog/menu');
 		} else {

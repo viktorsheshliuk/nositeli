@@ -1,4 +1,9 @@
-<div class="s-group">
-  <input type="text" name="search" value="{{ search }}" placeholder="{{ text_search }}" />
-    <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
-    </div>
+<div id="fn_search" class="search fn_validate_search active_search" data-more="Переглянути всі результати" novalidate="novalidate">
+  <input class="fn_search search_input" type="text" name="search" value="" placeholder="{{ text_search_placeholder }}" required="" aria-required="true" autocomplete="off" />
+  <button class="search_button button--blick">
+    <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M8.41416 1.89767e-08C7.07233 0.000114335 5.74998 0.321116 4.55743 0.936224C3.36489 1.55133 2.33673 2.44271 1.55875 3.53598C0.780758 4.62926 0.2755 5.89274 0.0851241 7.221C-0.105252 8.54926 0.0247757 9.90379 0.464358 11.1716C0.90394 12.4394 1.64033 13.5836 2.61209 14.509C3.58385 15.4343 4.7628 16.1138 6.05059 16.4908C7.33837 16.8678 8.69764 16.9314 10.015 16.6762C11.3323 16.4211 12.5696 15.8546 13.6235 15.024L17.2389 18.6395C17.4256 18.8198 17.6757 18.9196 17.9353 18.9173C18.1948 18.9151 18.4431 18.8109 18.6267 18.6274C18.8102 18.4438 18.9143 18.1955 18.9166 17.936C18.9189 17.6764 18.8191 17.4263 18.6387 17.2396L15.0233 13.6242C16.0014 12.3834 16.6104 10.8922 16.7806 9.32143C16.9508 7.75065 16.6754 6.16367 15.9858 4.74212C15.2962 3.32058 14.2203 2.12189 12.8813 1.28325C11.5422 0.444609 9.99414 -0.00010607 8.41416 1.89767e-08ZM1.97926 8.41488C1.97926 6.70823 2.65722 5.07149 3.864 3.86471C5.07078 2.65793 6.70752 1.97997 8.41416 1.97997C10.1208 1.97997 11.7576 2.65793 12.9643 3.86471C14.1711 5.07149 14.8491 6.70823 14.8491 8.41488C14.8491 10.1215 14.1711 11.7583 12.9643 12.965C11.7576 14.1718 10.1208 14.8498 8.41416 14.8498C6.70752 14.8498 5.07078 14.1718 3.864 12.965C2.65722 11.7583 1.97926 10.1215 1.97926 8.41488Z" fill="currentColor"></path>
+    </svg>
+  </button>
+  <div class="autocomplete-suggestions" style="position: absolute; display: none; max-height: 700px; z-index: 9999;"></div>
+</div>

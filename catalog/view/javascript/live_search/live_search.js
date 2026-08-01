@@ -2,7 +2,7 @@ var LiveSearchJs = function () {
 
     var init = function(options) {
         var live_search = {
-            selector: "#search input[name='search']",
+            selector: "#fn_search input[name='search']",
             text_no_matches: options.text_empty,
             height: '50px'
         }

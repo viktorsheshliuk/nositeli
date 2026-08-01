@@ -3,7 +3,7 @@
 	position: absolute;
 	z-index: 1000;
 	padding: 5px 0 20px;
-	margin-top: 40px;
+	margin-top: 0px;
 	background-color:#FFF;
 	border: 1px solid #DDD;
 	border-bottom-left-radius: 10px;
@@ -98,7 +98,7 @@
 	font-size: 11px;
 	line-height: 20px;
 	color:#555555;
-	background-color:#4CAF50;
+	background-color:#5B6770;
 	position: absolute;
 	bottom: 0;
 	width: 100%;
@@ -109,9 +109,12 @@
 	color: #23527c;
 }
 .live-search .view-all-results {
-	color: #23a1d1;
+	color: #FFF;
 	line-height: 20px !important;
 }
+.live-search .view-all-results:hover {
+	color: #FFF;
+}	
 .live-search .product-image {
 	width: auto;
 }

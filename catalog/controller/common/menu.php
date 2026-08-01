@@ -42,7 +42,7 @@ class ControllerCommonMenu extends Controller {
 		}
 
 		$data['language'] = $this->load->controller('common/language');
-		$data['desktop_cart'] = $this->load->controller('common/cart');
+		// $data['desktop_cart'] = $this->load->controller('common/cart');
 		$data['link_wishlist'] = $this->url->link('account/wishlist');
 		$data['link_special'] = $this->url->link('product/special');
 		$data['login'] = $this->url->link('account/login');
