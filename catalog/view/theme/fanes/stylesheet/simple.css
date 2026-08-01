@@ -445,11 +445,15 @@
     font: inherit !important;
     font-size: 16px!important;
 }
+
 .simplecheckout-cart td.price .old_price{
     text-decoration: line-through;
     color: #ACACAC;
     margin-top: -28px;
     font-weight: 500;
+}
+.simplecheckout-cart td.price .old_price::after {
+    content: unset;
 }
 .simplecheckout-cart td.price .current_price{
     font-size: 18px!important;
