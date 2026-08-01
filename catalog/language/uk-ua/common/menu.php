@@ -9,3 +9,4 @@ $_['text_account'] = 'Особистий кабінет';
 $_['text_wishlist'] = 'Cписок бажань';
 $_['text_special'] = 'Акції';
 $_['text_contact'] = 'Контакти';
+$_['text_catalog'] = 'Каталог товарiв';

@@ -11,3 +11,4 @@ $_['text_account'] = 'Личный кабинет';
 $_['text_wishlist'] = 'Список желаний';
 $_['text_special'] = 'Акции';
 $_['text_contact'] = 'Контакты';
+$_['text_catalog'] = 'Каталог товаров';
