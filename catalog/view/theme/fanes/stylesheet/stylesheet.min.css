@@ -767,7 +767,10 @@ header #right-menu-language-select{
     margin: 0 auto;
     position: relative;
 }
-
+.nav-menu.fixed .menu-block {
+    position: fixed;
+    top: 55px;
+}
 .nav-menu .toggler-block {
     display: block;
     flex-basis: 25%;
