@@ -107,30 +107,3 @@
     </div>
   </div> 
 </div>
-<script>
-  function updateCartState() {
-    var $cart = $('#cart');
-    var $counter = $('#cart-total');
-    var cartText = $counter.text();
-    
-    // Проверяем, есть ли цифра больше 0 в тексте (например, "2 товара" или "1")
-    var matches = cartText.match(/\d+/);
-    var count = matches ? parseInt(matches[0]) : 0;
-
-    if (count > 0) {
-      $cart.addClass('with_products');
-      $counter.show(); // Показываем счетчик
-    } else {
-      $cart.removeClass('with_products');
-      $counter.hide(); // Скрываем счетчик, если 0
-    }
-  }
-
-  $(document).ready(function() {
-    updateCartState();
-  });
-
-  $(document).ajaxComplete(function(event, xhr, settings) {
-    setTimeout(updateCartState, 200);
-  });
-</script>
