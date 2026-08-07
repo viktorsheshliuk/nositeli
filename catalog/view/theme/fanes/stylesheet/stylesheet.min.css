@@ -7489,9 +7489,14 @@ header a, .top_item, .callback, .search_button, .button, .slick-next::before, .s
     transition: all .3s ease;
     color: #fff;
 }
+#related_products{
+    margin-left: 0;
+    margin-right: 0;
+}
 
-
-
+#related_products .caption h4 a{
+    color:#000
+}
 
 
 
@@ -8198,10 +8203,7 @@ header a, .top_item, .callback, .search_button, .button, .slick-next::before, .s
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 
 }*/
-#related_products{
-    margin-left: 0;
-    margin-right: 0;
-}
+
 @media (min-width: 769px) and (max-width: 1758px){
     .wrapper {
         padding: 10px;
