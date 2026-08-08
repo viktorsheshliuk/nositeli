@@ -1,0 +1,68 @@
+<div class="block__title_popup d-flex align-items-center justify-content-between">
+		<h2>{{ popup_add_to_cart }}</h2>
+		<div class="btn_close_popup">
+			<svg class="remove_icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20">
+				<path fill="currentColor" d="M15.833 5.346l-1.179-1.179-4.654 4.654-4.654-4.654-1.179 1.179 4.654 4.654-4.654 4.654 1.179 1.179 4.654-4.654 4.654 4.654 1.179-1.179-4.654-4.654z"></path>
+			</svg>
+		</div>
+	</div>
+	<div class="popup_cart_content_purchases">
+		<div class="block__popup_cart">
+			{% if products or vouchers %}
+				<div class="purchase" id="fn_purchases">
+					{% for product in products %}
+						<div class="fn_purchase popup_purchase" data-product-id="{{ product.product_id }}" data-cart-id="{{ product.cart_id }}">
+							<div class="purchase_image">
+								<a class="d-flex purchase_image_name align-items-center" href="{{ product.href }}">
+									{% if product.thumb %}
+										<img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}">
+									{% endif %}
+									<div class="fn_product_name purchase_name">
+										{{ product.name }}
+										{% if product.option %}
+											{% for option in product.option %}
+												<small>- {{ option.name }}: {{ option.value }}</small>
+											{% endfor %}
+										{% endif %}
+									</div>
+								</a>
+							</div>
+							<div class="purchase_amount">
+								<div class="fn_product_amount amount">
+									<span class="minus">−</span>
+									<input class="input_amount" type="text" name="amounts[{{ product.cart_id }}]" value="{{ product.quantity }}" data-cart-id="{{ product.cart_id }}" data-min="{{ product.minimum|default(1) }}" min="{{ product.minimum|default(1) }}" step="1">
+									<span class="plus">+</span>
+								</div>
+							</div>
+							<div class="purchase_sum">
+								<div class="price_container flex-column">
+									<div class="price">
+										<span class="fn_price">{{ product.price_raw }}</span>
+										<span class="currency">грн</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+					{% for voucher in vouchers %}
+						<div class="fn_purchase popup_purchase">
+							<div class="purchase_image">
+								<div class="purchase_name">{{ voucher.description }}</div>
+							</div>
+							<div class="purchase_sum">
+								<div class="price_container flex-column">
+									<div class="price">{{ voucher.amount }}</div>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			{% else %}
+				<div class="popup_cart_empty">{{ text_empty }}</div>
+			{% endif %}
+		</div>
+		<div class="popup_cart_bottom d-flex align-items-center justify-content-end">
+			<a class="form__button form_button_cart cont_btn" href="{{ cart }}" data-language="go_to_cart">{{ go_to_cart }}</a>
+			<a class="form__button form__button_continue main_btn" href="#" data-language="cart_continue_shopping">{{ cart_continue_shopping }}</a>
+		</div>
+	</div>
