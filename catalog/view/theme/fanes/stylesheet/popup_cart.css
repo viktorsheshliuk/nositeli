@@ -434,7 +434,7 @@
 	}
 }
 
-@media (max-width: 576px) {
+@media (max-width: 576px) { 
 	#fn_pop_up_cart_wrap .popup_cart_bottom .main_btn, .popup_cart_bottom .cont_btn {
 		width: 100%;
 	}

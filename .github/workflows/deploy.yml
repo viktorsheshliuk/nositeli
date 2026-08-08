@@ -19,7 +19,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
 
       - name: Install lftp
@@ -30,7 +30,14 @@ jobs:
 
       - name: Get changed files
         run: |
-          git diff --name-only HEAD^ HEAD > changed_files.txt
+          BEFORE="${{ github.event.before }}"
+
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "First push to the branch — deploying all repository files"
+            git ls-files > changed_files.txt
+          else
+            git diff --name-only "$BEFORE" "${{ github.sha }}" > changed_files.txt
+          fi
 
           echo "Changed files:"
           cat changed_files.txt
