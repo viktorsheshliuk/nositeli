@@ -164,6 +164,7 @@ class Cart {
 				}
 
 				$price = $product_query->row['price'];
+				$regular_price = $price; //обычная цена без скидки
 
 				// Product Discounts
 				$discount_quantity = 0;
@@ -242,9 +243,7 @@ class Cart {
 					'model'           => $product_query->row['model'],
 					'shipping'        => $product_query->row['shipping'],
 					'image'           => $product_query->row['image'],
-
 					'ostatok'         => $product_query->row['quantity'],
-					
 					'option'          => $option_data,
 					'download'        => $download_data,
 					'quantity'        => $cart['quantity'],
@@ -252,6 +251,7 @@ class Cart {
 					'subtract'        => $product_query->row['subtract'],
 					'stock'           => $stock,
 					'price'           => ($price + $option_price),
+					'regular_price'   => ($regular_price + $option_price),
 					'total'           => ($price + $option_price) * $cart['quantity'],
 					'reward'          => $reward * $cart['quantity'],
 					'points'          => ($product_query->row['points'] ? ($product_query->row['points'] + $option_points) * $cart['quantity'] : 0),

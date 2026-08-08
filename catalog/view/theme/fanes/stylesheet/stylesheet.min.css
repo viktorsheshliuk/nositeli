@@ -3254,7 +3254,7 @@ header #right-menu-language-select{
 .product-wrapp .price-block .price .fn_price{
     margin-bottom: -4px;
 }
-.product-wrapp .price-block .price.red-price {
+.price.red-price {
     color: var(--color-red);
 }
 
@@ -3266,13 +3266,14 @@ header #right-menu-language-select{
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    position: relative;
 }
 .old_price_box .fn_discount_label {
     font-size: 14px;
     font-weight: 700;
     color: #ff4f34;
 }
-.price-block .old_price {
+.old_price {
     margin-top: 0 !important;
     font-size: 23px;
     margin-left: 6px;

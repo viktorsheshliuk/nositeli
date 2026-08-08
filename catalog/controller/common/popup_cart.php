@@ -105,6 +105,7 @@ class ControllerCommonPopupCart extends Controller {
 				$price = $this->currency->format($unit_price, $this->session->data['currency']);
 				$total = $this->currency->format($unit_price * $product['quantity'], $this->session->data['currency']);
 
+				$regular_price_raw = $this->currency->format($product['regular_price'], $this->session->data['currency'], '', false);
 				$price_raw = $this->currency->format($unit_price, $this->session->data['currency'], '', false);
 				$total_raw = $this->currency->format($unit_price * $product['quantity'], $this->session->data['currency'], '', false);
 			} else {
@@ -113,6 +114,10 @@ class ControllerCommonPopupCart extends Controller {
 				$price_raw = false;
 				$total_raw = false;
 			}
+
+			if ($regular_price_raw > $price_raw || $price_raw !== 0){
+					$data['discount_percent'] = '-'. round(($regular_price_raw - $price_raw) / $regular_price_raw * 100) . '%';
+				}	
 
 			$data['products'][] = array(
 				'cart_id'    => $product['cart_id'],
@@ -125,6 +130,7 @@ class ControllerCommonPopupCart extends Controller {
 				'quantity'   => $product['quantity'],
 				'minimum'    => $product['minimum'],
 				'price'      => $price,
+				'regular_price_raw' => $regular_price_raw,
 				'total'      => $total,
 				'price_raw'  => $price_raw,
 				'total_raw'  => $total_raw,

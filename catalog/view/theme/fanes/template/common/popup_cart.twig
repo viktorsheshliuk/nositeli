@@ -36,7 +36,17 @@
 							</div>
 							<div class="purchase_sum">
 								<div class="price_container flex-column">
-									<div class="price">
+									{% if product.regular_price_raw != product.price_raw %}
+									<div class="old_price_box">
+										<div class="old_price">
+											<span class="fn_old_price">{{ product.regular_price_raw }}</span> грн
+                                        </div>
+										{% if discount_percent %}
+										<div class="fn_discount_label ">{{ discount_percent }}</div>
+										{% endif %}
+									</div>
+									{% endif %}
+									<div class="price {% if product.regular_price_raw != product.price_raw %}red-price{% endif %}">
 										<span class="fn_price">{{ product.price_raw }}</span>
 										<span class="currency">грн</span>
 									</div>

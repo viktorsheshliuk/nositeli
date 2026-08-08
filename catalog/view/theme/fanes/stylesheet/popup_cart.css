@@ -204,16 +204,6 @@
 	text-align: right;
 }
 
-#fn_pop_up_cart_wrap .old_price_box {
-	margin-bottom: 2px;
-}
-
-#fn_pop_up_cart_wrap .old_price {
-	text-decoration: line-through;
-	color: #a0a0a0;
-	font-size: 13px;
-}
-
 #fn_pop_up_cart_wrap .old_price.hidden {
 	display: none;
 }
@@ -225,6 +215,15 @@
 }
 .popup_purchase .currency {
     font-size: 24px;
+}
+.popup_purchase .old_price {
+    white-space: nowrap;
+	font-weight: normal;
+    font-size: 18px;
+    line-height: 25px;
+    color: #afafaf;
+    position: relative;
+    font-weight: 500;
 }
 
 #fn_pop_up_cart_wrap .purchase_remove button {
@@ -337,7 +336,11 @@
 .popup_purchase .price_container {
     gap: 0;
 }
-
+.popup_purchase .old_price_box {
+    flex-direction: row;
+    gap: 8px;
+    align-items: flex-start;
+}
 
 
 
@@ -373,6 +376,15 @@
     }
 }
 @media (max-width: 991px) {
+	.block__popup_cart .purchase_amount{
+		align-items: center;
+	}
+	.purchase_amount .plus, .purchase_amount .minus, .purchase_amount .input_amount {
+    	height: 43px;
+	}
+	.purchase_amount .amount {
+		line-height: 43px;
+	}
 	#fn_pop_up_cart_wrap .block__popup_cart .purchase_sum {
 		grid-column-start: 3;
 		grid-column-end: 4;
@@ -404,7 +416,7 @@
 		padding: 0;
 		border-top: none;
 	}
-	#fn_pop_up_cart_wrap .purchase .purchase_image, #fn_pop_up_cart_wrap .purchase .purchase_amount, #fn_pop_up_cart_wrap .purchase .purchase_sum, #fn_pop_up_cart_wrap .purchase .purchase_remove {
+	#fn_pop_up_cart_wrap .purchase .purchase_image,  #fn_pop_up_cart_wrap .purchase .purchase_sum {
 		align-items: flex-start;
 	}
 	#fn_pop_up_cart_wrap .block__popup_cart .fn_purchase {
@@ -434,7 +446,20 @@
 	}
 }
 
-@media (max-width: 576px) { 
+@media (max-width: 576px) {
+	.purchase_sum .old_price_box .fn_discount_label {
+    	font-size: 13px;
+	}
+	.purchase_sum .price_container .old_price {
+		font-size: 14px;
+		line-height: 22px;
+	}
+	.popup_purchase .purchase_amount .plus, .popup_purchase .purchase_amount .minus {
+		width: 36px;
+	}
+	.popup_purchase .purchase_amount .amount {
+		width: 114px;
+	} 
 	#fn_pop_up_cart_wrap .popup_cart_bottom .main_btn, .popup_cart_bottom .cont_btn {
 		width: 100%;
 	}
@@ -483,6 +508,12 @@
     }
 }
 @media (max-width: 480px) {
+	.popup_purchase .purchase_amount .amount {
+		width: 110px;
+	}
+	.purchase_amount .input_amount {
+		width: 33px;
+	}
 	#fn_pop_up_cart_wrap .purchase .purchase_sum {
 			padding-left: 0;
 		}
