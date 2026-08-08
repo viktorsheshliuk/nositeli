@@ -233,7 +233,7 @@
 	$(document).on('keydown', function(e) {
 		if (e.keyCode === 27) {
 			closePopupCart();
-		}
+		} 
 	});
 
 	/* ======= Перехват кнопки товара на странице продукта ======= */
