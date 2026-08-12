@@ -36,11 +36,11 @@
 <div class="content">
   {{ column_left }}
     {% if column_left and column_right %}
-    {% set class = 'product-card product-card-s' %}
+    {% set class = 'product-card product-card-s preview' %}
     {% elseif column_left or column_right %}
-    {% set class = 'product-card product-card-l' %}
+    {% set class = 'product-card product-card-l preview' %}
     {% else %}
-    {% set class = 'product-card' %}
+    {% set class = 'product-card preview' %}
     {% endif %}
     <div id="product-category" class="content-center">
      {{ content_top }}
@@ -107,25 +107,23 @@
      </div> #}
 {#    <div class="image"><a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" /></a></div>   #}
       
-      <div class="image">   
-                    <div>
-                       <a href="{{product.href}}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" /></a>
-                    </div>
-                 
-                    {% if product.webi_images %}
-                      {% for image in product.webi_images %}
-                        <div>
-                          <a href="{{product.href}}"><img src="{{image.popup}}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" /></a>
-                        </div>
-                      {% endfor %}
-                    {% endif %}
-               
-      </div>  
+    {# <div class="image">
+        <div>
+            <a href="{{product.href}}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" /></a>
+        </div>
+        {% if product.webi_images %}
+        {% for image in product.webi_images %}
+        <div>
+            <a href="{{product.href}}"><img src="{{image.popup}}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" /></a>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div> #}
       
-      <div class="caption">
+      {#<div class="caption">
         <h4 class="product-name"><a href="{{ product.href }}">{{ product.name }}</a></h4>
         <p class="product-description">{{ product.description }}</p>
-        {% if product.rating %}
+         {% if product.rating %}
         <div class="rating">
           {% for i in 5 %}
           {% if product.rating < i %}
@@ -135,8 +133,8 @@
           {% endif %}
           {% endfor %}
         </div>
-        {% endif %}
-        {% if product.price %}
+        {% endif %} #}
+        {# {% if product.price %}
          {% if product.stock_status_id == 9 and product.ostatok <= 0 %}
           <p class="price"></p>
          {% else %}
@@ -151,16 +149,103 @@
             {% endif %}
           </p>
          {% endif %} 
-        {% endif %}
+        {% endif %} 
+      </div>#}
+      {# <div class="button-add">
+        {% if product.stock_status_id != 9 or product.ostatok > 0 %} {#показываем кнопки купить
+        <button class="btn btn-primary" type="button" onclick="cart.add('{{ product.product_id }}');">{{ button_cart }}</button>
+        {% else %}
+        <button class="btn btn-primary disabled" type="button">{{ button_cart }}</button>
+        {% endif %}     
+      </div> #}
+
+
+      <div>
+        <a href="{{ product.href }}">
+            <div class="preview_image">
+                <div class="fn_product_images swiper gallery-top">
+                  <div class="swiper-wrapper">
+                      <div class="swiper-slide">
+                            <picture> <img src="{{ product.thumb }}" title="{{ product.name }}" alt="{{ product.name }}" class="preview_img fn_img"> </picture>
+                      </div>
+                      {% if product.webi_images %}
+                      {% for image in product.webi_images %}
+                      <div class="swiper-slide">
+                            <picture> <img src="{{image.popup}}" title="{{ product.name }}" alt="{{ product.name }}" class="preview_img" loading="lazy"> </picture>
+                      </div>
+                      {% endfor %}
+                      {% endif %} 
+                  </div>
+                    <div class="swiper-btn-next_pr" tabindex="0" role="button" aria-label="Next slide">
+                      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24.3536 17.6464C24.5488 17.8417 24.5488 18.1583 24.3536 18.3536L21.1716 21.5355C20.9763 21.7308 20.6597 21.7308 20.4645 21.5355C20.2692 21.3403 20.2692 21.0237 20.4645 20.8284L23.2929 18L20.4645 15.1716C20.2692 14.9763 20.2692 14.6597 20.4645 14.4645C20.6597 14.2692 20.9763 14.2692 21.1716 14.4645L24.3536 17.6464ZM12 18L12 17.5L24 17.5L24 18L24 18.5L12 18.5L12 18Z" fill="#5F5F5F"></path>
+                      </svg>
+                    </div>
+                    <div class="swiper-btn-prev_pr" tabindex="0" role="button" aria-label="Previous slide">
+                      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24.3536 17.6464C24.5488 17.8417 24.5488 18.1583 24.3536 18.3536L21.1716 21.5355C20.9763 21.7308 20.6597 21.7308 20.4645 21.5355C20.2692 21.3403 20.2692 21.0237 20.4645 20.8284L23.2929 18L20.4645 15.1716C20.2692 14.9763 20.2692 14.6597 20.4645 14.4645C20.6597 14.2692 20.9763 14.2692 21.1716 14.4645L24.3536 17.6464ZM12 18L12 17.5L24 17.5L24 18L24 18.5L12 18.5L12 18Z" fill="#5F5F5F"></path>
+                      </svg>
+                    </div>
+                    <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                </div>
+                {# <span class="product_bonuses" data-language="product_bonuses">+ 88.4 бонусів</span> #}
+            </div>
+            <div class="rating_code">
+                <div class="code_product"><span>Код:</span> <span>{{ product.model }}</span></div>
+                {# <div class="product_rating_list">
+                  <span class="rating_starOff">
+                    <span class="rating_starOn" style="width:0px;"></span>
+                  </span>
+                  <span class="rating_text"></span>
+                </div> #}
+            </div>
+            <div class="fn_product_name product_name">{{ product.name }}</div>
+        </a>
+        <div class="overlay_buttons ">
+            {# <a href="#" data-id="8386" class="fn_wishlist wishlist_button" title="В обране" data-result-text="З обраного"></a>
+            <a class="fn_comparison comparison_button" href="#" data-id="8386" title="В порівняння" data-result-text="З порівняння"></a> #}
+        </div>
+
+              {% if product.price %}
+                {% if product.stock_status_id != 9 or product.ostatok > 0 %}
+                <div class="price_wrapper d-flex justify-content-between">
+                  <div class="price_container">
+                    <div class="price {% if product.special %}red_price{% endif %}">
+                      <span class="fn_price">{% if product.special %}{{ product.special_raw }}{% else %}{{ product.price_raw }} {% endif %}</span><span>грн</span>
+                    </div>
+                    {% if product.special %}
+                    <div class="discount_old_price">
+                      <div class="discount_val"> <span>-15%</span> </div>
+                      <div class="old_price">
+                        <span class="fn_old_price">{{ product.price_raw }}</span> <span>грн</span>
+                      </div>
+                    </div>
+                    {% endif %}
+                  </div>
+                  <div class="button-add">
+                    {% if product.stock_status_id != 9 or product.ostatok > 0 %} {#показываем кнопки купить#}
+                    <button class="btn buy" type="button" onclick="cart.add('{{ product.product_id }}');">{# {{ button_cart }} #}
+                      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M13.4286 28.0001C13.9566 28.0001 14.3846 27.5721 14.3846 27.0441C14.3846 26.5161 13.9566 26.0881 13.4286 26.0881C12.9007 26.0881 12.4727 26.5161 12.4727 27.0441C12.4727 27.5721 12.9007 28.0001 13.4286 28.0001Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M26.8114 27.9998C27.3394 27.9998 27.7674 27.5718 27.7674 27.0439C27.7674 26.5159 27.3394 26.0879 26.8114 26.0879C26.2835 26.0879 25.8555 26.5159 25.8555 27.0439C25.8555 27.5718 26.2835 27.9998 26.8114 27.9998Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M5.78125 6.96875H9.60511L12.473 23.2202H27.7685" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M12.4744 19.3956H27.3779C27.4885 19.3957 27.5956 19.3574 27.6812 19.2874C27.7667 19.2173 27.8253 19.1198 27.847 19.0114L29.5677 10.4077C29.5816 10.3383 29.5799 10.2668 29.5628 10.1981C29.5456 10.1295 29.5134 10.0655 29.4686 10.0108C29.4237 9.95608 29.3673 9.91202 29.3033 9.88178C29.2393 9.85155 29.1694 9.83589 29.0987 9.83594H10.5625" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </svg>
+                    </button>
+                    {% else %}
+                    <button class="btn buy disabled" type="button">{{ button_cart }}</button>
+                    {% endif %}     
+                  </div>
+                </div>
+                {% endif %} 
+              {% endif %}
+
+
+
       </div>
-          <div class="button-add">
-           {% if product.stock_status_id != 9 or product.ostatok > 0 %} {#показываем кнопки купить#}
-            <button class="btn btn-primary" type="button" onclick="cart.add('{{ product.product_id }}');">{{ button_cart }}</button>
-           {% else %}
-             <button class="btn btn-primary disabled" type="button">{{ button_cart }}</button>
-           {% endif %}     
-          </div>
-    
+
+
+
+
+
+
+
+
+
+
     
   </div>
   {% endfor %}
@@ -194,24 +279,43 @@
 </div>
 {{ footer }} 
 <script>  
-  $(document).ready(function(){
-        $('.image').not('.slick-initialized').slick({
-          fade: true,
-          cssEase: 'linear',
-          draggable: false,
-          pauseOnHover: false,
-          adaptiveHeight: false,
-          swipe: false,
-          responsive: [
-                              {
-                                breakpoint: 992,
-                                settings: {
-                                  autoplay: false,
-                                  slidesToScroll: 1
-                                }
-                              }
-                            ] 
-      });
-   
+{# $(document).ready(function() {
+    $('.image').not('.slick-initialized').slick({
+        fade: true,
+        cssEase: 'linear',
+        draggable: false,
+        pauseOnHover: false,
+        adaptiveHeight: false,
+        swipe: false,
+        responsive: [{
+            breakpoint: 992,
+            settings: {
+                autoplay: false,
+                slidesToScroll: 1
+            }
+        }]
+    });
+
+}); #}
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Находим все блоки слайдеров на странице категории
+    const productSliders = document.querySelectorAll('.fn_product_images');
+
+    productSliders.forEach(function (sliderEl) {
+        // Ищем стрелки именно внутри текущей карточки товара
+        const nextBtn = sliderEl.querySelector('.swiper-btn-next_pr');
+        const prevBtn = sliderEl.querySelector('.swiper-btn-prev_pr');
+
+        new Swiper(sliderEl, {
+            slidesPerView: 1,
+            spaceBetween: 10,
+            loop: false, // Обычно для мини-слайдеров в сетке loop лучше отключать или настраивать аккуратно
+            navigation: {
+                nextEl: nextBtn,
+                prevEl: prevBtn,
+            },
+        });
+    });
 });
 </script>

@@ -200,14 +200,18 @@ class ControllerProductCategory extends Controller {
 
 				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
 					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+					$price_raw = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency'],'', false);
 				} else {
 					$price = false;
+					$price_raw = false;
 				}
 				$price = str_replace(".00","",$price); //удаление нолей после запятой в цене товара 
 				if ((float)$result['special']) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+					$special_raw = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency'], '', false);
 				} else {
 					$special = false;
+					$special_raw = false;
 				}
 
 				if ($this->config->get('config_tax')) {
@@ -222,7 +226,7 @@ class ControllerProductCategory extends Controller {
 					$rating = false;
 				}
 
-				/* Webiarch Images Start  дополнительные фото товаров для страницы категорий*/
+				/* дополнительные фото товаров для страницы категорий */
 
 				$webi_data['webi_images'] = array();
 				$webi_results = $this->model_catalog_product->getProductImages($result['product_id']);
@@ -230,9 +234,6 @@ class ControllerProductCategory extends Controller {
 				foreach ($webi_results as $webi_result) {
 					$webi_data['webi_images'][] = array('popup' => $this->model_tool_image->resize($webi_result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height')));
 				}
-
-				/* End */
-
 
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
@@ -243,7 +244,10 @@ class ControllerProductCategory extends Controller {
 					'name'        => $result['name'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 					'price'       => $price, 
+					'price_raw'   => $price_raw,
 					'special'     => $special,
+					'special_raw' => $special_raw,
+					'model'       => $result['model'],
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $result['rating'],

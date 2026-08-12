@@ -326,13 +326,7 @@
 .purchase .price_per_unit, .purchase .purchase_amount, .purchase .purchase_sum {
     padding: 20px 35px;
 }
-.price_container {
-    font-size: 23px;
-    color: #232221;
-    font-weight: 600;
-    display: flex;
-    gap: 10px;
-}
+
 .popup_purchase .price_container {
     gap: 0;
 }
