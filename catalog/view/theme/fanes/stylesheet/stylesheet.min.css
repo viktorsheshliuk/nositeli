@@ -7782,7 +7782,7 @@ header a, .top_item, .callback, .search_button, .button, .slick-next::before, .s
         -webkit-line-clamp: 2;
     }
     .rating_code {
-        padding: 0 10px;
+        padding: 5px 10px 0 10px;
     }
     .preview .button-add{
         margin-right: 10px;
