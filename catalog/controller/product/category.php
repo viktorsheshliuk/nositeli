@@ -206,9 +206,16 @@ class ControllerProductCategory extends Controller {
 					$price_raw = false;
 				}
 				$price = str_replace(".00","",$price); //удаление нолей после запятой в цене товара 
+
+				$discount_percent = '';
+
 				if ((float)$result['special']) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 					$special_raw = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency'], '', false);
+
+					if ($price > $special && $price !== 0){
+						$discount_percent = '-'. round(($price - $special) / $price * 100) . '%';
+					}	
 				} else {
 					$special = false;
 					$special_raw = false;
@@ -247,6 +254,7 @@ class ControllerProductCategory extends Controller {
 					'price_raw'   => $price_raw,
 					'special'     => $special,
 					'special_raw' => $special_raw,
+					'discount_percent' => $discount_percent,
 					'model'       => $result['model'],
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
