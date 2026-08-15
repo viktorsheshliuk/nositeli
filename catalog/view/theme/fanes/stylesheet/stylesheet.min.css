@@ -2100,7 +2100,7 @@ header #right-menu-language-select{
     height: 40px !important;
 }
 
-#product-category .product-card, #product-compare .product-card, #product-search .product-card, #product-manufacturer .product-card {
+#product-category .product-card, #product-compare .product-card, #product-search .product-card, #product-manufacturer .product-card, #alllatest .product-card {
     flex-basis: calc(25% - 20px);
     padding-bottom: 20px;
     margin: 10px;
@@ -2176,13 +2176,17 @@ header #right-menu-language-select{
 
 }
 
-}#product-category .product-card.product-card-l, #product-compare .product-card.product-card-l, #product-search .product-card.product-card-l, #product-manufacturer .product-card.product-card-l {
-
+}#product-category .product-card.product-card-l, #product-compare .product-card.product-card-l, #product-search .product-card.product-card-l, #product-manufacturer .product-card.product-card-l, #alllatest .product-card.product-card-l{
     flex-basis: calc(33.3% - 20px);
-
     margin: 10px;
-
+    flex-grow: 0;
 }
+/* .preview_image {
+    width: 380px; /* Установите ширину, соответствующую вашему дизайну */
+    max-width: 100%;
+    margin: 0 auto;
+    overflow: hidden; /* Критически важно: обрезает то, что выходит за рамки */
+} */
 
 @media (min-width: 835px) and (max-width: 1024px) {
 
@@ -2208,7 +2212,7 @@ header #right-menu-language-select{
 
 }
 @media (max-width: 480px) {
-    #product-category .product-card.product-card-l, #product-compare .product-card.product-card-l, #product-search .product-card.product-card-l, #product-manufacturer .product-card.product-card-l {
+    #product-category .product-card.product-card-l, #product-compare .product-card.product-card-l, #product-search .product-card.product-card-l, #product-manufacturer .product-card.product-card-l, #alllatest .product-card.product-card-l {
         flex-basis: calc(100% - 4px);
         margin: 10px 0;
     }
@@ -2696,24 +2700,16 @@ header #right-menu-language-select{
 
 }
 
-#product-category .product-wrapp, #product-compare .product-wrapp, #product-search .product-wrapp, #product-manufacturer .product-wrapp {
-
+#product-category .product-wrapp, #product-compare .product-wrapp, #product-search .product-wrapp, #product-manufacturer .product-wrapp, #alllatest .product-wrapp {
     display: flex;
-
     display: -webkit-box;
-
     display: -moz-box;
-
     display: -ms-flexbox;
-
     display: -webkit-flex;
-
     flex-wrap: wrap;
-
     padding: 0;
-
     margin: 0;
-
+    max-width: 100%;
 }
 
 #product-category .cat-title, #product-compare .cat-title, #product-search .cat-title, #product-manufacturer .cat-title {
@@ -7576,7 +7572,7 @@ header a, .top_item, .callback, .search_button, .button, .slick-next::before, .s
     display: flex;
     height: 100%;
     justify-content: center;
-    max-width: 370px;
+    /* max-width: 370px; */
     justify-self: center;
     margin: 0 auto;
 }

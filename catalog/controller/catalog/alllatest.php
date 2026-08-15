@@ -16,12 +16,29 @@ class ControllerCatalogAlllatest extends Controller {
 			'text' => $this->language->get('text_latest'),
 			'href' =>''
 		);
+
+		$data['products'] = array();
+
+		$filter_data = array(
+			'filter_latest' => true,
+			'sort'          => 'p.date_added',
+			'order'         => 'DESC',
+			'start'         => 0,
+			'limit'         => 60
+		);
+
+		$results = $this->model_catalog_product->getProducts($filter_data);
+
+
+		$data['products'] = $this->load->controller('product/thumb', [
+            'products' => $results
+        ]);
+
 		$this->document->setTitle($this->language->get('text_title'));
 		$this->document->setDescription($this->language->get('text_description'));
 		$this->document->setKeywords($this->language->get('text_keywords'));
 
 		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
 		$data['content_top'] = $this->load->controller('common/content_top');
 		$data['content_bottom'] = $this->load->controller('common/content_bottom');
 		$data['footer'] = $this->load->controller('common/footer');
