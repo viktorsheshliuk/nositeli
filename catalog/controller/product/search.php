@@ -197,6 +197,20 @@ class ControllerProductSearch extends Controller {
 
 			$results = $this->model_catalog_product->getProducts($filter_data);
 
+
+			$data['products'] = $this->load->controller('product/thumb', [
+                'products' => $results
+            ]);
+
+			
+
+
+
+
+
+
+
+
 			foreach ($results as $result) {
 				if ($result['image']) {
 					$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
@@ -228,20 +242,20 @@ class ControllerProductSearch extends Controller {
 					$rating = false;
 				}
 
-				$data['products'][] = array(
-					'stock_status_id' => $result['stock_status_id'],
-			        'ostatok'     => $result['quantity'],
-					'product_id'  => $result['product_id'],
-					'thumb'       => $image,
-					'name'        => $result['name'],
-					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
-					'price'       => $price,
-					'special'     => $special,
-					'tax'         => $tax,
-					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
-					'rating'      => $result['rating'],
-					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'] . $url)
-				);
+				// $data['products'][] = array(
+				// 	'stock_status_id' => $result['stock_status_id'],
+			    //     'ostatok'     => $result['quantity'],
+				// 	'product_id'  => $result['product_id'],
+				// 	'thumb'       => $image,
+				// 	'name'        => $result['name'],
+				// 	'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
+				// 	'price'       => $price,
+				// 	'special'     => $special,
+				// 	'tax'         => $tax,
+				// 	'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
+				// 	'rating'      => $result['rating'],
+				// 	'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'] . $url)
+				// );
 			}
 
 			$url = '';
