@@ -45,6 +45,8 @@ class ControllerCommonMenu extends Controller {
 		// $data['desktop_cart'] = $this->load->controller('common/cart');
 		$data['link_wishlist'] = $this->url->link('account/wishlist');
 		$data['link_special'] = $this->url->link('product/special');
+		$data['link_latest'] = $this->url->link('catalog/alllatest');
+
 		$data['login'] = $this->url->link('account/login');
 		$data['link_contact'] = $this->url->link('information/contact');
 		$data['register'] = $this->url->link('account/register');

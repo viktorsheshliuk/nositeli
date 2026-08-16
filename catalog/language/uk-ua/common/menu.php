@@ -10,3 +10,4 @@ $_['text_wishlist'] = 'Cписок бажань';
 $_['text_special'] = 'Акції';
 $_['text_contact'] = 'Контакти';
 $_['text_catalog'] = 'Каталог товарiв';
+$_['text_latest']  = 'Новинки';
