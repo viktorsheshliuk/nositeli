@@ -17,12 +17,28 @@ class ControllerCatalogAlllatest extends Controller {
 			'href' =>''
 		);
 
+		$data['text_empty'] = $this->language->get('text_empty');
+
+		if (isset($this->request->get['sort'])) {
+			$sort = $this->request->get['sort'];
+			$this->document->setRobots('noindex,follow');
+		} else {
+			$sort = 'p.date_added';
+		}
+
+		if (isset($this->request->get['order'])) {
+			$order = $this->request->get['order'];
+			$this->document->setRobots('noindex,follow');
+		} else {
+			$order = 'DESC';
+		}
+
 		$data['products'] = array();
 
 		$filter_data = array(
 			'filter_latest' => true,
-			'sort'          => 'p.date_added',
-			'order'         => 'DESC',
+			'sort'          => $sort,
+			'order'         => $order,
 			'start'         => 0,
 			'limit'         => 60
 		);
@@ -33,6 +49,49 @@ class ControllerCatalogAlllatest extends Controller {
 		$data['products'] = $this->load->controller('product/thumb', [
             'products' => $results
         ]);
+
+		$url = '';
+
+		$data['sorts'] = array();
+
+		$data['sorts'][] = array(
+				'text'  => $this->language->get('text_default'),
+				'value' => 'p.sort_order-ASC',
+				'href'  => $this->url->link('catalog/alllatest', '&sort=p.sort_order&order=ASC' . $url)
+		);
+
+		$data['sorts'][] = array(
+				'text'  => $this->language->get('text_name_asc'),
+				'value' => 'pd.name-ASC',
+				'href'  => $this->url->link('catalog/alllatest', '&sort=pd.name&order=ASC' . $url)
+		);
+
+		$data['sorts'][] = array(
+				'text'  => $this->language->get('text_name_desc'),
+				'value' => 'pd.name-DESC',
+				'href'  => $this->url->link('catalog/alllatest', '&sort=pd.name&order=DESC' . $url)
+		);
+
+		$data['sorts'][] = array(
+				'text'  => $this->language->get('text_price_asc'),
+				'value' => 'p.price-ASC',
+				'href'  => $this->url->link('catalog/alllatest', '&sort=p.price&order=ASC' . $url)
+		);
+
+		$data['sorts'][] = array(
+				'text'  => $this->language->get('text_price_desc'),
+				'value' => 'p.price-DESC',
+				'href'  => $this->url->link('catalog/alllatest', '&sort=p.price&order=DESC' . $url)
+		);
+
+		// $url = '';
+
+		// if (isset($this->request->get['sort'])) {
+		// 	$url .= '&sort=' . $this->request->get['sort'];
+		// }
+
+		$data['sort'] = $sort;
+		$data['order'] = $order;
 
 		$this->document->setTitle($this->language->get('text_title'));
 		$this->document->setDescription($this->language->get('text_description'));

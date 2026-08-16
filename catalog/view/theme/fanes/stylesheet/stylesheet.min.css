@@ -2045,7 +2045,11 @@ header #right-menu-language-select{
 
 }
 
-#product-category .sort-block, #product-compare .sort-block, #product-search .sort-block, #product-manufacturer .sort-block {
+/* #product-category .sort-block,
+#product-compare .sort-block,
+#product-search .sort-block,
+#product-manufacturer */
+ .sort-block {
     display: flex;
     display: -webkit-box;
     display: -moz-box;
@@ -2065,12 +2069,14 @@ header #right-menu-language-select{
 
 }
 
-}#product-category .sort-block .sort, #product-compare .sort-block .sort, #product-search .sort-block .sort, #product-manufacturer .sort-block .sort {
-
-    flex-basis: 48%;
-
+}
+/* #product-category .sort-block .sort,
+#product-compare .sort-block .sort,
+#product-search .sort-block .sort, 
+#product-manufacturer  */
+.sort-block .sort {
+    /* flex-basis: 48%; */
     margin: 10px;
-
 }
 
 @media (max-width: 834px) {

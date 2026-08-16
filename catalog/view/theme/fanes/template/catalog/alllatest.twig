@@ -23,10 +23,32 @@
     {% set class = 'thumbnails-block' %}
     {% endif %}
     <div id="alllatest" class="content-center">
+    <h1 class="heading-title">{{ text_latest }}</h1>
+    <div class="sort-block">
+        <div class="sort">
+          <div class="form-group input-group input-group-sm">
+            <label class="input-group-addon" for="input-sort">{{ text_sort }}</label>
+            <select id="input-sort" class="form-control" onchange="location = this.value;">
+              {% for sorts in sorts %}
+              {% if sorts.value == '%s-%s'|format(sort, order) %}         
+              <option value="{{ sorts.href }}" selected="selected">{{ sorts.text }}</option>
+              {% else %}                         
+              <option value="{{ sorts.href }}">{{ sorts.text }}</option>              
+              {% endif %}
+              {% endfor %}         
+            </select>
+          </div>
+        </div>
+    </div>
+
       <div class="product-wrapp">
+      {% if products %}
       {% for product in products %}
         {% include 'fanes/template/product/thumb/default.twig' %}
       {% endfor %}
+      {% else %}
+        {{ text_empty }}
+      {% endif %}
       </div>
     </div>  
   </div>
