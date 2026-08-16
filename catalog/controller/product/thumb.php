@@ -288,7 +288,8 @@ class ControllerProductThumb extends Controller
 				$this->tax->calculate($product['special'], $product['tax_class_id'], $config['tax']),
 				$this->session->data['currency'], '', false
 			);
-			$data['economy'] = round(100 - ($product['special'] / ($product['price'] / 100)));
+			$economy = round(100 - ($product['special'] / ($product['price'] / 100))); //процент скидки
+			$data['economy'] = $economy > 0 ? '-' . $economy . '%' : false; 
 			$tax_price = (float) $product['special'];
 		} else {
 			$data['special'] = false;

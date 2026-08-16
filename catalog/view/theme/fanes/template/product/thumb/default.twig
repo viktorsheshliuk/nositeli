@@ -52,7 +52,9 @@
                     </div>
                     {% if product.special %}
                     <div class="discount_old_price">
-                      <div class="discount_val"> <span>-15%</span> </div>
+                      {% if product.economy %}
+                      <div class="discount_val"> <span>{{ product.economy }}</span> </div>
+                      {% endif %}
                       <div class="old_price">
                         <span class="fn_old_price">{{ product.price_raw }}</span> <span>грн</span>
                       </div>
