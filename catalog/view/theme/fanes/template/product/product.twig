@@ -842,6 +842,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Для десктопов и планшетов (>= 576px) — синхронизируем высоту
         const mainHeight = mainSlider.offsetHeight;
+
+        // Защита: не записываем "мусорную" высоту (0-2px),
+        // пока главное изображение ещё не загрузилось и слайдер не набрал реальную высоту
+        if (mainHeight < 50) {
+            return;
+        }
+
         thumbsSlider.style.height = mainHeight + 'px';
     }
 
@@ -886,11 +893,29 @@ document.addEventListener('DOMContentLoaded', function () {
         },
     });
 
-    // Вызываем синхронизацию высоты сразу после загрузки
-    syncThumbsHeight();
+    // Вызываем синхронизацию высоты сразу после инициализации слайдеров.
+    // Используем двойной requestAnimationFrame, чтобы дождаться первого кадра отрисовки
+    requestAnimationFrame(function () {
+        requestAnimationFrame(syncThumbsHeight);
+    });
+
+    // Пересчитываем высоту после полной загрузки страницы (все изображения загружены)
+    window.addEventListener('load', syncThumbsHeight);
 
     // И повторяем при изменении размера окна браузера (адаптив)
     window.addEventListener('resize', syncThumbsHeight);
+
+    // Автоматически синхронизируем высоту при любом изменении размеров главного слайдера
+    // (догрузка картинок, lazy-load, смена слайда и т.п.)
+    if ('ResizeObserver' in window) {
+        const mainSliderEl = document.querySelector('.fn_images_main');
+        if (mainSliderEl) {
+            const resizeObserver = new ResizeObserver(function () {
+                syncThumbsHeight();
+            });
+            resizeObserver.observe(mainSliderEl);
+        }
+    }
 
     // Инициализация Fancybox для всех элементов с атрибутом data-fancybox
     Fancybox.bind("[data-fancybox]", {
