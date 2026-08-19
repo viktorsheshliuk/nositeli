@@ -59,7 +59,7 @@
       <div class="sort-block">
         <div class="sort">
           <div class="form-group input-group input-group-sm">
-            <label class="input-group-addon" for="input-sort">{{ text_sort }}</label>
+            {# <label class="input-group-addon" for="input-sort">{{ text_sort }}</label> #}
             <select id="input-sort" class="form-control" onchange="location = this.value;">
               {% for sorts in sorts %}
               {% if sorts.value == '%s-%s'|format(sort, order) %}         
@@ -85,6 +85,28 @@
             </select>
           </div>
         </div> #}
+        
+        <div class="view-switcher">
+          <!-- Кнопка: 1 колонка -->
+          <button type="button" class="view-btn" data-view="1" title="1 колонка">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <rect x="4" y="4" width="16" height="4" rx="1.5"/>
+                <rect x="4" y="10" width="16" height="4" rx="1.5"/>
+                <rect x="4" y="16" width="16" height="4" rx="1.5"/>
+              </svg>
+          </button>
+
+          <!-- Кнопка: 2 колонки -->
+          <button type="button" class="view-btn" data-view="2" title="2 колонки">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="4" width="8" height="7" rx="1.5"/>
+                <rect x="13" y="4" width="8" height="7" rx="1.5"/>
+                <rect x="3" y="13" width="8" height="7" rx="1.5"/>
+                <rect x="13" y="13" width="8" height="7" rx="1.5"/>
+              </svg>
+          </button>
+        </div>
+
       </div>
       
   <div class="product-wrapp">
@@ -277,4 +299,70 @@
     });
 
 }); #}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const switcherBtns = document.querySelectorAll('.view-btn');
+    const productWrapp = document.querySelector('.product-wrapp');
+
+    if (!productWrapp || switcherBtns.length === 0) return;
+
+    // 1. Проверяем сохраненное состояние в localStorage при загрузке страницы
+    // (например, по умолчанию пусть будет '1' колонка или '2', как вам больше нравится)
+    const savedView = localStorage.getItem('catalogView') || '1';
+    applyView(savedView);
+
+    // 2. Обработка клика по кнопкам
+    switcherBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const viewType = this.getAttribute('data-view');
+            applyView(viewType);
+            // Сохраняем выбор пользователя в localStorage
+            localStorage.setItem('catalogView', viewType);
+        });
+    });
+
+    // Функция применения вида
+    function applyView(type) {
+        if (type === '2') {
+            productWrapp.classList.add('grid-2-cols');
+        } else {
+            productWrapp.classList.remove('grid-2-cols');
+        }
+
+        // Обновляем активный класс у кнопок
+        switcherBtns.forEach(function (b) {
+            if (b.getAttribute('data-view') === type) {
+                b.classList.add('active');
+            } else {
+                b.classList.remove('active');
+            }
+        });
+    }
+});
 </script>
+<style>
+.view-btn {
+    width: 38px;
+    height: 34px;
+    padding: 7px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.view-btn svg {
+    width: 19px;
+    height: 19px;
+}
+
+.view-btn.active {
+    background: #fff;
+    color: #111827;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12);
+}
+</style>
