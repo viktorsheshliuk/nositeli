@@ -8244,7 +8244,7 @@ header a, .top_item, .callback, .search_button, .button, .slick-next::before, .s
     /* Положение и внешний вид точек */
     .product-wrapp.grid-2-cols .product-card.product-card-l .fn_product_images .swiper-pagination {
         position: absolute;
-        bottom: 5px;
+        bottom: 1px;
         left: 0;
         width: 100%;
         display: flex;
