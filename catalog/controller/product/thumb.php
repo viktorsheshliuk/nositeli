@@ -168,6 +168,9 @@ class ControllerProductThumb extends Controller
 	{
 		$product_id = $product['product_id'];
 
+		$date_added = strtotime($product['date_added']);
+		$sixty_days_ago = strtotime('-60 days');
+
 		$data = [
 			'compare_id' => isset($product['compare_id']) ? $product['compare_id'] : 0,
 			'wishlist_id' => isset($product['wishlist_id']) ? $product['wishlist_id'] : 0,
@@ -181,6 +184,7 @@ class ControllerProductThumb extends Controller
 			'quantity' => $product['quantity'] > 0 ? $product['quantity'] : 0,
 			'image_width' => (int) $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'),
 			'image_height' => (int) $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'),
+			'new' => ($date_added >= $sixty_days_ago), 
 		];
 
 		// Зображення
