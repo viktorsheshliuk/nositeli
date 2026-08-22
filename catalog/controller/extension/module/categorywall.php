@@ -3,70 +3,33 @@ class ControllerExtensionModuleCategorywall extends Controller {
 	public function index() {
 		$this->load->language('extension/module/categorywall');
 
-		if (isset($this->request->get['path'])) {
-			$parts = explode('_', (string)$this->request->get['path']);
-		} else {
-			$parts = array();
-		}
-
-		if (isset($parts[0])) {
-			$data['category_id'] = $parts[0];
-		} else {
-			$data['category_id'] = 0;
-		}
-
-		if (isset($parts[1])) {
-			$data['child_id'] = $parts[1];
-		} else {
-			$data['child_id'] = 0;
-		}
-
 		$this->load->model('catalog/category');
-
-		$this->load->model('catalog/product');
-		
 		$this->load->model('tool/image');
 
 		$data['categories'] = array();
 
-		$categories = $this->model_catalog_category->getCategories(0);
+		$selected_categories = $this->config->get('module_categorywall_categories');
 
-		foreach ($categories as $category) {
-			$children_data = array();
+		if (!empty($selected_categories)) {
+			foreach ($selected_categories as $category_id) {
+				$category_info = $this->model_catalog_category->getCategory($category_id);
 
-			if ($category['category_id'] == $data['category_id']) {
-				$children = $this->model_catalog_category->getCategories($category['category_id']);
+				if ($category_info) {
+					if ($category_info['image']) {
+						$image = HTTP_SERVER . 'image/' . $category_info['image'];
+					} else {
+						$image = HTTP_SERVER . 'image/placeholder.png';
+					}
 
-				foreach($children as $child) {
-					$filter_data = array('filter_category_id' => $child['category_id'], 'filter_sub_category' => true);
-
-					$children_data[] = array(
-						'category_id' => $child['category_id'],
-						'name' => $child['name'] . ($this->config->get('config_product_count') ? ' (' . $this->model_catalog_product->getTotalProducts($filter_data) . ')' : ''),
-						'href' => $this->url->link('product/category', 'path=' . $category['category_id'] . '_' . $child['category_id'])
+					$data['categories'][] = array(
+						'category_id' => $category_info['category_id'],
+						'name'        => $category_info['name'],
+						'image'       => $image,
+						'href'        => $this->url->link('product/category', 'path=' . $category_info['category_id'])
 					);
 				}
 			}
-
-			$filter_data = array(
-				'filter_category_id'  => $category['category_id'],
-				'filter_sub_category' => true
-			);
-			
-			if ($category['image']) {
-				$image = HTTP_SERVER . 'image/' . $category['image'];
-			} else {
-				$image = HTTP_SERVER . 'image/placeholder.png';
-			}
-
-			$data['categories'][] = array(
-				'category_id' => $category['category_id'],
-				'name'        => $category['name'] . ($this->config->get('config_product_count') ? ' (' . $this->model_catalog_product->getTotalProducts($filter_data) . ')' : ''),
-				'image' 	  => $image,
-				'children'    => $children_data,
-				'href'        => $this->url->link('product/category', 'path=' . $category['category_id'])
-			);
-		}
+		} 
 
 		return $this->load->view('extension/module/categorywall', $data);
 	}

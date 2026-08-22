@@ -7,6 +7,14 @@ class ModelToolImage extends Model {
 
 		$extension = pathinfo($filename, PATHINFO_EXTENSION);
 
+		if (strtolower($extension) == 'svg') {
+			if ($this->request->server['HTTPS']) {
+				return $this->config->get('config_ssl') . 'image/' . $filename;
+			} else {
+				return $this->config->get('config_url') . 'image/' . $filename;
+			}
+		}
+
 		$image_old = $filename;
 
 		if( isset( $_SERVER['HTTP_ACCEPT'] ) && strpos( $_SERVER['HTTP_ACCEPT'], 'image/webp' ) !== false ) {

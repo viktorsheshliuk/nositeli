@@ -44,10 +44,36 @@ class ControllerExtensionModuleCategorywall extends Controller {
 
 		$data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true);
 
+		$data['user_token'] = $this->session->data['user_token'];
+
 		if (isset($this->request->post['module_categorywall_status'])) {
 			$data['module_categorywall_status'] = $this->request->post['module_categorywall_status'];
 		} else {
 			$data['module_categorywall_status'] = $this->config->get('module_categorywall_status');
+		}
+
+		// Категории
+		$this->load->model('catalog/category');
+
+		$data['categories'] = array();
+
+		if (isset($this->request->post['module_categorywall_categories'])) {
+			$categories = $this->request->post['module_categorywall_categories'];
+		} elseif ($this->config->get('module_categorywall_categories')) {
+			$categories = $this->config->get('module_categorywall_categories');
+		} else {
+			$categories = array();
+		}
+
+		foreach ($categories as $category_id) {
+			$category_info = $this->model_catalog_category->getCategory($category_id);
+
+			if ($category_info) {
+				$data['categories'][] = array(
+					'category_id' => $category_info['category_id'],
+					'name'        => $category_info['name']
+				);
+			}
 		}
 
 		$data['header'] = $this->load->controller('common/header');
