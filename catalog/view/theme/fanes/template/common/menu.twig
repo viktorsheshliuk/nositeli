@@ -1,10 +1,10 @@
 <div class="nav-menu align-items-center" id="desktop-menu">
     <div class="menu-block">
         {% if categories %}
-        <ul class="menu">
+        <ul class="menu level_1">
             {% for category in categories %}
                 {% if category.children %}
-                    <li class="dropdown">
+                    <li class="dropdown category_item">
                         <a href="{{ category.href }}" class="dropdown-toggle" data-toggle="dropdown">{{ category.name }}</a>
                         <div  class="dropdown-menu"><!-- id="m" --> 
                             <div class="dropdown-inner">
@@ -20,7 +20,7 @@
                         </div>
                     </li>
                 {% else %}
-                    <li><a href="{{ category.href }}">{{ category.name }}</a></li>
+                    <li class="category_item"><a href="{{ category.href }}">{{ category.name }}</a></li>
                 {% endif %}
             {% endfor %}
         </ul>
