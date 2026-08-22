@@ -70,7 +70,7 @@
       <div class="sort-block">
         <div class="sort">
           <div class="form-group input-group input-group-sm">
-            <label class="input-group-addon" for="input-sort">{{ text_sort }}</label>
+            {# <label class="input-group-addon" for="input-sort">{{ text_sort }}</label> #}
             <select id="input-sort" class="form-control" onchange="location = this.value;">
               {% for sorts in sorts %}
               {% if sorts.value == '%s-%s'|format(sort, order) %}
@@ -96,6 +96,25 @@
             </select>
           </div>
         </div> #}
+        <div class="view-switcher">
+          <!-- Кнопка: 1 колонка -->
+          <button type="button" class="view-btn" data-view="1" title="1 колонка">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <rect x="4" y="4" width="16" height="4" rx="1.5"/>
+                <rect x="4" y="10" width="16" height="4" rx="1.5"/>
+                <rect x="4" y="16" width="16" height="4" rx="1.5"/>
+              </svg>
+          </button>
+          <!-- Кнопка: 2 колонки -->
+          <button type="button" class="view-btn" data-view="2" title="2 колонки">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="4" width="8" height="7" rx="1.5"/>
+                <rect x="13" y="4" width="8" height="7" rx="1.5"/>
+                <rect x="3" y="13" width="8" height="7" rx="1.5"/>
+                <rect x="13" y="13" width="8" height="7" rx="1.5"/>
+              </svg>
+          </button>
+        </div>
       </div>
     <div class="product-wrapp">
     {% for product in products %}

@@ -2072,19 +2072,22 @@ header #right-menu-language-select{
 
     }
 
-}#product-category .sort-block .sort .form-group, #product-compare .sort-block .sort .form-group, #product-search .sort-block .sort .form-group, #product-manufacturer .sort-block .sort .form-group {
-
+}
+#product-category .sort-block .sort .form-group,
+#product-compare .sort-block .sort .form-group,
+#product-search .sort-block .sort .form-group,
+#product-manufacturer .sort-block .sort .form-group,
+#alllatest .sort-block .sort .form-group {
     margin: 0;
-
 }
 
-#product-category .sort-block .sort .form-group label, #product-compare .sort-block .sort .form-group label, #product-search .sort-block .sort .form-group label, #product-manufacturer .sort-block .sort .form-group label {
+/* #product-category .sort-block .sort .form-group label, #product-compare .sort-block .sort .form-group label, #product-search .sort-block .sort .form-group label, #product-manufacturer .sort-block .sort .form-group label {
     color: slategray;
     font-size: 11px;
     background: #eee;
     border: 0;
     border-radius: 2px;
-}
+} */
 
 #product-category .sort-block .sort .form-group .form-control, #product-compare .sort-block .sort .form-group .form-control, #product-search .sort-block .sort .form-group .form-control, #product-manufacturer .sort-block .sort .form-group .form-control {
     padding: 0;

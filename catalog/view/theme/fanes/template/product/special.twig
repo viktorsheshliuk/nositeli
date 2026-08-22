@@ -21,7 +21,7 @@
       <div class="sort-block">
         <div class="sort">
           <div class="form-group input-group input-group-sm">
-            <label class="input-group-addon" for="input-sort">{{ text_sort }}</label>
+            {# <label class="input-group-addon" for="input-sort">{{ text_sort }}</label> #}
             <select id="input-sort" class="form-control" onchange="location = this.value;">
               {% for sorts in sorts %}
               {% if sorts.value == '%s-%s'|format(sort, order) %}
@@ -33,47 +33,29 @@
             </select>
           </div>
         </div>
+        <div class="view-switcher">
+          <!-- Кнопка: 1 колонка -->
+          <button type="button" class="view-btn" data-view="1" title="1 колонка">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <rect x="4" y="4" width="16" height="4" rx="1.5"/>
+                <rect x="4" y="10" width="16" height="4" rx="1.5"/>
+                <rect x="4" y="16" width="16" height="4" rx="1.5"/>
+              </svg>
+          </button>
+          <!-- Кнопка: 2 колонки -->
+          <button type="button" class="view-btn" data-view="2" title="2 колонки">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="4" width="8" height="7" rx="1.5"/>
+                <rect x="13" y="4" width="8" height="7" rx="1.5"/>
+                <rect x="3" y="13" width="8" height="7" rx="1.5"/>
+                <rect x="13" y="13" width="8" height="7" rx="1.5"/>
+              </svg>
+          </button>
+        </div>
       </div>
       <div class="product-wrapp">
- {% for product in products %}
-  {# <div class="{{class}}">
-     <div class="btn-top">
-        <button type="button" data-toggle="tooltip" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');"><i class="fa fa-heart"></i></button>
-        <button type="button" data-toggle="tooltip" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');"><i class="fa fa-exchange"></i></button>
-     </div>
-      <div class="image"><a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" /></a></div>
-      <div class="caption">
-        <h4 class="product-name"><a href="{{ product.href }}">{{ product.name }}</a></h4>
-        <p class="product-description">{{ product.description }}</p>
-        {% if product.rating %}
-        <div class="rating">
-          {% for i in 5 %}
-          {% if product.rating < i %}
-          <span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span>
-          {% else %}
-          <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span>
-          {% endif %}
-          {% endfor %}
-        </div>
-        {% endif %}
-        {% if product.price %}
-        <p class="price">
-          {% if not product.special %}
-          {{ product.price }}
-          {% else %}
-          <span class="price-new">{{ product.special }}</span> <span class="price-old">{{ product.price }}</span>
-          {% endif %}
-          {% if product.tax %}
-          <span class="price-tax">{{ text_tax }} {{ product.tax }}</span>
-          {% endif %}
-        </p>
-        {% endif %}
-      </div>
-      <div class="button-add">
-        <button class="btn btn-primary" type="button" onclick="cart.add('{{ product.product_id }}');"><i class="fa fa-shopping-cart"></i> {{ button_cart }}</button>
-      </div>
-  </div> #}
-  {% include 'fanes/template/product/thumb/default.twig' %}
+  {% for product in products %}
+    {% include 'fanes/template/product/thumb/default.twig' %}
   {% endfor %}
 </div>
     <div class="pagination-block">
