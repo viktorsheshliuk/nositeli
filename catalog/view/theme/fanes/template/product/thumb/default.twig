@@ -73,5 +73,11 @@
                 </div>
                 {% endif %} 
             {% endif %}
+      {% if product.new %}
+      <img class="promo_img" src="catalog/view/theme/fanes/image/new.png" alt="Новинка - фото" title="Новинка" loading="lazy">
+      {% endif %}      
+      {% if product.special %}
+      <img class="promo_img" src="catalog/view/theme/fanes/image/sale.png" alt="Акцiя - фото" title="Акцiя" loading="lazy">
+      {% endif %}
     </div>
 </div>    

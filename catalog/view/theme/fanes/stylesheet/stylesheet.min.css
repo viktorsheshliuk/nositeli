@@ -7632,6 +7632,20 @@ header a, .top_item, .callback, .search_button, .button, .slick-next::before, .s
     color: #111827;
     box-shadow: 0 1px 3px rgba(0,0,0,.12);
 }
+.promo_img {
+    position: absolute;
+    max-width: 114px;
+    max-height: 128px;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+
+
+
+
+
 
 
 
