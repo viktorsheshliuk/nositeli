@@ -3301,14 +3301,14 @@ $('[onclick^="cart.remove"]').on('click', function(){
     </operation>
 
   </file><file path="catalog/controller/product/category.php" v="1.5">
-
+  <!--
     <operation>
       <search position="after"><![CDATA[=> $result['product_id'],]]></search>
         <add position="after"><![CDATA[
         'image_title' => isset($result['image_title']) ? $result['image_title'] : '',
         'image_alt' => isset($result['image_alt']) ? $result['image_alt'] : '',
         ]]></add>
-    </operation>
+    </operation> -->
     
     <operation error="skip" v="2.0"><!-- fix canonical and prev next links-->
       <search position="replace"><![CDATA[$this->url->link('product/category', 'path=' . $category_info['category_id']]]></search>

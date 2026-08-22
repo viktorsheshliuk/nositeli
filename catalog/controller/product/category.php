@@ -191,77 +191,81 @@ class ControllerProductCategory extends Controller {
 
 			$results = $this->model_catalog_product->getProducts($filter_data);
 
-			foreach ($results as $result) {
-				if ($result['image']) {
-					$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
-				} else {
-					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
-				}
+			// foreach ($results as $result) {
+			// 	if ($result['image']) {
+			// 		$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
+			// 	} else {
+			// 		$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
+			// 	}
 
-				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
-					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-					$price_raw = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency'],'', false);
-				} else {
-					$price = false;
-					$price_raw = false;
-				}
-				$price = str_replace(".00","",$price); //удаление нолей после запятой в цене товара 
+			// 	if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+			// 		$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+			// 		$price_raw = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency'],'', false);
+			// 	} else {
+			// 		$price = false;
+			// 		$price_raw = false;
+			// 	}
+			// 	$price = str_replace(".00","",$price); //удаление нолей после запятой в цене товара 
 
-				$discount_percent = '';
+			// 	$discount_percent = '';
 
-				if ((float)$result['special']) {
-					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-					$special_raw = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency'], '', false);
+			// 	if ((float)$result['special']) {
+			// 		$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+			// 		$special_raw = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency'], '', false);
 
-					if ($price > $special && $price !== 0){
-						$discount_percent = '-'. round(($price - $special) / $price * 100) . '%';
-					}	
-				} else {
-					$special = false;
-					$special_raw = false;
-				}
+			// 		if ($price > $special && $price !== 0){
+			// 			$discount_percent = '-'. round(($price - $special) / $price * 100) . '%';
+			// 		}	
+			// 	} else {
+			// 		$special = false;
+			// 		$special_raw = false;
+			// 	}
 
-				if ($this->config->get('config_tax')) {
-					$tax = $this->currency->format((float)$result['special'] ? $result['special'] : $result['price'], $this->session->data['currency']);
-				} else {
-					$tax = false;
-				}
+			// 	if ($this->config->get('config_tax')) {
+			// 		$tax = $this->currency->format((float)$result['special'] ? $result['special'] : $result['price'], $this->session->data['currency']);
+			// 	} else {
+			// 		$tax = false;
+			// 	}
 
-				if ($this->config->get('config_review_status')) {
-					$rating = (int)$result['rating'];
-				} else {
-					$rating = false;
-				}
+			// 	if ($this->config->get('config_review_status')) {
+			// 		$rating = (int)$result['rating'];
+			// 	} else {
+			// 		$rating = false;
+			// 	}
 
-				/* дополнительные фото товаров для страницы категорий */
+			// 	/* дополнительные фото товаров для страницы категорий */
 
-				$webi_data['webi_images'] = array();
-				$webi_results = $this->model_catalog_product->getProductImages($result['product_id']);
+			// 	$webi_data['webi_images'] = array();
+			// 	$webi_results = $this->model_catalog_product->getProductImages($result['product_id']);
 
-				foreach ($webi_results as $webi_result) {
-					$webi_data['webi_images'][] = array('popup' => $this->model_tool_image->resize($webi_result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height')));
-				}
+			// 	foreach ($webi_results as $webi_result) {
+			// 		$webi_data['webi_images'][] = array('popup' => $this->model_tool_image->resize($webi_result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height')));
+			// 	}
 
-				$data['products'][] = array(
-					'product_id'  => $result['product_id'],
-					'ostatok'     => $result['quantity'],
-					'stock_status_id'=>$result['stock_status_id'],
-					'thumb'       => $image,
-					'webi_images' => $webi_data['webi_images'],
-					'name'        => $result['name'],
-					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
-					'price'       => $price, 
-					'price_raw'   => $price_raw,
-					'special'     => $special,
-					'special_raw' => $special_raw,
-					'discount_percent' => $discount_percent,
-					'model'       => $result['model'],
-					'tax'         => $tax,
-					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
-					'rating'      => $result['rating'],
-					'href'        => $this->url->link('product/product', 'path=' . $this->request->get['path'] . '&product_id=' . $result['product_id'] . $url)
-				);
-			}
+			// 	$data['products'][] = array(
+			// 		'product_id'  => $result['product_id'],
+			// 		'ostatok'     => $result['quantity'],
+			// 		'stock_status_id'=>$result['stock_status_id'],
+			// 		'thumb'       => $image,
+			// 		'webi_images' => $webi_data['webi_images'],
+			// 		'name'        => $result['name'],
+			// 		'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
+			// 		'price'       => $price, 
+			// 		'price_raw'   => $price_raw,
+			// 		'special'     => $special,
+			// 		'special_raw' => $special_raw,
+			// 		'discount_percent' => $discount_percent,
+			// 		'model'       => $result['model'],
+			// 		'tax'         => $tax,
+			// 		'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
+			// 		'rating'      => $result['rating'],
+			// 		'href'        => $this->url->link('product/product', 'path=' . $this->request->get['path'] . '&product_id=' . $result['product_id'] . $url)
+			// 	);
+			// }
+			
+			$data['products'] = $this->load->controller('product/thumb', [
+            	'products' => $results
+        	]);
 
 			$url = '';
 
