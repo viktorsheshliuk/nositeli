@@ -1,44 +1,72 @@
 <div class="module-block">
-<h3 class="heading-title">{{ heading_title }}</h3>
-<div class="special">
- {% for product in products %}
-  <div class="product-card">
-     <div class="btn-top">
-        <button type="button" data-toggle="tooltip" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');"><i class="fa fa-heart"></i></button>
-        <button type="button" data-toggle="tooltip" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');"><i class="fa fa-exchange"></i></button>
-     </div>
-      <div class="image"><a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" /></a></div>
-      <div class="caption">
-        <h4 class="product-name"><a href="{{ product.href }}">{{ product.name }}</a></h4>
-        <p class="product-description">{{ product.description }}</p>
-        {% if product.rating %}
-        <div class="rating">
-          {% for i in 5 %}
-          {% if product.rating < i %}
-          <span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span>
-          {% else %}
-          <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span>
-          {% endif %}
-          {% endfor %}
-        </div>
-        {% endif %}
-        {% if product.price %}
-        <p class="price">
-          {% if not product.special %}
-          {{ product.price }}
-          {% else %}
-          <span class="price-new">{{ product.special }}</span> <span class="price-old">{{ product.price }}</span>
-          {% endif %}
-          {% if product.tax %}
-          <span class="price-tax">{{ text_tax }} {{ product.tax }}</span>
-          {% endif %}
-        </p>
-        {% endif %}
-      </div>
-      <div class="button-add">
-        <button class="btn btn-primary" type="button" onclick="cart.add('{{ product.product_id }}');">{{ button_cart }}</button>
-      </div>
+
+  <div class="heading_flex">
+    <h2 class="main_discount_products">{{ heading_title}}</h2>
+    <a class="block__more d-flex align-items-center" href="{{ all_specials }}">
+      <span>{{ text_all_specials }}</span>
+    </a>
   </div>
-  {% endfor %}
+
+  <div class="special main_products swiper">
+    <div class="swiper-wrapper">
+      {% for product in products %}
+        {% include 'fanes/template/product/thumb/swiper.twig' %}
+      {% endfor %}
+    </div>
+
+    <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide">
+      <svg width="10" height="21" viewBox="0 0 10 21" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M9 20L1 10.5L9 1" stroke="currentColor" stroke-linecap="round"></path> </svg>
+    </div>
+    <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide">
+      <svg width="10" height="21" viewBox="0 0 10 21" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M9 20L1 10.5L9 1" stroke="currentColor" stroke-linecap="round"></path> </svg>
+    </div>
+    <div class="swiper-pagination-product"></div>
+  </div>  
+
 </div>
-</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const productsSlider = new Swiper('.main_products', {
+        slidesPerView: 1, // Сколько карточек показывать на экране по умолчанию
+        spaceBetween: 10, // Расстояние между карточками в пикселях
+        loop: true,       // Бесконечный скролл
+        autoHeight: false,
+        watchSlidesProgress: true,
+        navigation: {
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+                el: '.swiper-pagination-product',
+                clickable: true,
+        },
+        
+        breakpoints: {
+          
+          1550: {
+            slidesPerView: 4,
+            pagination: {
+              enabled: false
+            },
+          },
+          992: {
+            slidesPerView: 3,
+            pagination: {
+              enabled: false
+            },
+          },
+          //850: {
+           // slidesPerView: 3,
+          //},
+          550: {
+            slidesPerView: 2,
+          },
+          0: {
+            slidesPerView: 1,
+            
+          },
+
+        }
+    });
+});
+</script>
