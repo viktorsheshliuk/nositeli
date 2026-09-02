@@ -122,6 +122,30 @@ class ControllerExtensionShippingNovaposhta extends Controller {
         $data['cities_total'] = $this->model_extension_shipping_novaposhta->getCitiesTotal();
         $data['departments_total'] = $this->model_extension_shipping_novaposhta->getDepartmentsTotal();
 
+        // Данные отправителя
+        $sender_fields = [
+            'shipping_novaposhta_sender_name',
+            'shipping_novaposhta_sender_phone',
+            'shipping_novaposhta_sender_city_ref',
+            'shipping_novaposhta_sender_city_name',
+            'shipping_novaposhta_sender_warehouse_ref',
+            'shipping_novaposhta_sender_warehouse_name',
+            'shipping_novaposhta_sender_counterparty_ref',  
+            'shipping_novaposhta_sender_contact_ref' 
+        ];
+
+        foreach ($sender_fields as $field) {
+            if (isset($this->request->post[$field])) {
+                $data[$field] = $this->request->post[$field];
+            } else {
+                $data[$field] = $this->config->get($field);
+            }
+        }
+
+        // Загружаем статусы заказов
+        $this->load->model('localisation/order_status');
+        $data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
+
         $data['user_token'] = $this->session->data['user_token'];
 
         $data['header'] = $this->load->controller('common/header');
@@ -145,6 +169,48 @@ class ControllerExtensionShippingNovaposhta extends Controller {
         }
 
         return !$this->error;
+    }
+
+    // Метод для поиска городов отправителя
+    public function searchSenderCities() {
+        $json = array();
+        
+        if (isset($this->request->get['search'])) {
+            $this->load->model('extension/shipping/novaposhta');
+            
+            $cities = $this->model_extension_shipping_novaposhta->searchCities($this->request->get['search']);
+            
+            foreach ($cities as $city) {
+                $json[] = array(
+                    'name' => !empty($city['description_ru']) ? $city['description_ru'] : $city['description'],
+                    'ref' => $city['ref']
+                );
+            }
+        }
+        
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json, JSON_UNESCAPED_UNICODE));
+    }
+    
+    // Метод для получения отделений отправителя
+    public function getSenderWarehouses() {
+        $json = array();
+        
+        if (isset($this->request->get['city_ref'])) {
+            $this->load->model('extension/shipping/novaposhta');
+            
+            $warehouses = $this->model_extension_shipping_novaposhta->getWarehousesByCityRef($this->request->get['city_ref']);
+            
+            foreach ($warehouses as $warehouse) {
+                $json[] = array(
+                    'name' => !empty($warehouse['description_ru']) ? $warehouse['description_ru'] : $warehouse['description'],
+                    'ref' => $warehouse['ref']
+                );
+            }
+        }
+        
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json, JSON_UNESCAPED_UNICODE));
     }
 
     // API методи для оновлення довідників

@@ -1258,6 +1258,8 @@ class ControllerSaleOrder extends Controller {
 			} else {
 				$data['api_token'] = '';
 			}
+			
+			$data['novaposhta_order'] = $this->load->controller('extension/module/novaposhta_order');
 
 			$data['header'] = $this->load->controller('common/header');
 			$data['column_left'] = $this->load->controller('common/column_left');

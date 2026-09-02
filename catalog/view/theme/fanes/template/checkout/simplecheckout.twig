@@ -268,263 +268,356 @@
 </div>
 
 <script type="text/javascript"><!--
-                        // Autocomplete for shipping addresses
-                        (function ($) {
-                            var methods = {
-                                init: function (options) {
-                                    return this.each(function () {
-                                        var $this = $(this);
-                                        var data = $this.data('autocompleteAddress');
+    // Autocomplete for shipping addresses
+    (function ($) {
+        var methods = {
+            init: function (options) {
+                return this.each(function () {
+                    var $this = $(this);
+                    var data = $this.data('autocompleteAddress');
 
-                                        // If the plugin is not yet initialized
-                                        if (!data) {
-                                            $this.timer = null;
-                                            $this.items = new Array();
+                    // If the plugin is not yet initialized
+                    if (!data) {
+                        $this.timer = null;
+                        $this.items = new Array();
 
-                                            $.extend($this, options);
+                        $.extend($this, options);
 
-                                            $this.attr('autocomplete', 'new-password');
+                        $this.attr('autocomplete', 'new-password');
 
-                                            // Focus
-                                            $this.on('focus.autocompleteAddress', function () {
-                                                $this.request('');
-                                            } );
+                        // Focus
+                        $this.on('focus.autocompleteAddress', function () {
+                            $this.request('');
+                        });
 
-                                            // Blur
-                                            $this.on('blur.autocompleteAddress', function () {
-                                                setTimeout(function (object) {
-                                                    object.hide();
-                                                }, 200, $this);
-                                            } );
+                        // Blur
+                        $this.on('blur.autocompleteAddress', function () {
+                            setTimeout(function (object) {
+                                object.hide();
+                            }, 200, $this);
+                        });
 
-                                            // Keydown
-                                            $this.on('keydown.autocompleteAddress', function (event) {
-                                                switch (event.keyCode) {
-                                                    case 27: // escape
-                                                        $this.hide();
-                                                        break;
-                                                    default:
-                                                        $this.request();
-                                                        break;
-                                                }
-                                            } );
-
-                                            // Click
-                                            $this.click = function (event) {
-                                                event.preventDefault();
-
-                                                var value = $(event.target).parent().attr('data-value');
-
-                                                if (value && $this.items[value]) {
-                                                    $this.select($this.items[value]);
-                                                }
-                                            }
-
-                                            // Show
-                                            $this.show = function () {
-                                                var pos = $this.position();
-
-                                                $this.siblings('ul.' + $this.class).css({
-                                                    'top': pos.top + $this.outerHeight(),
-                                                    'left': pos.left
-                                                });
-
-                                                $this.siblings('ul.' + $this.class).show();
-                                            }
-
-                                            // Hide
-                                            $this.hide = function () {
-                                                $this.siblings('ul.' + $this.class).hide();
-                                            }
-
-                                            // Request
-                                            $this.request = function (search) {
-                                                clearTimeout($this.timer);
-
-                                                $this.timer = setTimeout(function (object) {
-                                                    search = (typeof(search) === 'undefined') ? object.val() : search;
-
-                                                    object.source(search, $.proxy(object.response, object));
-                                                }, 200, $this);
-                                            }
-
-                                            // Response
-                                            $this.response = function (json) {
-                                                var html = '';
-
-                                                if (json.length) {
-                                                    for (i = 0; i < json.length; i++) {
-                                                        this.items[json[i]['value']] = json[i];
-
-                                                        //html += '<li data-value="' + json[i]['value'] + '"><a href="#">' + json[i]['label'] + '</a></li>';
-                                                        // Экранируем двойные кавычки для атрибута data-value
-                                                        var safeValue = String(json[i]['value']).replace(/"/g, '&quot;');
-                                                        html += '<li data-value="' + safeValue + '"><a href="#">' + json[i]['label'] + '</a></li>';
-
-                                                        
-                                                    }
-                                                }
-
-                                                if (html && $this.is(':focus')) {
-                                                    $this.show();
-                                                } else {
-                                                    $this.hide();
-                                                }
-
-                                                $this.siblings('ul.' + $this.class).html(html);
-                                            }
-
-                                            $this.after('<ul class="' + $this.class + '"></ul>');
-                                            $this.siblings('ul.' + $this.class).delegate('a', 'click', $.proxy($this.click, $this));
-                                            $this.data('autocompleteAddress', true);
-                                        }
-                                    } );
-                                },
-                                destroy: function () {
-                                    return this.each(function () {
-                                        var $this = $(this);
-
-                                        $this.removeData('autocompleteAddress');
-
-                                        $this.off('.autocompleteAddress');
-                                    } );
-                                }
-                            };
-
-                            $.fn.autocompleteAddress = function (method) {
-                                if (methods[method]) {
-                                    return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-                                } else if (typeof (method) === 'object' || !method) {
-                                    return methods.init.apply(this, arguments);
-                                } else {
-                                    $.error('Method "' + method + '" does not exist for jQuery.autocompleteAddress');
-                                }
+                        // Keydown
+                        $this.on('keydown.autocompleteAddress', function (event) {
+                            switch (event.keyCode) {
+                                case 27: // escape
+                                    $this.hide();
+                                    break;
+                                default:
+                                    $this.request();
+                                    break;
                             }
-                        } )(window.jQuery);
+                        });
 
-                        // ShippingData object
-                        function ShippingData() {
-                            var self = this;
-                            var src, method, lang;
+                        // Click - СОХРАНЯЕМ REF ДЛЯ ОТДЕЛЕНИЯ
+                        $this.click = function (event) {
+                            event.preventDefault();
 
-                            self.methods_city = [
-                                'novaposhta.department',
-                                'novaposhta.doors',
-                                'novaposhta.parcelbox'
-                            ];
+                            var $target = $(event.target).parent();
+                            var value = $target.attr('data-value');
+                            var ref = $target.attr('data-ref');
 
-                            self.methods_address = [
-                                'novaposhta.department',
-                                'novaposhta.parcelbox'
-                            ];
-
-                            self.setProp = function () {
-                                self.method = $('input[name="shipping_method"]:checked').val() || $('select[name="shipping_method"]').val();
-
-                                self.lang = $('html').attr('lang') || 'ru';
-                            }
-
-                            self.handlerChanges = function (name, value) {
-                                if ($.inArray(self.method, self.methods_city.concat(self.methods_address)) != - 1) {
-                                    if (name.match(/zone/i)) {
-                                        $('input[name*="city"]:visible').val('');
-                                        $('input[name*="address_1"]:visible').val('');
-                                    } else if (name.match(/city/i)) {
-                                        $('input[name*="address_1"]:visible').val('');
-                                    } else if (name.match(/shipping\_method/i)) {
-                                        $('input[name*="city"]:visible').autocompleteAddress('destroy');
-                                        $('input[name*="address_1"]:visible').val('').autocompleteAddress('destroy');
-
-                                        self.method = value;
-                                    }
-                                } else if ($.inArray(value, self.methods_city.concat(self.methods_address)) != - 1) {
-                                    if (name.match(/shipping\_method/i)) {
-                                        $('input[name*="city"]:visible').val('');
-                                        $('input[name*="address_1"]:visible').val('');
-
-                                        self.method = value;
+                            if (value && $this.items[value]) {
+                                // ЕСЛИ ЭТО ПОЛЕ ОТДЕЛЕНИЯ - СОХРАНЯЕМ REF
+                                if ($this.attr('name') && $this.attr('name').match(/address_1/i)) {
+                                    var $hiddenField = $('#shipping_address_address_ref');
+                                    if ($hiddenField.length && ref) {
+                                        $hiddenField.val(ref);
+                                        $hiddenField.trigger('change');
+                                        $this.data('selected-address-ref', ref);
+                                        $this.data('last-selected-address-value', value);
+                                        
+                                        // Добавляем визуальную индикацию выбора
+                                        $this.css('border-color', '#4CAF50');
                                     }
                                 }
-                            }
-
-                            self.getAddress = function (element, search) {
-                                var filter, action;
-
-                                if (element[0].name.match(/city/i)) {
-                                    action = 'getCities';
-                                    filter = $('[name*="zone"]:visible').val() || '';
-                                } else if (element[0].name.match(/address_1/i) && self.method == 'novaposhta.parcelbox') {
-                                    action = 'getPoshtomats';
-                                    filter = $('[name*="city"]:visible').val();
-                                } else if (element[0].name.match(/address_1/i)) {
-                                    action = 'getDepartments';
-                                    filter = $('[name*="city"]:visible').val();
-                                }
-
-                                if (!search) {
-                                    search = element[0].value;
-                                }
-
-                                return $.ajax( {
-                                    url: 'index.php?route=extension/module/shippingdata/getShippingData',
-                                    type: 'POST',
-                                    data: 'shipping=' + self.method + '&action=' + action + '&filter=' + encodeURIComponent(filter) + '&search=' + encodeURIComponent(search),
-                                    dataType: 'json',
-                                    global: false,
-                                    success: function (json) {
-                                        self.src = json;
-                                    }
-                                } );
+                                
+                                $this.select($this.items[value]);
                             }
                         }
 
-                        // DOOM loaded
-                        $(function () {
-                            var shippingData = new ShippingData();
+                        // Show
+                        $this.show = function () {
+                            var pos = $this.position();
 
-                            // Settings properties after DOOM load
-                            shippingData.setProp();
-
-                            // Settings properties after ajaxStop
-                            $(document).ajaxStop(function () {
-                                shippingData.setProp();
-
-                                //Simple checkout fix
-                                $('.simplecheckout-block-content').css('overflow', 'visible');
-                                $('input[name*="city"]:visible, input[name*="address_1"]:visible').blur();
-                            } );
-
-                            // Check changes
-                            $(document).on('change', '[name*="zone"]:visible, [name*="city"]:visible, [name*="shipping_method"]', function (e) {
-                                shippingData.handlerChanges(e.target.name, e.target.value);
+                            $this.siblings('ul.' + $this.class).css({
+                                'top': pos.top + $this.outerHeight(),
+                                'left': pos.left
                             });
 
-                            // Add autocomplete for address
-                            $('body').on('focus', 'input[name*="city"]:visible, input[name*="address_1"]:visible', function () {
-                                if (this.name.match(/city/i) && $.inArray(shippingData.method, shippingData.methods_city) != - 1 || this.name.match(/address_1/i) && $.inArray(shippingData.method, shippingData.methods_address) != - 1) {
-                                    $(this).autocompleteAddress( {
-                                        source: function (request, response) {
-                                            shippingData.getAddress(this, request).done(function () {
-                                                response($.map(shippingData.src, function (item) {
-                                                    return {
-                                                        label: item['description'],
-                                                        value: item['description']
-                                                    }
-                                                } ));
-                                            } );
-                                        },
-                                        select: function (e) {
-                                            if (e.value != this.val()) {
-                                                this.val(e.value);
+                            $this.siblings('ul.' + $this.class).show();
+                        }
 
-                                                this.trigger('change');
-                                            }
-                                        },
-                                        class: 'dropdown-address'
-                                    } );
+                        // Hide
+                        $this.hide = function () {
+                            $this.siblings('ul.' + $this.class).hide();
+                        }
+
+                        // Request
+                        $this.request = function (search) {
+                            clearTimeout($this.timer);
+
+                            $this.timer = setTimeout(function (object) {
+                                search = (typeof(search) === 'undefined') ? object.val() : search;
+
+                                object.source(search, $.proxy(object.response, object));
+                            }, 200, $this);
+                        }
+
+                        // Response
+                        $this.response = function (json) {
+                            var html = '';
+
+                            if (json.length) {
+                                for (i = 0; i < json.length; i++) {
+                                    this.items[json[i]['value']] = json[i];
+
+                                    // экранирование для HTML-атрибутов
+                                    var safeValue = String(json[i]['value'])
+                                        .replace(/&/g, '&amp;')
+                                        .replace(/"/g, '&quot;')
+                                        .replace(/'/g, '&#39;');
+                                    
+                                    var safeRef = String(json[i]['id'])
+                                        .replace(/&/g, '&amp;')
+                                        .replace(/"/g, '&quot;')
+                                        .replace(/'/g, '&#39;');
+                                    
+                                    var safeLabel = String(json[i]['label'])
+                                        .replace(/&/g, '&amp;')
+                                        .replace(/"/g, '&quot;')
+                                        .replace(/'/g, '&#39;');
+                                    
+                                    html += '<li data-ref="' + safeRef + '" data-value="' + safeValue + '"><a href="#">' + safeLabel + '</a></li>';
                                 }
-                            } );
-                        } );
+                            }
+
+                            if (html && $this.is(':focus')) {
+                                $this.show();
+                            } else {
+                                $this.hide();
+                            }
+
+                            $this.siblings('ul.' + $this.class).html(html);
+                        }
+
+                        $this.after('<ul class="' + $this.class + '"></ul>');
+                        $this.siblings('ul.' + $this.class).delegate('a', 'click', $.proxy($this.click, $this));
+                        $this.data('autocompleteAddress', true);
+                    }
+                });
+            },
+            destroy: function () {
+                return this.each(function () {
+                    var $this = $(this);
+
+                    $this.removeData('autocompleteAddress');
+
+                    $this.off('.autocompleteAddress');
+                });
+            }
+        };
+
+        $.fn.autocompleteAddress = function (method) {
+            if (methods[method]) {
+                return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+            } else if (typeof (method) === 'object' || !method) {
+                return methods.init.apply(this, arguments);
+            } else {
+                $.error('Method "' + method + '" does not exist for jQuery.autocompleteAddress');
+            }
+        }
+    })(window.jQuery);
+
+    // ShippingData object
+    function ShippingData() {
+        var self = this;
+        var src, method, lang;
+
+        self.methods_city = [
+            'novaposhta.department',
+            'novaposhta.doors',
+            'novaposhta.parcelbox'
+        ];
+
+        self.methods_address = [
+            'novaposhta.department',
+            'novaposhta.parcelbox'
+        ];
+
+        self.setProp = function () {
+            self.method = $('input[name="shipping_method"]:checked').val() || $('select[name="shipping_method"]').val();
+
+            self.lang = $('html').attr('lang') || 'ru';
+        }
+
+        self.handlerChanges = function (name, value) {
+            if ($.inArray(self.method, self.methods_city.concat(self.methods_address)) != -1) {
+                if (name.match(/zone/i)) {
+                    $('input[name*="city"]:visible').val('');
+                    $('input[name*="address_1"]:visible').val('');
+                    // Очищаем REF отделения при смене области
+                    $('#shipping_address_address_ref').val('');
+                } else if (name.match(/city/i)) {
+                    $('input[name*="address_1"]:visible').val('');
+                    // Очищаем REF отделения при смене города
+                    $('#shipping_address_address_ref').val('');
+                } else if (name.match(/shipping\_method/i)) {
+                    $('input[name*="city"]:visible').autocompleteAddress('destroy');
+                    $('input[name*="address_1"]:visible').val('').autocompleteAddress('destroy');
+                    // Очищаем REF отделения
+                    $('#shipping_address_address_ref').val('');
+
+                    self.method = value;
+                }
+            } else if ($.inArray(value, self.methods_city.concat(self.methods_address)) != -1) {
+                if (name.match(/shipping\_method/i)) {
+                    $('input[name*="city"]:visible').val('');
+                    $('input[name*="address_1"]:visible').val('');
+                    // Очищаем REF отделения
+                    $('#shipping_address_address_ref').val('');
+
+                    self.method = value;
+                }
+            }
+        }
+
+        self.getAddress = function (element, search) {
+            var filter, action;
+
+            if (element[0].name.match(/city/i)) {
+                action = 'getCities';
+                filter = $('[name*="zone"]:visible').val() || '';
+            } else if (element[0].name.match(/address_1/i) && self.method == 'novaposhta.parcelbox') {
+                action = 'getPoshtomats';
+                filter = $('[name*="city"]:visible').val();
+            } else if (element[0].name.match(/address_1/i)) {
+                action = 'getDepartments';
+                filter = $('[name*="city"]:visible').val();
+            }
+
+            if (!search) {
+                search = element[0].value;
+            }
+
+            return $.ajax({
+                url: 'index.php?route=extension/module/shippingdata/getShippingData',
+                type: 'POST',
+                data: 'shipping=' + self.method + '&action=' + action + '&filter=' + encodeURIComponent(filter) + '&search=' + encodeURIComponent(search),
+                dataType: 'json',
+                global: false,
+                success: function (json) {
+                    self.src = json;
+                }
+            });
+        }
+    }
+
+    // DOOM loaded
+    $(function () {
+        var shippingData = new ShippingData();
+
+        // Settings properties after DOOM load
+        shippingData.setProp();
+
+        // Settings properties after ajaxStop
+        $(document).ajaxStop(function () {
+            shippingData.setProp();
+
+            //Simple checkout fix
+            $('.simplecheckout-block-content').css('overflow', 'visible');
+            $('input[name*="city"]:visible, input[name*="address_1"]:visible').blur();
+        });
+
+        // Check changes
+        $(document).on('change', '[name*="zone"]:visible, [name*="city"]:visible, [name*="shipping_method"]', function (e) {
+            shippingData.handlerChanges(e.target.name, e.target.value);
+        });
+
+        // ОЧИСТКА REF ОТДЕЛЕНИЯ ПРИ РУЧНОМ ВВОДЕ
+        $(document).on('input', 'input[name*="address_1"]:visible', function() {
+            var $this = $(this);
+            var $hidden = $('#shipping_address_address_ref');
+            var lastSelected = $this.data('last-selected-address-value');
+            
+            // Если пользователь вводит текст вручную
+            if ($this.val().length > 0) {
+                // Если текст не совпадает с последним выбранным значением - очищаем REF
+                if (lastSelected && $this.val() !== lastSelected) {
+                    $hidden.val('');
+                    $this.data('selected-address-ref', null);
+                    $this.css('border-color', '');
+                }
+            } else {
+                // Если поле очищено - очищаем REF
+                $hidden.val('');
+                $this.data('selected-address-ref', null);
+                $this.css('border-color', '');
+            }
+        });
+
+        // Add autocomplete for address (ПОЛНЫЙ ОРИГИНАЛЬНЫЙ КОД)
+        $('body').on('focus', 'input[name*="city"]:visible, input[name*="address_1"]:visible', function () {
+            if (this.name.match(/city/i) && $.inArray(shippingData.method, shippingData.methods_city) != -1 || this.name.match(/address_1/i) && $.inArray(shippingData.method, shippingData.methods_address) != -1) {
+                
+                // Убеждаемся, что скрытое поле для отделения существует
+                if (this.name.match(/address_1/i)) {
+                    if ($('#shipping_address_address_ref').length === 0) {
+                        $(this).after('<input type="hidden" name="shipping_address[address_ref]" id="shipping_address_address_ref" value="" />');
+                    }
+                }
+                
+                $(this).autocompleteAddress({
+                    source: function (request, response) {
+                        shippingData.getAddress(this, request).done(function () {
+                            response($.map(shippingData.src, function (item) {
+                                return {
+                                    id: item['id'],
+                                    label: item['description'],
+                                    value: item['description']
+                                }
+                            }));
+                        });
+                    },
+                    select: function (e) {
+                        if (e.value != this.val()) {
+                            this.val(e.value);
+                            this.trigger('change');
+                        }
+                    },
+                    class: 'dropdown-address'
+                });
+            }
+        });
+
+        // ДОПОЛНИТЕЛЬНАЯ ОЧИСТКА ПРИ СМЕНЕ ГОРОДА
+        $(document).on('change', 'input[name*="city"]:visible', function() {
+            var $addressField = $('input[name*="address_1"]:visible');
+            var $refField = $('#shipping_address_address_ref');
+            
+            // При смене города очищаем поле отделения и его REF
+            if ($(this).val()) {
+                $addressField.val('');
+                $refField.val('');
+                $addressField.data('selected-address-ref', null);
+                $addressField.data('last-selected-address-value', null);
+                $addressField.css('border-color', '');
+            }
+        });
+
+        // ДЕБАГ: Выводим в консоль при изменении REF
+        $(document).on('change', '#shipping_address_address_ref', function() {
+            console.log('REF отделения сохранен:', $(this).val());
+        });
+
+        // ПРИ ВЫБОРЕ ОТДЕЛЕНИЯ ИЗ СПИСКА - ПОКАЗЫВАЕМ REF В КОНСОЛИ
+        $(document).on('click', '.dropdown-address li', function() {
+            var ref = $(this).attr('data-ref');
+            var value = $(this).attr('data-value');
+            console.log('Выбрано отделение:', value);
+            console.log('REF отделения:', ref);
+        });
+    });
 //--></script>
 
 {% include simple_footer %}

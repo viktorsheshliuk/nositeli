@@ -1,5 +1,4 @@
 <?php
-
 class ModelExtensionShippingNovaposhta extends Model {
     private $error = array();
 
@@ -482,4 +481,235 @@ class ModelExtensionShippingNovaposhta extends Model {
         
         error_log("[MODEL] updateDepartments() completed. Inserted: $inserted, Failed: $failed");
     }
+
+    public function addTtn($order_id, $data) {
+        $this->db->query("INSERT INTO " . DB_PREFIX . "novaposhta_ttn SET 
+            ref = '" . $this->db->escape($data['ref']) . "',
+            order_id = '" . (int)$order_id . "',
+            ttn = '" . $this->db->escape($data['ttn']) . "',
+            city_ref = '" . $this->db->escape($data['city_ref']) . "',
+            city_name = '" . $this->db->escape($data['city_name']) . "',
+            warehouse_ref = '" . $this->db->escape($data['warehouse_ref']) . "',
+            warehouse_name = '" . $this->db->escape($data['warehouse_name']) . "',
+            service_type = '" . $this->db->escape($data['service_type']) . "',
+            payer_type = '" . $this->db->escape($data['payer_type']) . "',
+            payment_method = '" . $this->db->escape($data['payment_method']) . "',
+            cargo_type = '" . $this->db->escape($data['cargo_type']) . "',
+            volume_general = '" . $this->db->escape($data['volume_general']) . "',
+            weight = '" . $this->db->escape($data['weight']) . "',
+            cost = '" . (float)$data['cost'] . "',
+            seats_amount = '" . (int)$data['seats_amount'] . "',
+            description = '" . $this->db->escape($data['description']) . "',
+            recipient_name = '" . $this->db->escape($data['recipient_name']) . "',
+            recipient_phone = '" . $this->db->escape($data['recipient_phone']) . "',
+            date_added = NOW()");
+        
+        return $this->db->getLastId();
+    }
+
+    public function getTtn($order_id) {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "novaposhta_ttn WHERE order_id = '" . (int)$order_id . "'");
+        
+        return $query->row;
+    }
+    
+    public function getTtns($order_id) {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "novaposhta_ttn WHERE order_id = '" . (int)$order_id . "' ORDER BY date_added DESC");
+        
+        return $query->rows;
+    }
+
+    public function updateTtn($ttn_id, $data) {
+        $this->db->query("UPDATE " . DB_PREFIX . "novaposhta_ttn SET 
+            ttn = '" . $this->db->escape($data['ttn']) . "',
+            city_ref = '" . $this->db->escape($data['city_ref']) . "',
+            city_name = '" . $this->db->escape($data['city_name']) . "',
+            warehouse_ref = '" . $this->db->escape($data['warehouse_ref']) . "',
+            warehouse_name = '" . $this->db->escape($data['warehouse_name']) . "',
+            service_type = '" . $this->db->escape($data['service_type']) . "',
+            payer_type = '" . $this->db->escape($data['payer_type']) . "',
+            payment_method = '" . $this->db->escape($data['payment_method']) . "',
+            cargo_type = '" . $this->db->escape($data['cargo_type']) . "',
+            volume_general = '" . $this->db->escape($data['volume_general']) . "',
+            weight = '" . $this->db->escape($data['weight']) . "',
+            cost = '" . (float)$data['cost'] . "',
+            seats_amount = '" . (int)$data['seats_amount'] . "',
+            description = '" . $this->db->escape($data['description']) . "',
+            recipient_name = '" . $this->db->escape($data['recipient_name']) . "',
+            recipient_phone = '" . $this->db->escape($data['recipient_phone']) . "',
+            date_modified = NOW() 
+            WHERE ttn_id = '" . (int)$ttn_id . "'");
+    }
+
+    public function deleteTtn($ttn_id) {
+        $this->db->query("DELETE FROM " . DB_PREFIX . "novaposhta_ttn WHERE ttn_id = '" . (int)$ttn_id . "'");
+    }
+
+    public function install() {
+        // Создание таблицы для ТТН
+        $this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "novaposhta_ttn` (
+            `ttn_id` INT(11) NOT NULL AUTO_INCREMENT,
+            `order_id` INT(11) NOT NULL,
+            `ref` VARCHAR(255) NOT NULL,
+            `ttn` VARCHAR(255) NOT NULL,
+            `city_ref` VARCHAR(255) NOT NULL,
+            `city_name` VARCHAR(255) NOT NULL,
+            `warehouse_ref` VARCHAR(255) NOT NULL,
+            `warehouse_name` VARCHAR(255) NOT NULL,
+            `service_type` VARCHAR(50) DEFAULT 'WarehouseWarehouse',
+            `payer_type` VARCHAR(50) DEFAULT 'Recipient',
+            `payment_method` VARCHAR(50) DEFAULT 'Cash',
+            `cargo_type` VARCHAR(50) DEFAULT 'Cargo',
+            `volume_general` VARCHAR(20) DEFAULT '0.01',
+            `weight` VARCHAR(20) DEFAULT '1',
+            `cost` DECIMAL(15,2) DEFAULT '0.00',
+            `seats_amount` INT(5) DEFAULT '1',
+            `description` TEXT,
+            `recipient_name` VARCHAR(255),
+            `recipient_phone` VARCHAR(50),
+            `date_added` DATETIME NOT NULL,
+            `date_modified` DATETIME DEFAULT NULL,
+            PRIMARY KEY (`ttn_id`),
+            KEY `order_id` (`order_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+    }
+
+    public function uninstall() {
+        $this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "novaposhta_ttn`");
+    }
+
+        /**
+     * Получить список городов из базы данных
+     */
+    public function getCitiesList() {
+        $query = $this->db->query("SELECT Ref as ref, DescriptionRu as description_ru, Description as description 
+                                   FROM " . DB_PREFIX . "novaposhta_cities 
+                                   ORDER BY DescriptionRu ASC");
+        
+        return $query->rows;
+    }
+
+    /**
+     * Поиск городов по названию
+     */
+    public function searchCities($search, $limit = 20) {
+        $search = $this->db->escape($search);
+        
+        // Сначала ищем крупные города (областные центры)
+        $sql = "SELECT 
+                    c.Ref as ref, 
+                    c.DescriptionRu as description_ru, 
+                    c.Description as description,
+                    c.SettlementType,
+                    c.AreaDescription,
+                    c.AreaDescriptionRu,
+                    CASE 
+                        WHEN c.DescriptionRu = '" . $search . "' THEN 1
+                        WHEN c.Description = '" . $search . "' THEN 2
+                        WHEN c.DescriptionRu LIKE '" . $search . "%' THEN 3
+                        WHEN c.Description LIKE '" . $search . "%' THEN 4
+                        WHEN c.DescriptionRu LIKE '%" . $search . "%' THEN 5
+                        WHEN c.Description LIKE '%" . $search . "%' THEN 6
+                        ELSE 7
+                    END as sort_order
+                FROM " . DB_PREFIX . "novaposhta_cities c
+                WHERE c.DescriptionRu LIKE '%" . $search . "%' 
+                OR c.Description LIKE '%" . $search . "%'
+                ORDER BY sort_order ASC, 
+                        c.SettlementType ASC,  -- Города раньше сел
+                        c.DescriptionRu ASC 
+                LIMIT " . (int)$limit;
+        
+        $query = $this->db->query($sql);
+        
+        return $query->rows;
+    }
+
+ 
+
+    /**
+     * Получить город по Ref
+     */
+    public function getCityByRef($city_ref) {
+        $query = $this->db->query("SELECT Ref as ref, DescriptionRu as description_ru, Description as description 
+                                   FROM " . DB_PREFIX . "novaposhta_cities 
+                                   WHERE Ref = '" . $this->db->escape($city_ref) . "' 
+                                   LIMIT 1");
+        
+        return $query->row;
+    }
+
+    /**
+     * Получить отделение по Ref
+     */
+    public function getWarehousesByCityRef($city_ref, $limit = 50) {
+        $query = $this->db->query("SELECT Ref as ref, DescriptionRu as description_ru, Description as description, Number 
+                                FROM " . DB_PREFIX . "novaposhta_departments 
+                                WHERE CityRef = '" . $this->db->escape($city_ref) . "' 
+                                ORDER BY CAST(Number AS UNSIGNED) ASC, Number ASC 
+                                LIMIT " . (int)$limit);
+        
+        return $query->rows;
+    }
+
+    public function searchWarehouses($city_ref, $search) {
+        $search = trim($search);
+        $search_escaped = $this->db->escape($search);
+        
+        // Разбиваем поисковый запрос на слова
+        $words = explode(' ', $search);
+        $conditions = array();
+        
+        foreach ($words as $word) {
+            $word = $this->db->escape($word);
+            $conditions[] = "(Number LIKE '%" . $word . "%' 
+                            OR DescriptionRu LIKE '%" . $word . "%' 
+                            OR Description LIKE '%" . $word . "%'
+                            OR ShortAddressRu LIKE '%" . $word . "%'
+                            OR ShortAddress LIKE '%" . $word . "%')";
+        }
+        
+        $where = implode(' AND ', $conditions);
+        
+        $sql = "SELECT 
+                    Ref as ref, 
+                    DescriptionRu as description_ru, 
+                    Description as description,
+                    Number,
+                    ShortAddressRu,
+                    ShortAddress,
+                    CASE 
+                        WHEN Number = '" . $search_escaped . "' THEN 1
+                        WHEN Number LIKE '" . $search_escaped . "%' THEN 2
+                        WHEN DescriptionRu LIKE '%" . $search_escaped . "%' THEN 3
+                        WHEN Description LIKE '%" . $search_escaped . "%' THEN 4
+                        WHEN ShortAddressRu LIKE '%" . $search_escaped . "%' THEN 5
+                        WHEN ShortAddress LIKE '%" . $search_escaped . "%' THEN 6
+                        ELSE 7
+                    END as sort_order
+                FROM " . DB_PREFIX . "novaposhta_departments 
+                WHERE CityRef = '" . $this->db->escape($city_ref) . "' 
+                AND (" . $where . ")
+                ORDER BY sort_order ASC, CAST(Number AS UNSIGNED) ASC 
+                LIMIT 20";
+        
+        $query = $this->db->query($sql);
+        
+        return $query->rows;
+    }
+
+    public function getRefTtn($ttn_id){
+        $query = $this->db->query("SELECT ref FROM " . DB_PREFIX . "novaposhta_ttn WHERE ttn_id = '" . (int)$ttn_id . "'");
+        return $query->row;
+    }
+
+    public function getWarehouseByRef($ref){
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "novaposhta_departments WHERE Ref = '" . $this->db->escape($ref) . "'");
+        return $query->row;
+    }
+
+    // public function getCityByRef($ref){
+    //     $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "novaposhta_cities WHERE Ref = '" . $this->db->escape($ref) . "'");
+    //     return $query->row;
+    // }
 }

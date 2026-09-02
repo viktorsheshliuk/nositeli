@@ -859,6 +859,8 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
         $payment_address  = $this->session->data['simple']['payment_address'];
         $shipping_address = $this->session->data['simple']['shipping_address'];
 
+        $novaposhta_cn_ref = isset($shipping_address['address_ref']) ? $shipping_address['address_ref'] : '';
+
         $comment          = $this->simplecheckout->getComment();
         $version          = $this->simplecheckout->getOpencartVersion();
         
@@ -973,6 +975,8 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
         array_multisort($sort_order, SORT_ASC, $totals);
 
         $data = array();
+
+        $data['novaposhta_cn_ref'] = $novaposhta_cn_ref;
 
         $data['invoice_prefix'] = $this->config->get('config_invoice_prefix');
         $data['store_id'] = $this->config->get('config_store_id');
@@ -1337,6 +1341,7 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
                 }
             }
         } elseif ($version >= 152) {
+          
             $order_id = $this->model_checkout_order->addOrder($data);
         }
 

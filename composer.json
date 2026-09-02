@@ -1,0 +1,5 @@
+{
+    "require": {
+        "aunhurian/nova-poshta-sdk": "^1.0"
+    }
+}

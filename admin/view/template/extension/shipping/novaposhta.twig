@@ -38,6 +38,7 @@
                 <!-- ВКЛАДКИ -->
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#tab-main" data-toggle="tab">{{ tab_main }}</a></li>
+                    <li><a href="#tab-sender" data-toggle="tab"><i class="fa fa-user"></i> Отправитель</a></li>
                     {% for customer_group in customer_groups %}
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ customer_group.name }} <span class="caret"></span></a>
@@ -95,6 +96,79 @@
 
                             <div class="alert alert-info">
                                 <i class="fa fa-info-circle"></i> Налаштуйте параметри кожного методу доставки для кожної групи користувачів в підменю груп.
+                            </div>
+                        </div>
+
+                        <!-- НАСТРОЙКИ ОТПРАВИТЕЛЯ -->
+                        <div class="tab-pane form-horizontal" id="tab-sender">
+                            <div class="alert alert-info">
+                                <i class="fa fa-info-circle"></i> Настройте данные отправителя для создания ТТН
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-sender-name">Имя отправителя</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="shipping_novaposhta_sender_name"
+                                           value="{{ shipping_novaposhta_sender_name }}" 
+                                           placeholder="Имя отправителя" id="input-sender-name" class="form-control"/>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-sender-phone">Телефон отправителя</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="shipping_novaposhta_sender_phone"
+                                           value="{{ shipping_novaposhta_sender_phone }}" 
+                                           placeholder="+380XXXXXXXXX" id="input-sender-phone" class="form-control"/>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Город отправителя</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="sender_city_search" 
+                                           value="{{ shipping_novaposhta_sender_city_name }}" 
+                                           placeholder="Поиск города..." id="sender-city-search" class="form-control"/>
+                                    <input type="hidden" name="shipping_novaposhta_sender_city_ref" 
+                                           value="{{ shipping_novaposhta_sender_city_ref }}" id="sender-city-ref"/>
+                                    <input type="hidden" name="shipping_novaposhta_sender_city_name" 
+                                           value="{{ shipping_novaposhta_sender_city_name }}" id="sender-city-name"/>
+                                    <div id="sender-city-results" class="list-group" style="position: absolute; z-index: 1000; max-height: 200px; overflow-y: auto;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Отделение отправителя</label>
+                                <div class="col-sm-10">
+                                    <select name="shipping_novaposhta_sender_warehouse_ref" id="sender-warehouse-select" class="form-control">
+                                        {% if shipping_novaposhta_sender_warehouse_ref %}
+                                            <option value="{{ shipping_novaposhta_sender_warehouse_ref }}" selected>{{ shipping_novaposhta_sender_warehouse_name }}</option>
+                                        {% else %}
+                                            <option value="">Выберите отделение</option>
+                                        {% endif %}
+                                    </select>
+                                    <input type="hidden" name="shipping_novaposhta_sender_warehouse_name" 
+                                           value="{{ shipping_novaposhta_sender_warehouse_name }}" id="sender-warehouse-name"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Ref отправителя</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="shipping_novaposhta_sender_counterparty_ref"
+                                        value="{{ shipping_novaposhta_sender_counterparty_ref }}" 
+                                        placeholder="Ref контрагента-отправителя" class="form-control"/>
+                                    <div class="help-block">Ref контрагента-отправителя из API Новой Почты</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Ref контакта отправителя</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="shipping_novaposhta_sender_contact_ref"
+                                        value="{{ shipping_novaposhta_sender_contact_ref }}" 
+                                        placeholder="Ref контактного лица отправителя" class="form-control"/>
+                                    <div class="help-block">Ref контактного лица отправителя (если есть)</div>
+                                </div>
                             </div>
                         </div>
 
@@ -302,94 +376,249 @@
     
     <script type="text/javascript"><!--
         $('.nav[id*=language]').find('a:first').tab('show');
+        
+        // Поиск города отправителя
+        $('#sender-city-search').on('input', function() {
+            var search = $(this).val();
+            
+            if (search.length >= 2) {
+                $.ajax({
+                    url: 'index.php?route=extension/shipping/novaposhta/searchSenderCities&user_token={{ user_token }}&search=' + search,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(json) {
+                        var html = '';
+                        
+                        $.each(json, function(index, city) {
+                            html += '<a href="#" class="list-group-item sender-city-item" data-ref="' + city.ref + '" data-name="' + city.name + '">' + city.name + '</a>';
+                        });
+                        
+                        $('#sender-city-results').html(html).show();
+                    }
+                });
+            } else {
+                $('#sender-city-results').hide();
+            }
+        });
+        
+        // Выбор города отправителя
+        $(document).on('click', '.sender-city-item', function(e) {
+            e.preventDefault();
+            
+            var cityRef = $(this).data('ref');
+            var cityName = $(this).data('name');
+            
+            $('#sender-city-search').val(cityName);
+            $('#sender-city-ref').val(cityRef);
+            $('#sender-city-name').val(cityName);
+            $('#sender-city-results').hide();
+            
+            // Загрузка отделений
+            $.ajax({
+                url: 'index.php?route=extension/shipping/novaposhta/getSenderWarehouses&user_token={{ user_token }}&city_ref=' + cityRef,
+                type: 'GET',
+                dataType: 'json',
+                success: function(json) {
+                    var html = '<option value="">Выберите отделение</option>';
+                    
+                    $.each(json, function(index, warehouse) {
+                        html += '<option value="' + warehouse.ref + '">' + warehouse.name + '</option>';
+                    });
+                    
+                    $('#sender-warehouse-select').html(html);
+                }
+            });
+        });
+        
+        // Выбор отделения отправителя
+        $('#sender-warehouse-select').on('change', function() {
+            var warehouseName = $(this).find('option:selected').text();
+            $('#sender-warehouse-name').val(warehouseName);
+        });
+        
+        // Скрытие списка городов при клике вне
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('#sender-city-results').length) {
+                $('#sender-city-results').hide();
+            }
+        });
         //--></script>
-    <script>
-        $('#update-departments').on('click', function () {
-            const node = this;
+    <script type="text/javascript"><!--
+    // Поиск города отправителя
+    $('#sender-city-search').on('input', function() {
+        var search = $(this).val();
+        
+        if (search.length >= 2) {
             $.ajax({
-                url: 'index.php?route=extension/shipping/novaposhta/updateDepartments&user_token={{ user_token }}',
-                type: 'post',
+                url: 'index.php?route=extension/shipping/novaposhta/searchSenderCities&user_token={{ user_token }}&search=' + encodeURIComponent(search),
+                type: 'GET',
                 dataType: 'json',
-                beforeSend: function () {
-                    $(node).prop('disabled', true);
-                    $(node).find('i').addClass('fa-spin');
-                },
-                success: function (json) {
-                    if (json['error']) {
-                        alert('Error: ' + json['error']);
-                        $(node).find('i').removeClass('fa-spin');
-                        $(node).prop('disabled', false);
-                        return;
+                success: function(json) {
+                    var html = '';
+                    
+                    if (json.length > 0) {
+                        $.each(json, function(index, city) {
+                            html += '<a href="#" class="list-group-item sender-city-item" data-ref="' + city.ref + '" data-name="' + city.name + '">' + city.name + '</a>';
+                        });
+                    } else {
+                        html = '<div class="list-group-item">Ничего не найдено</div>';
                     }
-                    if (json['old_total'] != json['new_total']) {
-                        $('#departments-total').html(`${json['old_total']} (+${Math.abs(json['old_total'] - json['new_total'])})`);
-                    }
-                    $(node).find('i').removeClass('fa-spin');
-                    $(node).prop('disabled', false);
+                    
+                    $('#sender-city-results').html(html).show();
                 },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                error: function(xhr, ajaxOptions, thrownError) {
+                    console.error(thrownError);
                 }
             });
+        } else {
+            $('#sender-city-results').hide();
+        }
+    });
+    
+    // Выбор города отправителя
+    $(document).on('click', '.sender-city-item', function(e) {
+        e.preventDefault();
+        
+        var cityRef = $(this).data('ref');
+        var cityName = $(this).data('name');
+        
+        $('#sender-city-search').val(cityName);
+        $('#sender-city-ref').val(cityRef);
+        $('#sender-city-name').val(cityName);
+        $('#sender-city-results').hide();
+        
+        // Загрузка отделений
+        $.ajax({
+            url: 'index.php?route=extension/shipping/novaposhta/getSenderWarehouses&user_token={{ user_token }}&city_ref=' + encodeURIComponent(cityRef),
+            type: 'GET',
+            dataType: 'json',
+            beforeSend: function() {
+                $('#sender-warehouse-select').html('<option value="">Загрузка...</option>');
+            },
+            success: function(json) {
+                var html = '<option value="">Выберите отделение</option>';
+                
+                if (json.length > 0) {
+                    $.each(json, function(index, warehouse) {
+                        html += '<option value="' + warehouse.ref + '">' + warehouse.name + '</option>';
+                    });
+                }
+                
+                $('#sender-warehouse-select').html(html);
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                console.error(thrownError);
+                $('#sender-warehouse-select').html('<option value="">Ошибка загрузки</option>');
+            }
         });
+    });
+    
+    // Выбор отделения отправителя
+    $('#sender-warehouse-select').on('change', function() {
+        var warehouseName = $(this).find('option:selected').text();
+        $('#sender-warehouse-name').val(warehouseName);
+    });
+    
+    // Скрытие списка городов при клике вне
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('#sender-city-results').length) {
+            $('#sender-city-results').hide();
+        }
+    });
+    
+    // Обновление отделений
+    $('#update-departments').on('click', function () {
+        const node = this;
+        $.ajax({
+            url: 'index.php?route=extension/shipping/novaposhta/updateDepartments&user_token={{ user_token }}',
+            type: 'post',
+            dataType: 'json',
+            beforeSend: function () {
+                $(node).prop('disabled', true);
+                $(node).find('i').addClass('fa-spin');
+            },
+            success: function (json) {
+                if (json['error']) {
+                    alert('Error: ' + json['error']);
+                } else {
+                    if (json['new_total']) {
+                        $('#departments-total').html(json['new_total']);
+                    }
+                    alert('Отделения обновлены! Всего: ' + json['new_total']);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            },
+            complete: function() {
+                $(node).find('i').removeClass('fa-spin');
+                $(node).prop('disabled', false);
+            }
+        });
+    });
 
-        $('#update-cities').on('click', function () {
-            const node = this;
-            $.ajax({
-                url: 'index.php?route=extension/shipping/novaposhta/updateCities&user_token={{ user_token }}',
-                type: 'post',
-                dataType: 'json',
-                beforeSend: function () {
-                    $(node).prop('disabled', true);
-                    $(node).find('i').addClass('fa-spin');
-                },
-                success: function (json) {
-                    if (json['error']) {
-                        alert('Error: ' + json['error']);
-                        $(node).find('i').removeClass('fa-spin');
-                        $(node).prop('disabled', false);
-                        return;
+    // Обновление городов
+    $('#update-cities').on('click', function () {
+        const node = this;
+        $.ajax({
+            url: 'index.php?route=extension/shipping/novaposhta/updateCities&user_token={{ user_token }}',
+            type: 'post',
+            dataType: 'json',
+            beforeSend: function () {
+                $(node).prop('disabled', true);
+                $(node).find('i').addClass('fa-spin');
+            },
+            success: function (json) {
+                if (json['error']) {
+                    alert('Error: ' + json['error']);
+                } else {
+                    if (json['new_total']) {
+                        $('#cities-total').html(json['new_total']);
                     }
-                    if (json['old_total'] != json['new_total']) {
-                        $('#cities-total').html(`${json['old_total']} (+${Math.abs(json['old_total'] - json['new_total'])})`);
-                    }
-                    $(node).find('i').removeClass('fa-spin');
-                    $(node).prop('disabled', false);
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                    alert('Города обновлены! Всего: ' + json['new_total']);
                 }
-            });
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            },
+            complete: function() {
+                $(node).find('i').removeClass('fa-spin');
+                $(node).prop('disabled', false);
+            }
         });
+    });
 
-        $('#update-regions').on('click', function () {
-            const node = this;
-            $.ajax({
-                url: 'index.php?route=extension/shipping/novaposhta/updateRegions&user_token={{ user_token }}',
-                type: 'post',
-                dataType: 'json',
-                beforeSend: function () {
-                    $(node).prop('disabled', true);
-                    $(node).find('i').addClass('fa-spin');
-                },
-                success: function (json) {
-                    if (json['error']) {
-                        alert('Error: ' + json['error']);
-                        $(node).find('i').removeClass('fa-spin');
-                        $(node).prop('disabled', false);
-                        return;
+    // Обновление регионов
+    $('#update-regions').on('click', function () {
+        const node = this;
+        $.ajax({
+            url: 'index.php?route=extension/shipping/novaposhta/updateRegions&user_token={{ user_token }}',
+            type: 'post',
+            dataType: 'json',
+            beforeSend: function () {
+                $(node).prop('disabled', true);
+                $(node).find('i').addClass('fa-spin');
+            },
+            success: function (json) {
+                if (json['error']) {
+                    alert('Error: ' + json['error']);
+                } else {
+                    if (json['new_total']) {
+                        $('#regions-total').html(json['new_total']);
                     }
-                    if (json['old_total'] != json['new_total']) {
-                        $('#regions-total').html(`${json['old_total']} (+${Math.abs(json['old_total'] - json['new_total'])})`);
-                    }
-                    $(node).find('i').removeClass('fa-spin');
-                    $(node).prop('disabled', false);
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                    alert('Регионы обновлены! Всего: ' + json['new_total']);
                 }
-            });
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            },
+            complete: function() {
+                $(node).find('i').removeClass('fa-spin');
+                $(node).prop('disabled', false);
+            }
         });
-    </script>
+    });
+//--></script>
+    
 </div>
-    {{ footer }}
+{{ footer }}
