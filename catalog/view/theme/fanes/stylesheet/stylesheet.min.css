@@ -7685,7 +7685,11 @@ header a, .top_item, .callback, .search_button, .button, .slick-next::before, .s
 .category__wall-module{
     padding-top: 20px;
 }
-
+.no_in_stock_product .price_container, .no_in_stock_product .product_name, .no_in_stock_product .preview_image {
+    -webkit-filter: grayscale(1);
+    filter: grayscale(1);
+    opacity: .6;
+}
 
 
 

@@ -1,4 +1,4 @@
-<div class="product-card product-card-l preview">    
+<div class="product-card product-card-l preview {% if product.quantity <= 0 %}no_in_stock_product{% endif %}">    
     <div>
         <a href="{{ product.href }}">
             <div class="preview_image">
