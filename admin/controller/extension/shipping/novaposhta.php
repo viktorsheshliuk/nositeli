@@ -10,7 +10,15 @@ class ControllerExtensionShippingNovaposhta extends Controller {
         $this->load->model('setting/setting');
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-            $this->model_setting_setting->editSetting('shipping_novaposhta', $this->request->post);
+            //$this->model_setting_setting->editSetting('shipping_novaposhta', $this->request->post);
+            $setting_data = $this->request->post;
+            if (isset($this->request->post['shipping_novaposhta_api_key'])) {
+                $setting_data['shipping_novaposhta'] = [
+                    'key_api' => $this->request->post['shipping_novaposhta_api_key']
+                ];
+            }
+
+            $this->model_setting_setting->editSetting('shipping_novaposhta', $setting_data);
 
             $this->session->data['success'] = $this->language->get('text_success');
 
