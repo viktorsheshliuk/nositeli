@@ -1,11 +1,29 @@
+{% macro get_product_label(count, text_tovar_1, text_tovar_2, text_tovar_3) %}
+    {% set last_digit = count|split('')|last %}
+    {% set last_two = count|slice(-2) %}
+    
+    {% if count == 0 %}
+        {{ text_tovar_2 }}
+    {% elseif count == 1 %}
+        {{ text_tovar_1 }}
+    {% elseif last_two >= 11 and last_two <= 19 %}
+       {{ text_tovar_2 }}
+    {% elseif last_digit == 1 %}
+       {{ text_tovar_1 }}
+    {% elseif last_digit >= 2 and last_digit <= 4 %}
+        {{ text_tovar_3 }}
+    {% else %}
+        {{ text_tovar_2 }}
+    {% endif %}
+{% endmacro %} 
 <div class="simplecheckout-block" id="simplecheckout_summary" {{ hide ? 'data-hide="true"' : '' }}>
-    {% if display_header %}
+    {# {% if display_header %}
       <div class="checkout-heading panel-heading">{{ text_summary }}
        <span id="back_to_step_1" style="float:right;">{{ text_edit }}<span>
       </div>
-    {% endif %}
+    {% endif %} #}
 
-    {% if display_products %}
+    {# {% if display_products %}
       <div class="table-responsive">
           <table class="simplecheckout-cart">
               <colgroup>
@@ -65,28 +83,103 @@
               </tbody>
           </table>
       </div>
+    {% endif %} #}
+
+    {# {% if not display_products and display_totals_block and display_totals is not empty %}
+      <div class="simplecheckout-summary-totals">
+    {% endif %} #}
+
+    {% set amount_sub_total = '0' %}
+    {% set amount_total = '0' %}
+    
+    {% for total in totals  %}
+        {% if total.code == 'sub_total' %}
+          {% set amount_sub_total = total.text|replace({'грн': ''})|trim %}
+          {# <div class="simplecheckout-cart-total" id="total_{{ total['code'] }}">
+              <span>{{ total.title }}</span>
+              <span class="simplecheckout-cart-total-value">{{ total['text'] }}</span>
+          </div> #}
+        {% endif %}
+        {% if total.code == 'total' %}
+          {% set amount_total = total.text|replace({'грн': ''})|trim %}
+        {% endif %}  
+    {% endfor %}
+
+    {% if amount_total != amount_sub_total %}
+    {% set total_summa = amount_total %}
     {% endif %}
 
-    {% if not display_products and display_totals_block and display_totals is not empty %}
-      <div class="simplecheckout-summary-totals">
+    <div class="cart_top_right_block">
+      <div class="cart_product_count">
+        <span class="cart_amount_purchases">{{ count_products }}</span>
+        <span class="cart_purchases_text">{{ _self.get_product_label(count_products, text_tovar_1, text_tovar_2, text_tovar_3) }}</span>
+          {{ text_in_cart }}
+      </div>
+      <div class="cart_dash"></div>
+      <div class="cart_total_price_container">
+        <div class="total_sum nowrap"><span id="total_sum">{{ amount_sub_total }}</span> грн</div>
+      </div>
+    </div>
+
+
+    {# 
+    {{ monopay.title }} — название (например, «Комиссия Monopay»).
+    {{ monopay.text }} — отформатированная строка с ценой (например, 150 ₴).
+    {{ monopay.value }} — числовое значение для математических операций (например, 150.0000). #}
+    {% if 'monopay_fee' in totals|keys %}
+
+      {% set monopay = null %}
+      {% for total in totals %}
+          {% if total.code == 'monopay_fee' %}
+              {% set monopay = total %}
+          {% endif %}
+      {% endfor %}
+    
+      {% if monopay %}
+      <div class="cart_top_right_block">
+        <div class="cart_product_count">
+            {{ monopay.title }}
+        </div>
+        <div class="cart_dash"></div>
+        <div class="cart_total_price_container">
+          <div class="total_sum nowrap"><span id="total_sum">{{ monopay.value }}</span> грн</div>
+        </div>
+      </div>
+      {% endif %}
+    
+    {% endif %}
+
+    {% if total_summa %}
+    <div class="cart_top_right_block">
+      <div class="cart_product_count">
+          {{ text_to_pay }}
+      </div>
+      <div class="cart_dash"></div>
+      <div class="cart_total_price_container">
+        <div class="total_sum nowrap"><span id="total_sum">{{ total_summa }}</span> грн</div>
+      </div>
+    </div>
     {% endif %}
 
     {% if display_totals_block %}
       {% for total in totals  %}
         {% if total['code'] in display_totals %}
-          <div class="simplecheckout-cart-total" id="total_{{ total['code'] }}">
+          {# <div class="simplecheckout-cart-total" id="total_{{ total['code'] }}">
               <span>{{ total.title }}</span>
               <span class="simplecheckout-cart-total-value">{{ total['text'] }}</span>
-          </div>
+          </div> #}
+          
+
         {% endif %}
       {% endfor %}
     {% endif %}
+    
 
-    {% if not display_products and display_totals_block and display_totals is not empty %}
+    {# {% if not display_products and display_totals_block and display_totals is not empty %}
       </div>
-    {% endif %}
+    {% endif %} #}
 
-    {% if display_comment %}
+    {# {% if display_comment %}
       {% if summary_comment %}
       <table class="simplecheckout-cart simplecheckout-summary-info">
         <thead>
@@ -101,9 +194,9 @@
         </tbody>
       </table>
       {% endif %}
-    {% endif %}
+    {% endif %} #}
     
-    {% if display_address %}
+    {# {% if display_address %}
       {% if summary_payment_address or summary_shipping_address %}
         <table class="simplecheckout-cart simplecheckout-summary-info">
           <thead>
@@ -128,26 +221,12 @@
           </tbody>
         </table>
       {% endif %}
-    {% endif %}
+    {% endif %} #}
 </div>
-<script>
+{# <script>
 var back = document.getElementById('back_to_step_1');
 back.addEventListener('click',function(){
   var button_prev = document.getElementById('simplecheckout_button_prev');
   button_prev.dispatchEvent(new Event("click"));
-{#
-    var e = $(".js-fancy-popup-cart");
-    e.length && e.fancybox({
-        slideClass: "popup-simple--fancybox",
-        autoFocus: !1,
-        closeClickOutside: !0,
-        touch: !1,
-        beforeLoad: function(e, t) {
-            fastCartData(t.opts.$orig)
-        }
-    });
-
-#}
-
 });
-</script>
+</script> #}

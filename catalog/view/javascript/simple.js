@@ -1089,29 +1089,5 @@ if (!window.localStorage) {
   window.localStorage.length = (document.cookie.match(/\=/g) || window.localStorage).length;
 }
 
-// function click(){
-  //  console.log('click');
- //};
-
- $(".my_toggle").on("click",  function(e) {
-
-        e.preventDefault();
-         var t = $(this)
-          , s = $(this).attr("data-tabs-btn");
-          if( $(this).hasClass("is-active") ){
-            $(this).closest(".page-homepage").find("[data-tabs-content=" + s + "]").slideUp() 
-          } else {
-              $(this).closest(".page-homepage").find("[data-tabs-content=" + s + "]").slideDown() 
-         }
-
-         this.classList.toggle("is-active");
-         $(this).closest(".page-homepage").find("[data-tabs-content=" + s + "]").toggleClass("is-active");
-        
-    });
-
-
-$(document).on("ready",function(){
-   // elem = document.getElementById('customer_block');
-   // elem.addEventListener("click", click);
-   
-});
+// $(document).on("ready",function(){
+// });

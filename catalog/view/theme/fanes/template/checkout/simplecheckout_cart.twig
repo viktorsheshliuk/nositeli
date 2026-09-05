@@ -9,55 +9,103 @@
 {% if error_warning %}
     <div class="alert alert-danger simplecheckout-warning-block">{{ error_warning }}</div>
 {% endif %}
-    <div class="table-responsive">
-        <table class="simplecheckout-cart">
-            <colgroup>
-                <col class="image">
-                <col class="name">
-                <col class="model">
-                <col class="quantity">
-                <col class="warehouse">
-                <col class="price">
-                <col class="total">
-                <col class="remove">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th class="image">{{ column_image }}</th>
-                    <th class="name">{{ column_name }}</th>
-                    <th class="model">{{ column_model }}</th>
-                    <th class="quantity">{{ column_quantity }}</th>
-                    <th class="warehouse">{{ column_warehouse }}</th>
-                    <th class="price">{{ column_price }}</th>
-                    <th class="total">{{ column_total }}</th>
-                    <th class="remove"></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for product in products %}
-                    {% if product['recurring'] is not empty %}
-                        <tr>
-                            <td class="simplecheckout-recurring-product" style="border:none;"><img src="{{ additional_path }}catalog/view/theme/default/image/reorder.png" alt="" title="" style="float:left;" />
-                                <span style="float:left;line-height:18px; margin-left:10px;">
-                                <strong>{{ text_recurring_item }}</strong>
-                                {{ product['profile_description'] }}
-                                </span>
-                            </td>
-                        </tr>
-                    {% endif %}
-                    <tr>
-                        <td class="image">
-                            {% if product['thumb'] %}
-                                <a href="{{ product['href'] }}"><img src="{{ product['thumb'] }}" alt="{{ product['name'] }}" title="{{ product['name'] }}" /></a>
-                            {% endif %}
-                        </td>
-                        <td class="name">
-                            {% if product['thumb'] %}
-                                <div class="image">
-                                    <a href="{{ product['href'] }}"><img src="{{ product['thumb'] }}" alt="{{ product['name'] }}" title="{{ product['name'] }}" /></a>
+ {# <a class="simple_heading_clear_cart" data-onclick="clearCart" data-confirm-text="{{ text_clear_cart_question }}">{{ text_clear_cart }}</a> #}
+    <div id="fn_purchases">
+        <div style="display:none;" id="simplecheckout_cart_total">{{ cart_total }}</div>
+        <div class="purchase">
+            <div class="purchase_top_grid">
+                <div data-language="cart_head_img">{{ column_name }}</div>
+                <div class="desktop_amount">{{ column_quantity }}</div>
+                <div class="tablet_amount">{{ column_quantity_mobile }}</div>
+                <div data-language="cart_head_total">{{ column_total }}</div>
+                <div></div>
+            </div>
+            {% for product in products %}
+            <div class="fn_purchase">
+                <div class="purchase_image">
+                    <a class="d-flex purchase_image_name" href="{{ product.href }}">
+                        <img src="{{ product.thumb }}" alt="{{ product.name }} - фото" title="{{ product.name }}">
+                        <div class="d-flex flex-column name_price_container">
+                            <div class="fn_product_name purchase_name">{{ product.name }}</div>
+                            <div class="price_container mobile_hidden">
+                                <div class="price {% if product.old_price%}red-price{% endif %}">
+                                    <span class="fn_price">{{ product.price|replace({'грн': ''})|trim }}</span>
+                                    <span class="currency">грн</span>
                                 </div>
-                            {% endif %}
-                            <a href="{{ product['href'] }}">{{ product['name'] }}</a>
+                                {% if product.old_price%}
+                                <div class="old_price_box">
+                                    <div class="fn_discount_label ">{{ product.economy}}</div>
+                                    <div class="old_price">
+                                        <span class="fn_old_price">{{ product.old_price|replace({'грн': ''})|trim }}</span> грн
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="purchase_amount">
+                    <div class="fn_product_amount amount quantity">
+                        <span class="minus" data-onclick="decreaseProductQuantity">−</span>
+                        <input class="input_amount" type="text" data-onchange="changeProductQuantity" {{ quantity_step_as_minimum ? 'data-minimum="' ~ product.minimum ~ '"' : '' }} name="quantity[{{ product.cart_id is not empty ? product.cart_id : product.key }}]" value="{{ product.quantity }}" size="1" />
+                        <span class="plus" data-onclick="increaseProductQuantity">+</span>
+                    </div>
+                </div>
+                <div class="purchase_sum">
+                    <div class="price_container ">
+                        <div class="price {% if product.old_price%}red-price{% endif %}">
+                            <span class="fn_price">{{ product.price|replace({'грн': ''})|trim }}</span>
+                            <span class="currency">грн</span>
+                        </div>
+                        {% if product.old_price%}
+                        <div class="old_price_box">
+                            <div class="fn_discount_label ">{{ product.economy}}</div>
+                            <div class="old_price">
+                                <span class="fn_old_price">{{ product.old_price|replace({'грн': ''})|trim }}</span> грн
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <span class="nowrap fn_price">
+                        {# <span class="product_bonuses">
+                            + 406.2 
+                            <span class="cart_bonuses_name"> бонусів</span>
+                            <span class="bonuses_info_purchase help-tip">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M12.0011 20.6409C16.9054 20.6409 20.8811 16.6651 20.8811 11.7609C20.8811 6.85657 16.9054 2.88086 12.0011 2.88086C7.09681 2.88086 3.12109 6.85657 3.12109 11.7609C3.12109 16.6651 7.09681 20.6409 12.0011 20.6409Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M12.8921 7.82446C12.887 8.05703 12.7904 8.27822 12.6233 8.43999C12.4561 8.60176 12.2318 8.69101 11.9992 8.68843C11.8297 8.68278 11.6656 8.62736 11.5274 8.52905C11.389 8.43075 11.2829 8.29388 11.2219 8.13559C11.1608 7.97731 11.1478 7.80456 11.1844 7.63889C11.2208 7.47323 11.3053 7.32204 11.4272 7.20407C11.5492 7.0861 11.703 7.00662 11.8698 6.97556C12.0366 6.94448 12.2089 6.96318 12.3651 7.02935C12.5213 7.0955 12.6545 7.20617 12.7482 7.34757C12.842 7.48896 12.892 7.65483 12.8921 7.82446ZM11.3177 15.8693V10.7045C11.3151 10.6138 11.3309 10.5235 11.3641 10.4391C11.3973 10.3547 11.4472 10.2779 11.511 10.2134C11.5746 10.1488 11.6507 10.0977 11.7346 10.0633C11.8185 10.029 11.9086 10.0119 11.9992 10.0132C12.0887 10.0131 12.1773 10.0312 12.2596 10.0663C12.3418 10.1013 12.4162 10.1527 12.4782 10.2173C12.5401 10.2819 12.5882 10.3583 12.6198 10.442C12.6513 10.5258 12.6655 10.615 12.6616 10.7045V15.8693C12.6616 15.9575 12.6442 16.0449 12.6105 16.1264C12.5767 16.2079 12.5272 16.282 12.4648 16.3444C12.4024 16.4068 12.3284 16.4563 12.2469 16.49C12.1653 16.5238 12.0779 16.5412 11.9897 16.5412C11.9015 16.5412 11.814 16.5238 11.7325 16.49C11.651 16.4563 11.5769 16.4068 11.5145 16.3444C11.4521 16.282 11.4026 16.2079 11.3689 16.1264C11.3351 16.0449 11.3177 15.9575 11.3177 15.8693Z" fill="currentColor"></path>
+                                </svg>
+                                <span class="bonuses_purchase_content" data-language="bonuses_purchases">Бонусів на рахунок</span>
+                            </span>
+                        </span> #}
+                        {{ product.total|replace({'грн': ''})|trim }}
+                        <span class="currency">грн</span>
+                    </span>
+                </div>
+                <div class="purchase_remove">
+                    <a class="d-flex align-items-center justify-content-center" data-onclick="removeProduct" data-product-key="{{ product['cart_id'] is not empty ? product['cart_id'] : product['key'] }}" title="{{text_remove}}">
+                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.322 6.43024H17.6791C17.6791 5.71984 17.3969 5.03854 16.8946 4.53621C16.3923 4.03388 15.711 3.75167 15.0006 3.75167C14.2902 3.75167 13.6088 4.03388 13.1065 4.53621C12.6042 5.03854 12.322 5.71984 12.322 6.43024ZM10.7148 6.43024C10.7148 5.2936 11.1664 4.20351 11.9701 3.39979C12.7738 2.59606 13.8639 2.14453 15.0006 2.14453C16.1372 2.14453 17.2273 2.59606 18.031 3.39979C18.8347 4.20351 19.2863 5.2936 19.2863 6.43024H25.9827C26.1958 6.43024 26.4002 6.51491 26.5509 6.6656C26.7016 6.8163 26.7863 7.02069 26.7863 7.23382C26.7863 7.44694 26.7016 7.65133 26.5509 7.80203C26.4002 7.95272 26.1958 8.03739 25.9827 8.03739H24.5791L23.2752 23.6835C23.1803 24.8217 22.6612 25.8826 21.8207 26.656C20.9803 27.4294 19.8798 27.8587 18.7377 27.8588H11.2634C10.1213 27.8587 9.02085 27.4294 8.18038 26.656C7.33992 25.8826 6.82078 24.8217 6.72591 23.6835L5.42199 8.03739H4.01841C3.80529 8.03739 3.6009 7.95272 3.4502 7.80203C3.29951 7.65133 3.21484 7.44694 3.21484 7.23382C3.21484 7.02069 3.29951 6.8163 3.4502 6.6656C3.6009 6.51491 3.80529 6.43024 4.01841 6.43024H10.7148ZM8.3277 23.5495C8.38897 24.286 8.7248 24.9726 9.26857 25.4731C9.81235 25.9736 10.5244 26.2515 11.2634 26.2517H18.7377C19.4768 26.2515 20.1888 25.9736 20.7325 25.4731C21.2763 24.9726 21.6121 24.286 21.6734 23.5495L22.9677 8.03739H7.03449L8.3277 23.5495ZM12.5898 11.7874C12.803 11.7874 13.0074 11.872 13.1581 12.0227C13.3088 12.1734 13.3934 12.3778 13.3934 12.591V21.6981C13.3934 21.9112 13.3088 22.1156 13.1581 22.2663C13.0074 22.417 12.803 22.5017 12.5898 22.5017C12.3767 22.5017 12.1723 22.417 12.0216 22.2663C11.8709 22.1156 11.7863 21.9112 11.7863 21.6981V12.591C11.7863 12.3778 11.8709 12.1734 12.0216 12.0227C12.1723 11.872 12.3767 11.7874 12.5898 11.7874ZM18.2148 12.591C18.2148 12.3778 18.1302 12.1734 17.9795 12.0227C17.8288 11.872 17.6244 11.7874 17.4113 11.7874C17.1981 11.7874 16.9938 11.872 16.8431 12.0227C16.6924 12.1734 16.6077 12.3778 16.6077 12.591V21.6981C16.6077 21.9112 16.6924 22.1156 16.8431 22.2663C16.9938 22.417 17.1981 22.5017 17.4113 22.5017C17.6244 22.5017 17.8288 22.417 17.9795 22.2663C18.1302 22.1156 18.2148 21.9112 18.2148 21.6981V12.591Z" fill="currentColor"></path></svg>
+                    </a>
+                </div>
+                <input type="hidden" name="remove" value="" id="simplecheckout_remove">
+            </div>
+            {% endfor %}
+        </div>   
+
+
+
+
+    </div>
+
+    <div class="inner_cart_wrapper">
+        <div class="tfoot cart_bottom">
+            <a class="cart_link_btn cont_btn" href="/">{{ text_continue_shopping }}</a>
+            <a class="block__more d-flex align-items-center tablet_amount" data-onclick="clearCart" >{{ text_clear_cart }}</a>
+        </div>
+    </div>
+
+
+  
+                    {# <th class="model">{{ column_model }}</th>
+                    <th class="warehouse">{{ column_warehouse }}</th>
                             {% if not product['stock'] and (config_stock_warning or not config_stock_checkout) %}
                                 <span class="product-warning">***</span>
                             {% endif %}
@@ -65,118 +113,18 @@
                             {% for option in product['option'] %}
                             &nbsp;<small> - {{ option['name'] }}: {{ option['value'] }}</small><br />
                             {% endfor %}
-                            {% if product['recurring'] is not empty %}
-                            - <small>{{ text_payment_profile }}: {{ product['profile_name'] }}</small>
-                            {% endif %}
                             </div>
-
-                            <div class="model">{{column_kod}} {{ product['model'] }}</div>
-
-                                <div class="price_container">
-                                <div class="price">
-                                {% if product['old_price'] is not empty %}
-                                <div style="text-decoration: line-through; color: #ACACAC;">{{ product['old_price'] }}</div>
-                                {% endif %}
-                                </div> 
-                                <div class="price">{{ product['price'] }}</div>
-                                </div>
-
-                            {% if product['reward'] %}
-                            <small>{{ product['reward'] }}</small>
-                            {% endif %}
-                        </td>
-                        <td class="model">{{ product['model'] }}</td>
-
-                        <td class="quantity">
-                            <div class="input-group btn-block" style="max-width: 200px;">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-primary" data-onclick="decreaseProductQuantity" data-toggle="tooltip" type="submit">
-                                        <i class="fa fa-minus"></i>
-                                    </button>
-                                </span>
-                                <input class="form-control" type="text" data-onchange="changeProductQuantity" {{ quantity_step_as_minimum ? 'data-minimum="' ~ product['minimum'] ~ '"' : '' }} name="quantity[{{ product['cart_id'] is not empty ? product['cart_id'] : product['key'] }}]" value="{{ product['quantity'] }}" size="1" />
-                                <span class="input-group-btn">
-                                    <button class="btn btn-primary" data-onclick="increaseProductQuantity" data-toggle="tooltip" type="submit">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </span>
-                            </div>
-                        </td>
-
-                        {#
-                        <td class="quantity">
-#}
-{#                          <input class="ui-number ui-number--sm" type="number" name="quantity[{{ product['cart_id'] }}]" min="{{ product['minimum'] }}" max="9999" value="{{ product['quantity'] }}">
-                        #}  
- {#                          <div class="quantity_input_button" >
-                                <span class="input-group-btn">
-                                    <button class="" data-onclick="decreaseProductQuantity" data-toggle="tooltip" type="submit">
-                                      -
-                                    </button>
-                                </span>
-                                <input class="quantity_input form-control" type="text" data-onchange="changeProductQuantity" {{ quantity_step_as_minimum ? 'data-minimum="' ~ product['minimum'] ~ '"' : '' }} name="quantity[{{ product['cart_id'] is not empty ? product['cart_id'] : product['key'] }}]" value="{{ product['quantity'] }}" size="1" />
-                                <span class="input-group-btn quantity_plus">
-                                    <button class="" data-onclick="increaseProductQuantity" data-toggle="tooltip" type="submit">
-                                      +
-                                    </button>
-                                </span>
-                            </div>   
-
-
-                                                     
-                        </td>
-   #}                     
+                            <div class="model">{{column_kod}} {{ product['model'] }}</div>       
                         <td class="warehouse">
                         {% if product['ostatok']>=product['quantity'] %}
                             <div class="instock"><i title="{{text_instock}}" class="fa fa-check"></i></div>
                         {% else %}
                             <div class="outofstock"><i title="{{text_outofstock}}" class="fa fa-ban"></i>{{text_ostatok}}: {{product['ostatok']}}</div>
                         {%endif%}                        
-                        </td>
-                        <td class="price">
-                            {% if product['old_price'] is not empty %}
-                                <div class="old_price">{{ product['old_price'] }}</div>
-                            {% endif %}
-                            <div class="current_price">{{ product['price'] }}</div>
-                        </td>
-                        <td class="total">{{ product['total'] }}</td>
-                        <td class="remove">
-                         <a class="basket__table-delete" title="{{text_remove}}" data-onclick="removeProduct" data-product-key="{{ product['cart_id'] is not empty ? product['cart_id'] : product['key'] }}" data-toggle="tooltip" type="button">
-                            <svg class="icon-delete">
-                              <use xlink:href="catalog/view/image/sprite.svg#icon-delete"></use>
-                            </svg>
-                         </a>      
-                        </td>
-                    </tr>
-                {% endfor %}
-                {% for voucher_info in vouchers %}
-                    <tr>
-                        <td class="image"></td>
-                        <td class="name">{{ voucher_info['description'] }}</td>
-                        <td class="model"></td>
-                        <td class="quantity">
-                            <div class="input-group btn-block" style="max-width: 200px;">
-                                <input class="form-control" type="text" disabled value="1" size="1" />
-                                <span class="input-group-btn">
-                                    <button class="btn btn-danger" data-onclick="removeGift" data-gift-key="{{ voucher_info['key'] }}" title="{{ button_remove }}" type="button">
-                                        <i class="fa fa-times-circle"></i>
-                                    </button>
-                                </span>
-                            </div>
-                        </td>
-                        <td class="price">{{ voucher_info['amount'] }}</td>
-                        <td class="total">{{ voucher_info['amount'] }}</td>
-                        <td class="remove">
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                        </td> #}
+                        
 
-
-
-    <div class="mobile_simplecheckout_cart">
+    {# <div class="mobile_simplecheckout_cart">
         {% for product in products %}
 
         <div class="product_row">
@@ -221,13 +169,10 @@
         </div>   
         </div>        
         {% endfor %}
-    </div>
+    </div> #}
 
 
-
-
-
-{% for total in totals %}
+{# {% for total in totals %}
     <div class="simplecheckout-cart-total" id="total_{{ total['code'] }}">
         <span><b>{{ total['title'] }}:</b></span>
         <span class="simplecheckout-cart-total-value">{{ total['text'] }}</span>
@@ -266,44 +211,6 @@
 {% endif %}
 <input type="hidden" name="remove" value="" id="simplecheckout_remove">
 <div style="display:none;" id="simplecheckout_cart_total">{{ cart_total }}</div>
-{% if display_weight %}
-    <div style="display:none;" id="simplecheckout_cart_weight">{{ weight }}</div>
-{% endif %}
-{% if not display_model %}
-    <style>
-    .simplecheckout-cart col.model,
-    .simplecheckout-cart th.model,
-    .simplecheckout-cart td.model {
-        display: none;
-    }
-    </style>
-{% endif %}
+
+#}
 </div>
-
-{#
-<script src="/catalog/view/javascript/technics/plugins.min.js?v1.3.1"></script>    
-<script src="/catalog/view/javascript/technics/app.min.js?v1.3.1"></script>      
-<script src="/catalog/view/javascript/jquery/jquery.inputmask.bundle.min.js"></script>     
-          <div class="popup popup--570" style="display: none;" id="popup-buy-click-cc">
-            <button class="popup__close" data-fancybox-close>
-              <svg class="icon-close">
-                <use xlink:href="catalog/view/theme/technics/sprites/sprite.svg#icon-close"></use>
-              </svg>
-            </button>   
-            <button class="nav__list-close" data-fancybox-close>
-        <svg class="icon-back">
-          <use xlink:href="catalog/view/theme/technics/sprites/sprite.svg#icon-back"></use>
-        </svg>
-      </button>    
-            <div class="fast_order_header">{{ text_technics_fast_order }}</div>
-            
-
-            <div class="writeus">    
-                <div class="fast_order_info_text">{{text_fast_order_info}}</div>
-              <div class="writeus__form">
-                <div class="fast_order_customer">
-                        {{ buyclick_form }}
-                        {{ captcha_fo }}
-                    </div>
-              </div>    
-            </div>      #}

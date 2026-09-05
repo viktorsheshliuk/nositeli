@@ -74,6 +74,9 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
         $this->_templateData['text_recurring_item']  = $this->language->get('text_recurring_item');
         $this->_templateData['text_payment_profile'] = $this->language->get('text_payment_profile');
         $this->_templateData['text_cart']            = $this->language->get('text_cart');
+        $this->_templateData['column_quantity_mobile']            = $this->language->get('column_quantity_mobile');
+
+        
         
         $this->_templateData['text_clear_cart']               = $this->language->get('text_clear_cart');
         $this->_templateData['text_clear_cart_question']      = $this->language->get('text_clear_cart_question');
@@ -171,12 +174,19 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
 
             $product_info = $this->model_catalog_product->getProduct($product['product_id']);
 
+            $economy_label = '';
+
             if ($product_info['special']) {
                 $old_price = $this->simplecheckout->formatCurrency($this->tax->calculate($product_info['price'], $product['tax_class_id'], $this->config->get('config_tax')));
             
                 if ($old_price < $price) {
                     $old_price = null;
                 }
+
+                if ($product_info['price'] > 0){    
+                    $economy = round(100 - ($product_info['special'] / ($product_info['price'] / 100))); //процент скидки
+                    $economy_label = $economy > 0 ? '-' . $economy . '%' : false; 
+                }    
             }
 
             if ($version >= 200) {
@@ -216,6 +226,7 @@ class ControllerCheckoutSimpleCheckoutCart extends SimpleController {
                     'reward'    => ($product['reward'] ? sprintf($this->language->get('text_points'), $product['reward']) : ''),
                     'price'     => $price,
                     'old_price' => $old_price,
+                    'economy'   => $economy_label,
                     'total'     => $total,
                     'ostatok'   => $product_info['quantity'],
                     'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])

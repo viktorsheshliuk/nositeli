@@ -1,4 +1,4 @@
 <?php
 // Text
-$_['text_title'] = 'Online-оплата через платежную систему WayForPay';
+$_['text_title'] = 'Онлайн-оплата через платежную систему WayForPay';
 ?>

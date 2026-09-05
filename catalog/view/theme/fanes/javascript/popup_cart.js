@@ -214,6 +214,14 @@
 	// Кнопки +/− перехватываем в capture-фазе, чтобы глобальные
 	// обработчики .minus/.plus из click.min.js не меняли количество дважды
 	document.addEventListener('click', function(e) {
+		// Проверяем, происходит ли клик внутри всплывающего окна
+		var popupWrap = e.target.closest ? e.target.closest('#fn_pop_up_cart_wrap') : null;
+		
+		// Если клик вне всплывающего окна — сразу выходим, код не срабатывает
+		if (!popupWrap) {
+			return;
+		}
+
 		var minusEl = e.target.closest ? e.target.closest('#fn_pop_up_cart_wrap .minus') : null;
 		var plusEl = e.target.closest ? e.target.closest('#fn_pop_up_cart_wrap .plus') : null;
 

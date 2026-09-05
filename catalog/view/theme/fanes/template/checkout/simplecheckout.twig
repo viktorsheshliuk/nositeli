@@ -99,7 +99,10 @@
                     javascriptCallback: function() {try{ {{ javascript_callback }} } catch (e) {console.log(e)}},
                     stepButtons: {{ step_buttons }},
                     menuType: {{ menu_type ? menu_type : '1' }},
-                    languageCode: "{{ language_code }}"
+                    languageCode: "{{ language_code }}",
+                    extraContainers: [
+                        '#content .simple_heading_box'
+                    ]
                 });
 
                 if (typeof toastr !== 'undefined') {
@@ -159,6 +162,53 @@
                     {% endfor %}                 
                 {% endif %}
 
+                {% set buttons_html %}
+                <div {#class="simplecheckout-button-block buttons"#} id="buttons">
+                    {# <div class="simplecheckout-button-right"> #}
+                        {% if display_agreement_checkbox %}
+                            <span id="agreement_checkbox">
+                                {% for agreement_id, text_agreement in text_agreements %}
+                                    <div class="checkbox">
+                                        <input type="checkbox" id="agreement_{{ agreement_id }}" name="agreements[]" value="{{ agreement_id }}" {{ agreement_id in agreements ? 'checked="checked"' : '' }} />
+                                        <label for="agreement_{{ agreement_id }}">{{ text_agreement }}</label>
+                                    </div>
+                                {% endfor %}
+                            </span>
+                        {% endif %}
+                        {% if display_agreement_checkbox %}
+                            <div class="alert alert-danger" id="agreement_warning" {% if display_error and has_error %}data-error="true"{% else %}style="display:none;"{% endif %}>
+                                <div class="agreement_all">
+                                    {% for agreement_id, warning_agreement in error_warning_agreement %}
+                                        <div class="agreement_{{ agreement_id }}">{{ warning_agreement }}</div>
+                                    {% endfor %}
+                                </div>                    
+                            </div>
+                        {% endif %}               
+                         
+
+                        
+                        {# <div id="simplecheckout_button_quick_order" style="display:inline-block;"><a class="btn btn--link js-fancy-popup-cart" href="#popup-buy-click-cc" data-typefrom="cart-popup" data-for="">{{ button_quick_order }}</a></div> #}
+                       
+                        {# {% if steps_count > 1 %}
+                        <a class="button btn-primary button_oc btn" data-onclick="nextStep" id="simplecheckout_button_next"><span>{{ button_next }}</span>
+                        </a>
+                        {% endif %} #}
+                        <button class="btn-orange" {{ block_order ? 'disabled' : ''}} data-onclick="createOrder" id="simplecheckout_button_confirm"><span>{{ button_order }}</span></button>
+                    {# </div> #}
+                    {# <div class="simplecheckout-button-left">
+                        {% if display_back_button %}
+                        <a class="button btn-primary button_oc btn" data-onclick="backHistory" id="simplecheckout_button_back"><span>{{ button_back }}</span></a>
+                        {% endif %}
+                        {% if steps_count > 1 %}
+                        <a class="button btn-primary button_oc btn" data-onclick="previousStep" id="simplecheckout_button_prev"><span>{{ button_prev }}</span></a>    
+                        {% endif %}
+                    </div> #}
+                </div>
+                {% endset %}
+
+
+
+{#'<div class="simplecheckout-step">', #}
                 {%
                     set replace = {
                         '{three_column}'     : '<div class="simplecheckout-three-column">',
@@ -167,7 +217,7 @@
                         '{/left_column}'     : '</div>',
                         '{right_column}'     : '<div class="simplecheckout-right-column">',
                         '{/right_column}'    : '</div>',
-                        '{step}'             : '<div class="simplecheckout-step">',
+                        '{step}'             : '<div class="simplecheckout-step-wrapper">', 
                         '{/step}'            : '</div>',
                         '{clear_both}'       : '<div style="width:100%;clear:both;height:1px"></div>',
                         '{customer}'         : simple_blocks['customer'],
@@ -184,6 +234,11 @@
                     }
                 %}
 
+                {# Обновляем replace с добавлением buttons #}
+                {% set replace = replace|merge({'{buttons}': buttons_html}) %}
+
+
+
                 {% for key, value in simple_blocks %}
                     {% set key_clear = key %}
                     {% set key = '{' ~ key ~ '}' %}
@@ -197,7 +252,7 @@
                 <div id="simplecheckout_bottom" style="width:100%;height:1px;clear:both;"></div>
                 <div class="simplecheckout-proceed-payment" id="simplecheckout_proceed_payment" style="display:none;">{{ text_proceed_payment }}</div>
                 
-                {% if display_agreement_checkbox %}
+                {# {% if display_agreement_checkbox %}
                     <div class="alert alert-danger simplecheckout-warning-block" id="agreement_warning" {% if display_error and has_error %}data-error="true"{% else %}style="display:none;"{% endif %}>
                         <div class="agreement_all">
                             {% for agreement_id, warning_agreement in error_warning_agreement %}
@@ -205,9 +260,9 @@
                             {% endfor %}
                         </div>                    
                     </div>
-                {% endif %}  
+                {% endif %}   #}
 
-                <div class="simplecheckout-button-block buttons" id="buttons">
+                {# <div class="simplecheckout-button-block buttons" id="buttons">
                     <div class="simplecheckout-button-right">
                         {% if display_agreement_checkbox %}
                             <span id="agreement_checkbox">
@@ -235,7 +290,7 @@
                         <a class="button btn-primary button_oc btn" data-onclick="previousStep" id="simplecheckout_button_prev"><span>{{ button_prev }}</span></a>    
                         {% endif %}
                     </div>
-                </div>    
+                </div>     #}
 
                 {% if steps_count > 1 and menu_type == '2' %}
                     </div>
@@ -257,7 +312,7 @@
                 {% endif %}
                 {% if not popup and not as_module %}
                     <div class="simplecheckout-button-block buttons">
-                        <div class="simplecheckout-button-right right"><a href="{{ continue }}" class="button btn-primary btn"><span>{{ button_continue }}</span></a></div>
+                        <div class="simplecheckout-button-right right"><a href="{{ continue }}" class="btn-orange"><span>{{ button_continue }}</span></a></div>
                     </div>
                 {% endif %}
             {% endif %}
@@ -328,7 +383,7 @@
                                         $this.data('last-selected-address-value', value);
                                         
                                         // Добавляем визуальную индикацию выбора
-                                        $this.css('border-color', '#4CAF50');
+                                        //$this.css('border-color', '#4CAF50');
                                     }
                                 }
                                 

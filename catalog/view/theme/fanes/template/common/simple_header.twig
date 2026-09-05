@@ -27,6 +27,10 @@
     {% set class = 'col-sm-12' %}
     {% endif %}
     <div id="content" class="{{ class }}">{{ content_top }}
-      <div class="simple_heading_title">{{ heading_title }}</div>
+      <div class="simple_heading_box d-flex align-items-center justify-content-between">
+        <div class="simple_heading_title">{{ heading_title }}</div>
+        {# <a class="simple_heading_clear_cart" data-onclick="clearCart" data-confirm-text="Удалить{{ text_clear_cart_question }}">{{ text_clear_cart }}</a> #}
+      </div>  
+
       
       

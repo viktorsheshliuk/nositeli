@@ -121,7 +121,13 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
             $this->_templateData['simple_blocks']['cart']             = $this->getChildController('checkout/simplecheckout_cart');
             $this->_templateData['simple_blocks']['customer']         = $this->getChildController('checkout/simplecheckout_customer');
             $this->_templateData['simple_blocks']['payment_address']  = $this->getChildController('checkout/simplecheckout_payment_address');
-            $this->_templateData['simple_blocks']['shipping_address'] = $this->getChildController('checkout/simplecheckout_shipping_address');
+            //$this->_templateData['simple_blocks']['shipping_address'] = $this->getChildController('checkout/simplecheckout_shipping_address');
+            // Передаем параметры в дочерний контроллер
+            $shipping_address_params = array();
+            if (isset($this->request->post['shipping_address']['address_ref'])) {
+                $shipping_address_params['address_ref'] = $this->request->post['shipping_address']['address_ref'];
+            }
+            $this->_templateData['simple_blocks']['shipping_address'] = $this->getChildController('checkout/simplecheckout_shipping_address', $shipping_address_params);
 
             if ($this->simplecheckout->hasBlock('agreement')) {
                 $this->_templateData['simple_blocks']['agreement'] = $this->getChildController('checkout/simplecheckout_text', 'agreement');
@@ -269,6 +275,7 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
         $this->_templateData['login_type']                       = $this->simplecheckout->getSettingValue('loginType');
         $this->_templateData['current_theme']                    = $this->config->get('config_template');
         $this->_templateData['simple_template']                  = $this->simplecheckout->getTemplate();
+        //var_dump($this->_templateData['simple_template']);
         $this->_templateData['logged']                           = $this->customer->isLogged();
         $this->_templateData['steps_count']                      = $this->simplecheckout->getStepsCount();
         $this->_templateData['step_names']                       = $this->simplecheckout->getStepsNames();

@@ -3243,9 +3243,9 @@ select[multiple].input-lg,textarea.input-lg {
     color: #8a6d3b
 }
 
-.has-error .checkbox,.has-error .checkbox-inline,.has-error .control-label,.has-error .help-block,.has-error .radio,.has-error .radio-inline,.has-error.checkbox label,.has-error.checkbox-inline label,.has-error.radio label,.has-error.radio-inline label {
+/* .has-error .checkbox,.has-error .checkbox-inline,.has-error .control-label,.has-error .help-block,.has-error .radio,.has-error .radio-inline,.has-error.checkbox label,.has-error.checkbox-inline label,.has-error.radio label,.has-error.radio-inline label {
     color: #a94442
-}
+} */
 
 .has-error .form-control {
     border-color: #a94442;
@@ -3355,13 +3355,13 @@ select[multiple].input-lg,textarea.input-lg {
     margin-left: -15px
 }
 
-@media (min-width: 768px) {
+/* @media (min-width: 768px) {
     .form-horizontal .control-label {
         padding-top:7px;
         margin-bottom: 0;
         text-align: right
     }
-}
+} */
 
 .form-horizontal .has-feedback .form-control-feedback {
     right: 15px
@@ -5865,12 +5865,12 @@ a.list-group-item-danger.active,a.list-group-item-danger.active:focus,a.list-gro
     padding: 15px
 }
 
-.panel-heading {
+/* .panel-heading {
     padding: 10px 15px;
     border-bottom: 1px solid transparent;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px
-}
+} */
 
 .panel-heading>.dropdown .dropdown-toggle {
     color: inherit

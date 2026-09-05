@@ -1,8 +1,13 @@
 <div class="simplecheckout-block" id="simplecheckout_comment">
-    {% if display_header %}
+    {# {% if display_header %}
       <div class="checkout-heading panel-heading__">{{ label }}</div>
-    {% endif %}
+    {% endif %} #}
     <div class="simplecheckout-block-content">
-      <textarea class="form-control" name="comment" id="comment" placeholder="{{ placeholder }}" data-reload-payment-form="true">{{ comment }}</textarea>
+
+      <label class="control-label col-sm-12" for="comment">
+        {{ label }}
+        <span class="required" style="display:none;">*</span>
+      </label>
+      <textarea class="simple-textarea" name="comment" id="comment" placeholder="{{ placeholder }}" data-reload-payment-form="true">{{ comment }}</textarea>
     </div>
 </div>

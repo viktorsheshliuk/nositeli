@@ -2,6 +2,8 @@
     window.Simplecheckout = function(params) {
         this.params = params;
 
+        this.params.extraContainers = this.params.extraContainers || [];
+
         this.callback = params.javascriptCallback || function() {};
 
         this.selectors = {
@@ -52,13 +54,13 @@
             return false;
         };
 
-        this.callFunc = function(func, $target) {
+        this.callFunc = function(func, $target) { 
             var self = this;
 
             if (func && typeof self[func] === "function") {
                 self[func]($target);
             } else if (func) {
-                //console.log(func + " is not registered");
+                console.log(func + " is not registered");
             }
         };
 
@@ -198,17 +200,17 @@
                     }
 
                     var funcOnClick = $element.attr("data-onclick");
-
+        
                     if (funcOnClick) {
                         $element.on("click", function() {
                             if ($(this).attr("disabled")) {
                                 return;
                             }
-
+        
                             var confirmText = $(this).attr("data-confirm-text");
-
+        
                             self.setDirty();
-                            
+        
                             if (!confirmText || (confirmText && confirm(confirmText))) {
                                 self.callFunc(funcOnClick, $element);
                             }
@@ -1565,7 +1567,7 @@
             return;
         }
 
-        var callFunc = function(func, $target, e) {
+        var callFunc = function(func, $target, e) {  
             if (func && typeof self[func] === "function") {
                 self[func]($target, e);
             } else if (func) {
@@ -1737,7 +1739,7 @@
             var weight = $mainContainer.find("#simplecheckout_cart_weight").text();
 
             if (total) {
-                $.each(["#cart_total", "#cart-total", "#cart_menu .s_grand_total", "#cart .tb_items", "#cart .tb_total", "#menu_wrap #cart-total"], function(index, selector) {
+                $.each(["#cart_total", "#cart-total", "#cart .tb_items", "#cart .tb_total", "#menu_wrap #cart-total"], function(index, selector) {
                     $(selector).html(total);
                 });
 
@@ -1769,8 +1771,8 @@
             }
           
             setTimeout(function() {
-                $('#cart div.cart__body').load('index.php?route=common/cart/info .cart__scroll',function(){
-                    $('#cart input[type=\'number\']').styler()
+                $('#cart .cart_total').load('index.php?route=common/cart/info .total_sum_header',function(){
+                    //$('#cart input[type=\'number\']').styler()
                 });
             }, 1500);
           
@@ -1799,8 +1801,8 @@
             }
 
            setTimeout(function() {
-                $('#cart div.cart__body').load('index.php?route=common/cart/info .cart__scroll',function(){
-                    $('#cart input[type=\'number\']').styler()
+                $('#cart .cart_total').load('index.php?route=common/cart/info .total_sum_header',function(){
+                    //$('#cart input[type=\'number\']').styler()
                 });
             }, 1500);
             
@@ -1831,8 +1833,8 @@
                 self.reloadAll();
 
                 setTimeout(function() {
-                    $('#cart div.cart__body').load('index.php?route=common/cart/info .cart__scroll',function(){
-                        $('#cart input[type=\'number\']').styler()
+                    $('#cart .cart_total').load('index.php?route=common/cart/info .total_sum_header',function(){
+                        //$('#cart input[type=\'number\']').styler()
                      });
                 }, 1500);
             }
@@ -1851,8 +1853,8 @@
             self.reloadAll();
 
             setTimeout(function() {
-                $('#cart div.cart__body').load('index.php?route=common/cart/info .cart__scroll',function(){
-                    $('#cart input[type=\'number\']').styler()
+                $('#cart .cart_total').load('index.php?route=common/cart/info .total_sum_header',function(){
+                    //$('#cart input[type=\'number\']').styler()
                 });
             }, 1500);
         };
@@ -2274,3 +2276,17 @@
         });
     })();
 })(jQuery || $);
+
+// document.addEventListener('DOMContentLoaded', () => {
+//     document.querySelectorAll('input[name="payment_method"]').forEach((radio) => {
+//         radio.addEventListener('change', function() {
+//             document.querySelectorAll('.payment_item').forEach((item) => {
+//                 item.classList.remove('active');
+//             });
+
+//             if (this.checked) {
+//                 this.closest('.payment_item').classList.add('active');
+//             }
+//         });
+//     });
+// });

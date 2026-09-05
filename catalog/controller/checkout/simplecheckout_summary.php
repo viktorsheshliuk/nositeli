@@ -59,6 +59,12 @@ class ControllerCheckoutSimpleCheckoutSummary extends SimpleController {
         $this->_templateData['text_length']                   = $this->language->get('text_length');
         $this->_templateData['text_recurring_item']           = $this->language->get('text_recurring_item');
         $this->_templateData['text_payment_profile']          = $this->language->get('text_payment_profile');
+        $this->_templateData['text_tovar_1']                  = $this->language->get('text_tovar_1');
+        $this->_templateData['text_tovar_2']                  = $this->language->get('text_tovar_2');
+        $this->_templateData['text_tovar_3']                  = $this->language->get('text_tovar_3');
+        $this->_templateData['text_in_cart']                  = $this->language->get('text_in_cart');
+        
+        
 
         $this->_templateData['button_update'] = $this->language->get('button_update');
 
@@ -170,6 +176,8 @@ class ControllerCheckoutSimpleCheckoutSummary extends SimpleController {
                     'total'     => $total,
                     'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
                 );
+
+                $this->_templateData['count_products'] = count($this->_templateData['products']);
             } elseif ($version >= 156) {
                 $profile_description = '';
 

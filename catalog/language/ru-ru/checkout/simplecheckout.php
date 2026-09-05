@@ -11,13 +11,13 @@ $_['button_quick_order']		     = 'Быстрый заказ';
 
 // Text
 $_['text_cart']                      = 'Корзина';
-$_['text_checkout_customer']         = 'Ваши контактные данные';
+$_['text_checkout_customer']         = '1. Личная информация';
 $_['text_checkout_customer_login']   = 'Я зарегистрирован';
 $_['text_checkout_customer_cancel']  = 'Отмена';
-$_['text_checkout_shipping_method']  = 'Способ доставки';
-$_['text_checkout_payment_method']   = 'Способ оплаты';
+$_['text_checkout_shipping_method']  = '2. Доставка';
+$_['text_checkout_payment_method']   = '4. Оплата';
 $_['text_checkout_payment_address']  = 'Адрес оплаты';
-$_['text_checkout_shipping_address'] = 'Адрес доставки';
+$_['text_checkout_shipping_address'] = '3. Адрес доставки';
 $_['text_city']                      = 'Начните набирать Ваш город и выберите его из списка';
 $_['text_shipping_address']          = 'Введите Ваш адрес для получения полной информации по доставке';
 $_['text_payment_address']           = 'Введите Ваш адрес для получения полной информации по оплате';
@@ -27,7 +27,7 @@ $_['text_reward']                    = 'Бонусных баллов: %s';
 $_['text_items']                     = 'Товаров: %s (%s)';
 $_['text_empty']                     = 'Ваша корзина пуста!';
 $_['text_login']                     = 'Необходимо войти в <a href="%s">личный кабинет</a> или создать <a href="%s">учетную запись</a> чтобы видеть цены!';
-$_['text_agree']                     = 'Я прочитал и согласен с правилами <a class="colorbox fancybox agree" href="%s" alt="%s"><b>%s</b></a>';
+$_['text_agree']                     = 'Подтверждая заказ, я соглашаюсь с <a class="colorbox fancybox agree" href="%s" alt="%s"><b>%s</b></a>';
 $_['text_agree_shoppica']            = 'Я прочитал и согласен с правилами <a class="s_main_color" rel="prettyPhoto[ajax]" href="%s&iframe=true" alt="%s"><b>%s</b></a>';
 $_['text_private']                   = 'Физ. лицо';
 $_['text_company']                   = 'Юр. лицо';
@@ -35,7 +35,6 @@ $_['text_add_new']                   = 'Добавить новый адрес';
 $_['text_your_company']              = 'Данные организации';
 $_['text_select_address']            = 'Выберите адрес';
 $_['text_proceed_payment']           = 'Подождите... Происходит переход к оплате';
-$_['text_checkout_shipping_address'] = 'Адрес доставки';
 $_['text_payment_form_title']        = 'Оплата';
 $_['text_account_created']           = 'Ваш аккаунт создан! Вы можете перейти к оплате заказа!';
 $_['text_need_save_changes']         = 'Необходимо сохранить изменения перед оплатой!';
@@ -51,14 +50,23 @@ $_['text_remove']					 = 'Удалить';
 $_['text_instock']			         = 'Есть в наличии в нужном количестве';
 $_['text_outofstock']			     = 'Нет в наличии в нужном количестве';
 $_['text_ostatok']				     = 'Остаток';
+$_['text_continue_shopping']         = 'Продолжить покупки';
+$_['text_tovar_1']                   = 'товар';
+$_['text_tovar_2']                   = 'товаров';
+$_['text_tovar_3']                   = 'товара'; 
+$_['text_in_cart']                   = 'в корзине';
+$_['text_to_pay']                    = 'К оплате';
+
+
 
 // Column
 $_['column_image']                   = 'Фото';
-$_['column_name']                    = 'Наименование товара';
+$_['column_name']                    = 'Товар / цена (шт)';
 $_['column_model']                   = 'Модель';
-$_['column_quantity']                = '<span title="Количество">Кол-во</span>';
+$_['column_quantity']                = 'Количество';
+$_['column_quantity_mobile']         = 'Кол-во/Цена';
 $_['column_price']                   = 'Цена';
-$_['column_total']                   = 'Всего';
+$_['column_total']                   = 'Cумма';
 $_['column_kod']			         = 'Код:';
 $_['column_warehouse']			     = 'Склад';
 
@@ -83,7 +91,7 @@ $_['error_no_shipping']              = 'Доставка по данному а�
 $_['error_no_payment']               = 'Оплата по данному адресу невозможна! Обратитесь к <a href="%s">Администрации</a>!';
 $_['error_stock']                    = 'Товары, отмеченные ***, недоступны в нужном количестве или их нет на складе!';
 $_['error_minimum']                  = 'Минимальное количество для заказа товара %s составляет %s!';
-$_['error_agree']                    = 'Вы должны согласиться с условиями соглашения "%s"!';
+$_['error_agree']                    = 'Для подтверждения заказа, пожалуйста, ознакомьтесь с "%s"!';
 $_['error_password']                 = 'В пароле должно быть от 4 до 20 символов!';
 $_['error_password_confirm']         = 'Пароль и подтверждение пароля должны совпадать!';
 $_['error_coupon']                   = 'Ошибка: купон либо недействителен, либо истек срок его действия, либо достигнут предел его использования!';

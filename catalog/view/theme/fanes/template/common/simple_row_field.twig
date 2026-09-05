@@ -1,13 +1,17 @@
 <div class="form-group {% if required %}required{% endif %} row-{{id}}">
-    <label class="control-label {{page == 'checkout' ? 'col-sm-12' : 'col-sm-2' }}" for="{{id}}">{{label}}<span class="required" style="display:none;">*</span></label>
+    <label class="control-label {{page == 'checkout' ? 'col-sm-12' : 'col-sm-2' }}" for="{{id}}">{{label}}
+      {% if required %}
+      <span class="required" style="">*</span>
+      {% endif %}
+    </label>
     <div class="{{page == 'checkout' ? '' : 'col-sm-10'}}">
       {% if type == 'select' or type == 'select2' %}
-        <select class="form-control" name="{{ name }}" id="{{ id }}" {{ bootstrap ? 'data-theme="bootstrap"' : '' }} {{ type == 'select2' ? 'data-type="select2"' : '' }} {{ reload ? 'data-onchange="reloadAll"' : ''}}>
+        <select class="simple-select" name="{{ name }}" id="{{ id }}" {{ bootstrap ? 'data-theme="bootstrap"' : '' }} {{ type == 'select2' ? 'data-type="select2"' : '' }} {{ reload ? 'data-onchange="reloadAll"' : ''}}>
           {% for info in values %}
             <option value="{{ info['id'] | escape }}" {{ value == info['id'] ? 'selected="selected"' : '' }}>{{ info['text'] }}</option>
           {% endfor %}
         </select>
-        <div class="icon-exclamation_point" style="display:none"><img src="catalog/view/image/exclamation_point.jpg"></div> 
+        
       {% elseif type == 'radio' %}
         <div>
         {% for info in values %}
@@ -31,7 +35,7 @@
           </div>
         </div>
       {% elseif type == 'textarea' %}
-        <textarea class="form-control" name="{{ name }}" id="{{ id }}" placeholder="{{ placeholder }}" {{ reload ? 'data-onchange="reloadAll"' : ''}}>{{ value }}</textarea>
+        <textarea class="simple-textarea" name="{{ name }}" id="{{ id }}" placeholder="{{ placeholder }}" {{ reload ? 'data-onchange="reloadAll"' : ''}}>{{ value }}</textarea>
       {% elseif type == 'captcha' %}
         {% if site_key %}
           <script src="https://www.google.com/recaptcha/api.js?hl={{ lang }}&onload=recaptchaInit&render=explicit" type="text/javascript" async defer></script>
@@ -75,15 +79,7 @@
         </span>
       </div>
       {% else %}
-        <input  class="form-control" type="{{ type }}" name="{{ name }}" id="{{ id }}" {{ type == 'password' ? 'data-validate-on="keyup"' : '' }} value="{{ value }}" placeholder="{{ placeholder }}" {{ attrs }} {{ reload ? 'data-onchange="reloadAll"' : ''}}>
-
-       
-        <div class="icon-exclamation_point" style="display:none"><img src="catalog/view/image/exclamation_point.jpg"></div> 
-    {#      <svg class="icon-exclamation_point" style="display:none"> 
-           <use xlink:href="catalog/view/theme/technics/sprites/sprite.svg#exclamation_point"></use>     
-          </svg>  
-          #}  
-
+        <input  class="simple-input" type="{{ type }}" name="{{ name }}" id="{{ id }}" {{ type == 'password' ? 'data-validate-on="keyup"' : '' }} value="{{ value }}" placeholder="{{ placeholder }}" {{ attrs }} {{ reload ? 'data-onchange="reloadAll"' : ''}}>
       {% endif %}
       {% if rules is not empty %}
         <div class="simplecheckout-rule-group" data-for="{{ id }}">
