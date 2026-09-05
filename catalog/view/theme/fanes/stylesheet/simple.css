@@ -704,6 +704,9 @@ div#content .simple_heading_title{
     display: grid;
     grid-template-columns: 52% 21.5% 18% 8.5%;
 }
+.simplecheckout-left-column .fn_purchase.not-enough{
+    background-color: #f7dddd;
+}
 
 .purchase_top_grid div {
     color: var(--color-black);
@@ -979,8 +982,15 @@ div#content .simple_heading_title{
     margin-bottom: 0!important;
 }
 #simple_header2 > div {padding-left: 0!important}
-
-
+#fn_purchases .purchase .purchase_amount{
+    flex-direction: column;
+    justify-content: center;
+}
+.text_cart_ostatok{
+    font-weight: 600;
+    padding: 5px 0;
+    color: red;
+}
 
 
 
@@ -1149,7 +1159,7 @@ div#content .simple_heading_title{
         grid-column-start: 1;
         grid-row-start: 2;
         border-top: none;
-        padding: 5px 28px 10px 0;
+        padding: 5px 0px 10px 0;
         align-items: center;
     }
     .simplecheckout-left-column .purchase .purchase_sum {

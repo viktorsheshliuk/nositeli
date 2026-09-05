@@ -21,7 +21,7 @@
                 <div></div>
             </div>
             {% for product in products %}
-            <div class="fn_purchase">
+            <div class="fn_purchase {% if product.ostatok < product.quantity %}not-enough{% endif %}">
                 <div class="purchase_image">
                     <a class="d-flex purchase_image_name" href="{{ product.href }}">
                         <img src="{{ product.thumb }}" alt="{{ product.name }} - фото" title="{{ product.name }}">
@@ -45,6 +45,9 @@
                     </a>
                 </div>
                 <div class="purchase_amount">
+                    {% if product.ostatok < product.quantity %}
+                    <div class="text_cart_ostatok">{{ text_ostatok }}{{ product.ostatok }}шт</div>
+                    {% endif %}
                     <div class="fn_product_amount amount quantity">
                         <span class="minus" data-onclick="decreaseProductQuantity">−</span>
                         <input class="input_amount" type="text" data-onchange="changeProductQuantity" {{ quantity_step_as_minimum ? 'data-minimum="' ~ product.minimum ~ '"' : '' }} name="quantity[{{ product.cart_id is not empty ? product.cart_id : product.key }}]" value="{{ product.quantity }}" size="1" />
