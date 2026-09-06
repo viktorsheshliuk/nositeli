@@ -991,6 +991,17 @@ div#content .simple_heading_title{
     padding: 5px 0;
     color: red;
 }
+.delivery_description {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    color: #9b9b9b;
+    margin-top: 5px;
+}
+
+
+
+
 
 
 
