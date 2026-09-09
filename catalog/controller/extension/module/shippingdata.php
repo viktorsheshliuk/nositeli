@@ -42,7 +42,7 @@ class ControllerExtensionModuleShippingData extends Controller {
             }
 
             if ($search) {
-                $where[] = "(`Description` LIKE '%". $this->db->escape($search). "%' OR `DescriptionRu` LIKE '%". $this->db->escape($search). "%')";
+                $where[] = "(`Description` LIKE '". $this->db->escape($search). "%' OR `DescriptionRu` LIKE '". $this->db->escape($search). "%')";
             }
 
             $sql = "SELECT Ref as ref, Description as description, DescriptionRu as description_ru, AreaDescription as area, AreaDescriptionRu as area_ru, SettlementType as st_type, SettlementTypeDescription as st_desc, SettlementTypeDescriptionRu as st_desc_ru FROM ". DB_PREFIX. "novaposhta_cities";
