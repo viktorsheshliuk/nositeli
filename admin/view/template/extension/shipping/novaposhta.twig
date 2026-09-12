@@ -170,6 +170,23 @@
                                     <div class="help-block">Ref контактного лица отправителя (если есть)</div>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Метод оплаты "наложкой"</label>
+                                <div class="col-sm-10">
+                                    {# <input type="text" name="shipping_novaposhta_sender_contact_ref"
+                                        value="{{ shipping_novaposhta_sender_contact_ref }}" 
+                                        placeholder="Ref контактного лица отправителя" class="form-control"/> #}
+                                        <select name="shipping_novaposhta_payment_nalogka_code" id="input-payment-method" class="form-control">
+                                            <option value="">{{ text_select }}</option>
+                                            {% for method in payment_methods %}
+                                                <option value="{{ method.code }}"{% if method.code == shipping_novaposhta_payment_nalogka_code %} selected{% endif %}>
+                                                    {{ method.title }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    <div class="help-block">Укажите метод оплаты наложенным платежом (для подстановки суммы)</div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- ВКЛАДКИ ДЛЯ КОЖНОЇ ГРУПИ І МЕТОДУ -->
@@ -336,7 +353,6 @@
                         {% endfor %}
 
                         <!-- API ДАНІ -->
-                        <p>Увага ! Дані оновлюються автоматично при натисканні кнопки оновлення. Оновлення може зайняти деякий час. (Оновлення відділень - до 5 хвилин)</p>
                         <div class="tab-pane form-horizontal" id="tab-api">
                             <table class="table table-bordered">
                                 <tbody>
@@ -367,6 +383,7 @@
                                 </tr>
                                 </tbody>
                             </table>
+                            <p>Увага ! Дані оновлюються автоматично при натисканні кнопки оновлення. Оновлення може зайняти деякий час. (Оновлення відділень - до 5 хвилин)</p>
                         </div>
                     </div>
                 </form>

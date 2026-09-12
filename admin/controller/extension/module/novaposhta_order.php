@@ -52,12 +52,19 @@ class ControllerExtensionModuleNovaposhtaOrder extends Controller {
 				$data['seats_amount'] =  $this->request->get['seats_amount'];
 			} else {
                 $data['seats_amount'] = 1;
-            }
+            } 
+            
+            $code_nal = $this->config->get('shipping_novaposhta_payment_nalogka_code');
+            $payment_code_nalogka = isset($code_nal) ? $code_nal : null;
 
             if (isset($this->request->get['cash_on_delivery'])) {
 				$data['secash_on_delivery'] =  $this->request->get['cash_on_delivery'];
 			} else {
-                $data['cash_on_delivery'] = '';
+                if ($order_info['payment_code'] == $payment_code_nalogka) { // если метод оплаты = наложка
+                    $data['cash_on_delivery'] = (float)$order_info['total'];
+                } else {    
+                    $data['cash_on_delivery'] = '';
+                }    
             }
 
             // if (isset($this->request->get['warehouse_search'])) {
@@ -66,8 +73,6 @@ class ControllerExtensionModuleNovaposhtaOrder extends Controller {
             //     $data['warehouse_search'] = 1;
             // }
 
-
-            
             return $this->load->view('extension/module/novaposhta_order', $data);
         }
     }

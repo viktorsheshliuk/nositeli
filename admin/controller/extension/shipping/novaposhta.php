@@ -139,7 +139,8 @@ class ControllerExtensionShippingNovaposhta extends Controller {
             'shipping_novaposhta_sender_warehouse_ref',
             'shipping_novaposhta_sender_warehouse_name',
             'shipping_novaposhta_sender_counterparty_ref',  
-            'shipping_novaposhta_sender_contact_ref' 
+            'shipping_novaposhta_sender_contact_ref',
+            'shipping_novaposhta_payment_nalogka_code'
         ];
 
         foreach ($sender_fields as $field) {
@@ -153,6 +154,48 @@ class ControllerExtensionShippingNovaposhta extends Controller {
         // Загружаем статусы заказов
         $this->load->model('localisation/order_status');
         $data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
+
+        $this->load->model('setting/extension');
+        $installed = $this->model_setting_extension->getInstalled('payment');
+
+        $method_data = array();
+
+        // 1. Сначала обычные методы оплаты
+        foreach ($installed as $code) {
+            if ($this->config->get('payment_' . $code . '_status')) {
+                $this->load->language('extension/payment/' . $code);
+                $method_data[$code] = array(
+                    'code'       => $code,
+                    'title'      => $this->language->get('heading_title'),
+                    'sort_order' => $this->config->get('payment_' . $code . '_sort_order') ?? 0
+                );
+            }
+        }
+
+        // 2. Добавляем методы из Filterit
+        $language = $this->config->get('config_admin_language');
+        $filterit = $this->config->get('filterit_payment'); // ← вот тут всё хранится
+
+        if (!empty($filterit['created'])) {
+            foreach ($filterit['created'] as $module_code => $module_info) {
+                $method_data[$module_code] = array(
+                    'code'       => $module_code,
+                    'title'      => !empty($module_info['title'][$language])
+                                    ? $module_info['title'][$language]
+                                    : $module_code,
+                    'sort_order' => $module_info['sort_order'] ?? 0
+                );
+            }
+        }
+
+        // Сортировка
+        $sort_order = array();
+        foreach ($method_data as $key => $value) {
+            $sort_order[$key] = $value['sort_order'];
+        }
+        array_multisort($sort_order, SORT_ASC, $method_data);
+
+        $data['payment_methods'] = $method_data;
 
         $data['user_token'] = $this->session->data['user_token'];
 
