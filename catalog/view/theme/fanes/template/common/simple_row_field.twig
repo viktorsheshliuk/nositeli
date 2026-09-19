@@ -4,7 +4,7 @@
       <span class="required" style="">*</span>
       {% endif %}
     </label>
-    <div class="{{page == 'checkout' ? '' : 'col-sm-10'}}">
+    <div class="{{page == 'checkout' ? '' : 'col-sm-10'}} wrapper_{{id}}">
       {% if type == 'select' or type == 'select2' %}
         <select class="simple-select" name="{{ name }}" id="{{ id }}" {{ bootstrap ? 'data-theme="bootstrap"' : '' }} {{ type == 'select2' ? 'data-type="select2"' : '' }} {{ reload ? 'data-onchange="reloadAll"' : ''}}>
           {% for info in values %}

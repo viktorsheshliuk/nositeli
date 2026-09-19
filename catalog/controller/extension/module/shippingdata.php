@@ -55,20 +55,20 @@ class ControllerExtensionModuleShippingData extends Controller {
 
             foreach ($query->rows as $row) {
                 $description = $is_ru? $row['description_ru'] : $row['description'];
-                $area = $is_ru? $row['area_ru'] : $row['area'];
+                //$area = $is_ru? $row['area_ru'] : $row['area'];
                 $type = $is_ru? $row['st_desc_ru'] : $row['st_desc'];
 
-                $full_description = $type ? $type . ':' . $description : $description;
-                if ($area) {
-                    $full_description .= $area . ' бл.)';
-                }
+                $full_description = $type ? $type . ' ' . $description : $description;
+                // if ($area) {
+                //     $full_description .= ' (' . $area . ' обл.)';
+                // }
 
                 $json[] = array(
                     'id'               => $row['ref'],
-                    'label'            => $description,
-                    'value'            => $description,
-                    'full_description' => $full_description,
-                    'description'      => $description
+                    //'label'            => $description,
+                    //'value'            => $description,
+                   // 'full_description' => $full_description,
+                    'description'      => $full_description //$description
                 );
             }
 
@@ -86,7 +86,7 @@ class ControllerExtensionModuleShippingData extends Controller {
                     'full_description' => ($row['description_ru'] ?? $row['description'])
                 );
             }
-        } elseif (($action == 'getDepartments')|| ($action == 'getPoshtomats')){
+        } elseif ((($action == 'getDepartments')|| ($action == 'getPoshtomats')) && trim($filter) !== ''){
             $where = array();
 
             if (preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i', trim($filter))) {

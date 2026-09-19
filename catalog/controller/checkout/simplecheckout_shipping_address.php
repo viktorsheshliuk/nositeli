@@ -42,7 +42,10 @@ class ControllerCheckoutSimpleCheckoutShippingAddress extends SimpleController {
         $this->_templateData['rows']                           = $this->simplecheckout->getRows('shipping_address');
         $this->_templateData['hidden_rows']                    = $this->simplecheckout->getHiddenRows('shipping_address');
 
-        $this->_templateData['novaposhta_cn_ref'] = isset($args['address_ref']) ? $args['address_ref'] : '';
+        $shipping = isset($this->session->data['simple']['shipping_address']) ? $this->session->data['simple']['shipping_address'] : array();
+
+        $this->_templateData['novaposhta_cn_ref']   = isset($args['address_ref']) ? $args['address_ref'] : (isset($shipping['address_ref']) ? $shipping['address_ref'] : '');
+        $this->_templateData['novaposhta_city_ref'] = isset($args['city_ref']) ? $args['city_ref'] : (isset($shipping['city_ref']) ? $shipping['city_ref'] : '');
 
         if (!$this->simplecheckout->validateFields('shipping_address')) {
             $this->simplecheckout->addError('shipping_address');

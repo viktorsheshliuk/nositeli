@@ -998,7 +998,33 @@ div#content .simple_heading_title{
     color: #9b9b9b;
     margin-top: 5px;
 }
-
+.wrapper_shipping_address_zone_id{
+    position: relative;
+}
+.wrapper_shipping_address_zone_id select{
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 35px; /* место под псевдо-стрелочку */
+}
+/* Создаем стрелочку через псевдоэлемент у контейнера */
+.wrapper_shipping_address_zone_id::after {
+    content: "";
+    pointer-events: none; /* чтобы клик проходил сквозь стрелку прямо на селект */
+    border-bottom: 2px solid var(--color-orange);
+    border-right: 2px solid var(--color-orange);
+    border-left: none;
+    border-top: none;
+    height: 10px;
+    left: auto;
+    right: 19px;
+    margin-left: 0;
+    position: absolute;
+    top: calc(50% + 6px);
+    width: 10px;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
 
 
 
@@ -1279,3 +1305,56 @@ div#content .simple_heading_title{
         gap: 16px;
     }
 }
+
+/* === Nova Poshta Select2 === */
+.np-hidden-input {
+    display: none !important;
+}
+.np-select2 + .select2-container {
+    width: 100% !important;
+}
+.select2-container--default .select2-selection--single {
+    height: 50px;
+    border: 1px solid var(--color-orange, #ff7a00);
+    border-radius: 8px;
+    background-color: #fff;
+    padding: 0 20px;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 48px;
+    padding-left: 0;
+    padding-right: 25px;
+    font-size: 16px;
+    color: var(--color-black, #1a1a1a);
+}
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #969696;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 48px;
+    right: 12px;
+}
+.select2-container--default.select2-container--focus .select2-selection--single,
+.select2-container--default.select2-container--open .select2-selection--single {
+    border-color: var(--color-orange, #ff7a00);
+}
+.form-group.has-error .select2-container--default .select2-selection--single {
+    border-color: red;
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--color-orange, #ff7a00);
+}
+
+/* Select2: отделения заблокированы до выбора города */
+.np-locked .select2-selection--single {
+    background: #f5f5f5;
+    border-color: #dcdcdc !important;
+    cursor: not-allowed;
+}
+.np-locked .select2-selection__rendered {
+    color: #969696;
+}
+.np-locked .select2-selection__arrow {
+    opacity: .4;
+}
+

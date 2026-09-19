@@ -13,9 +13,12 @@
     {% endfor %}
  
     <input type="hidden" name="shipping_address[address_ref]" id="shipping_address_address_ref" value="{{ novaposhta_cn_ref }}" />
+    <input type="hidden" name="shipping_address[city_ref]" id="shipping_address_city_ref" value="{{ novaposhta_city_ref }}" />
   </div>
 </div>
 <script>
  $('#simplecheckout_shipping_address:has(select)').addClass('not_empty');
  $('#simplecheckout_shipping_address:has(input[type="text"])').addClass('not_empty');
+window.cityPlaceholder = "{{ text_city_placeholder }}";
+window.departmentPlaceholder = "{{ text_city_department }}";
 </script>

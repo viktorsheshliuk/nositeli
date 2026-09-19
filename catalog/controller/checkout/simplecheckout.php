@@ -127,6 +127,9 @@ class ControllerCheckoutSimpleCheckout extends SimpleController {
             if (isset($this->request->post['shipping_address']['address_ref'])) {
                 $shipping_address_params['address_ref'] = $this->request->post['shipping_address']['address_ref'];
             }
+            if (isset($this->request->post['shipping_address']['city_ref'])) {
+                $shipping_address_params['city_ref'] = $this->request->post['shipping_address']['city_ref'];
+            }
             $this->_templateData['simple_blocks']['shipping_address'] = $this->getChildController('checkout/simplecheckout_shipping_address', $shipping_address_params);
 
             if ($this->simplecheckout->hasBlock('agreement')) {
