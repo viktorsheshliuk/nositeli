@@ -50,6 +50,7 @@
                         </li>
                     {% endfor %}
                     <li><a href="#tab-api" data-toggle="tab">{{ tab_api }}</a></li>
+                    <li><a href="#tab-cron" data-toggle="tab">{{ tab_cron }}</a></li>
                 </ul>
                 
                 <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-shipping"
@@ -385,6 +386,79 @@
                             </table>
                             <p>Увага ! Дані оновлюються автоматично при натисканні кнопки оновлення. Оновлення може зайняти деякий час. (Оновлення відділень - до 5 хвилин)</p>
                         </div>
+
+                         <!-- CRON ДАНІ -->
+                        <div class="tab-pane form-horizontal" id="tab-cron">
+                            <style type="text/css">
+                                .np-multiselect { position: relative; }
+                                .np-multiselect-panel { display: none; position: absolute; z-index: 1050; top: 34px; left: 0; right: 0; background: #fff; border: 1px solid #cccccc; border-radius: 3px; padding: 5px 10px; max-height: 250px; overflow-y: auto; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175); }
+                                .np-multiselect-panel label { display: block; font-weight: normal; margin: 0; padding: 3px 0; cursor: pointer; }
+                                .np-multiselect.open .np-multiselect-panel { display: block; }
+                                .np-multiselect-label { display: inline-block; max-width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
+                            </style>
+
+                            <div class="alert alert-info">
+                                <i class="fa fa-info-circle"></i> {{ text_cron_info }}
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">{{ text_cron_url }}</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <input type="text" value="{{ cron_url|escape }}" id="input-cron-url" class="form-control" readonly/>
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" id="copy-cron-url" data-toggle="tooltip" title="{{ button_cron_copy }}"><i class="fa fa-copy"></i></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-tracking-enabled">{{ entry_np_tracking_enabled }}</label>
+                                <div class="col-sm-10">
+                                    <select name="shipping_novaposhta_tracking_enabled" id="input-tracking-enabled" class="form-control">
+                                        <option value="0" {{ "0" == shipping_novaposhta_tracking_enabled ? "selected" : "" }}>{{ text_disabled }}</option>
+                                        <option value="1" {{ "1" == shipping_novaposhta_tracking_enabled ? "selected" : "" }}>{{ text_enabled }}</option>
+                                    </select>
+                                    <div class="help-block">{{ help_np_tracking_enabled }}</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">{{ entry_np_tracking_statuses }}</label>
+                                <div class="col-sm-10">
+                                    <input type="hidden" name="np_tracking_statuses_present" value="1"/>
+                                    <div id="tracking-statuses"></div>
+                                    <div class="help-block">{{ help_np_tracking_statuses }}</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-cron-key">{{ entry_np_cron_key }}</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="shipping_novaposhta_cron_key" value="{{ shipping_novaposhta_cron_key }}" id="input-cron-key" class="form-control"/>
+                                    <div class="help-block">{{ help_np_cron_key }}</div>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <h4><i class="fa fa-exchange"></i> {{ text_status_mapping }}</h4>
+                            <div class="alert alert-info">{{ help_status_mapping }}</div>
+
+                            <input type="hidden" name="np_status_map_present" value="1"/>
+
+                            <div id="status-map-empty" class="alert alert-warning"{% if shipping_novaposhta_status_map %} style="display: none;"{% endif %}>{{ text_status_map_empty }}</div>
+
+                            <div id="status-map-rows"></div>
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="button" class="btn btn-success" id="add-status-map-row"><i class="fa fa-plus"></i> {{ button_add_mapping }}</button>
+                                    <button type="button" class="btn btn-primary" id="run-tracking"><i class="fa fa-refresh"></i> {{ button_run_tracking }}</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -637,5 +711,271 @@
     });
 //--></script>
     
+    <script type="text/javascript"><!--
+    // Статуси Нової Пошти, статуси замовлень та збережена відповідність
+    var npStatuses = {{ novaposhta_statuses|json_encode() }};
+    var npOrderStatuses = {{ order_statuses|json_encode() }};
+    var npTrackingStatuses = {{ shipping_novaposhta_tracking_statuses|json_encode() }};
+    var npStatusMap = {{ shipping_novaposhta_status_map|json_encode() }};
+
+    var npText = {
+        none: '{{ text_np_statuses_none|escape('js') }}',
+        selected: '{{ text_np_statuses_selected|escape('js') }}',
+        selectAll: '{{ text_np_select_all|escape('js') }}',
+        deselectAll: '{{ text_np_deselect_all|escape('js') }}',
+        selectStatus: '{{ text_select_status|escape('js') }}',
+        duplicate: '{{ error_np_status_map_duplicate|escape('js') }}',
+        result: '{{ text_tracking_result|escape('js') }}',
+        copied: '{{ text_cron_copied|escape('js') }}'
+    };
+
+    // Оновлення підпису мультивибору
+    function npUpdateMultiselectLabel($multiselect) {
+        var $checked = $multiselect.find('input[type="checkbox"]:checked');
+        var label = '';
+
+        if (!$checked.length) {
+            label = npText.none;
+        } else {
+            var names = [];
+
+            $checked.slice(0, 2).each(function () {
+                names.push($(this).attr('data-label'));
+            });
+
+            label = npText.selected + ' ' + $checked.length + ': ' + names.join(', ');
+
+            if ($checked.length > 2) {
+                label += ' ...';
+            }
+        }
+
+        $multiselect.find('.np-multiselect-label').text(label);
+    }
+
+    // Побудова мультивибору з чекбоксів
+    function npBuildMultiselect(inputName, items, selected) {
+        var selectedValues = [];
+        var html = '';
+
+        // Значення з налаштувань можуть приходити числами, а value чекбоксу завжди рядок
+        $.each(selected || [], function (index, value) {
+            selectedValues.push(String(value));
+        });
+
+        html += '<div class="np-multiselect">';
+        html += '<button type="button" class="btn btn-default form-control text-left np-multiselect-toggle"><span class="np-multiselect-label"></span><span class="caret pull-right"></span></button>';
+        html += '<div class="np-multiselect-panel">';
+        html += '<a href="#" class="np-multiselect-all">' + npText.selectAll + '</a> | <a href="#" class="np-multiselect-none">' + npText.deselectAll + '</a>';
+        html += '<hr style="margin: 5px 0;"/>';
+
+        $.each(items, function (index, item) {
+            var checked = $.inArray(String(item.value), selectedValues) !== -1 ? ' checked' : '';
+
+            html += '<label><input type="checkbox" name="' + inputName + '" value="' + item.value + '" data-label="' + item.label + '"' + checked + '/> [' + item.value + '] ' + item.label + '</label>';
+        });
+
+        html += '</div></div>';
+
+        return html;
+    }
+    // Статуси замовлень, які потрібно відслідковувати
+    var npTrackingItems = [];
+
+    $.each(npOrderStatuses, function (index, orderStatus) {
+        npTrackingItems.push({
+            value: orderStatus.order_status_id,
+            label: orderStatus.name
+        });
+    });
+
+    $('#tracking-statuses').html(npBuildMultiselect('shipping_novaposhta_tracking_statuses[]', npTrackingItems, npTrackingStatuses));
+
+    $('#tracking-statuses').find('.np-multiselect').each(function () {
+        npUpdateMultiselectLabel($(this));
+    });
+
+    // Статуси Нової Пошти для вибору
+    var npStatusItems = [];
+
+    $.each(npStatuses, function (statusCode, statusName) {
+        npStatusItems.push({
+            value: statusCode,
+            label: statusName
+        });
+    });
+
+    var npStatusMapIndex = 0;
+
+    function npUpdateStatusMapEmpty() {
+        if ($('#status-map-rows .status-map-row').length) {
+            $('#status-map-empty').hide();
+        } else {
+            $('#status-map-empty').show();
+        }
+    }
+
+    function npAddStatusMapRow(row) {
+        var index = npStatusMapIndex++;
+        var selected = row && row['statuses'] ? row['statuses'] : [];
+        var orderStatusId = row && row['order_status_id'] ? String(row['order_status_id']) : '';
+
+        var html = '';
+
+        html += '<div class="form-group status-map-row">';
+        html += '<div class="col-sm-offset-2 col-sm-5" style="margin-bottom: 5px;">';
+        html += npBuildMultiselect('shipping_novaposhta_status_map[' + index + '][statuses][]', npStatusItems, selected);
+        html += '</div>';
+        html += '<div class="col-sm-4" style="margin-bottom: 5px;">';
+        html += '<select name="shipping_novaposhta_status_map[' + index + '][order_status_id]" class="form-control">';
+        html += '<option value="">' + npText.selectStatus + '</option>';
+
+        $.each(npOrderStatuses, function (i, orderStatus) {
+            var selectedAttr = String(orderStatus.order_status_id) === orderStatusId ? ' selected' : '';
+
+            html += '<option value="' + orderStatus.order_status_id + '"' + selectedAttr + '>' + orderStatus.name + '</option>';
+        });
+
+        html += '</select>';
+        html += '</div>';
+        html += '<div class="col-sm-1" style="margin-bottom: 5px;">';
+        html += '<button type="button" class="btn btn-danger remove-status-map-row"><i class="fa fa-minus-circle"></i></button>';
+        html += '</div>';
+        html += '</div>';
+
+        var $row = $(html);
+
+        $('#status-map-rows').append($row);
+
+        $row.find('.np-multiselect').each(function () {
+            npUpdateMultiselectLabel($(this));
+        });
+
+        npUpdateStatusMapEmpty();
+    }
+
+    $.each(npStatusMap, function (index, row) {
+        npAddStatusMapRow(row);
+    });
+
+    npUpdateStatusMapEmpty();
+    // Додати рядок відповідності
+    $('#add-status-map-row').on('click', function () {
+        npAddStatusMapRow(null);
+    });
+
+    // Видалити рядок відповідності
+    $(document).on('click', '.remove-status-map-row', function (e) {
+        e.preventDefault();
+
+        $(this).closest('.status-map-row').remove();
+
+        npUpdateStatusMapEmpty();
+    });
+
+    // Відкрити/закрити список
+    $(document).on('click', '.np-multiselect-toggle', function (e) {
+        e.preventDefault();
+
+        var $multiselect = $(this).closest('.np-multiselect');
+
+        $('.np-multiselect.open').not($multiselect).removeClass('open');
+
+        $multiselect.toggleClass('open');
+    });
+
+    // Закрити список при кліку поза ним
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.np-multiselect').length) {
+            $('.np-multiselect.open').removeClass('open');
+        }
+    });
+
+    $(document).on('change', '.np-multiselect input[type="checkbox"]', function () {
+        npUpdateMultiselectLabel($(this).closest('.np-multiselect'));
+    });
+
+    $(document).on('click', '.np-multiselect-all', function (e) {
+        e.preventDefault();
+
+        $(this).closest('.np-multiselect').find('input[type="checkbox"]').prop('checked', true).trigger('change');
+    });
+
+    $(document).on('click', '.np-multiselect-none', function (e) {
+        e.preventDefault();
+
+        $(this).closest('.np-multiselect').find('input[type="checkbox"]').prop('checked', false).trigger('change');
+    });
+
+    // Перевірка дублів кодів Нової Пошти перед збереженням
+    $('#form-shipping').on('submit', function () {
+        var used = {};
+        var duplicates = [];
+
+        $('#status-map-rows input[type="checkbox"]:checked').each(function () {
+            var code = $(this).val();
+
+            if (used[code]) {
+                duplicates.push(code);
+            } else {
+                used[code] = true;
+            }
+        });
+
+        if (duplicates.length) {
+            alert(npText.duplicate + duplicates.join(', '));
+
+            return false;
+        }
+    });
+
+    // Копіювати URL cron
+    $('#copy-cron-url').on('click', function () {
+        var input = document.getElementById('input-cron-url');
+
+        input.select();
+        input.setSelectionRange(0, 99999);
+
+        try {
+            document.execCommand('copy');
+
+            alert(npText.copied);
+        } catch (error) {
+            alert(input.value);
+        }
+    });
+
+    // Оновити статуси зараз
+    $('#run-tracking').on('click', function () {
+        var node = this;
+
+        $.ajax({
+            url: 'index.php?route=extension/shipping/novaposhta/runTracking&user_token={{ user_token }}',
+            type: 'post',
+            dataType: 'json',
+            beforeSend: function () {
+                $(node).prop('disabled', true);
+                $(node).find('i').addClass('fa-spin');
+            },
+            success: function (json) {
+                if (json['errors'] && json['errors'].length) {
+                    alert(json['errors'].join("\r\n"));
+                }
+
+                if (typeof json['processed'] !== 'undefined') {
+                    alert(npText.result.replace('%s', json['processed']).replace('%s', json['updated']).replace('%s', json['skipped']));
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            },
+            complete: function () {
+                $(node).find('i').removeClass('fa-spin');
+                $(node).prop('disabled', false);
+            }
+        });
+    });
+    //--></script>
+
 </div>
 {{ footer }}

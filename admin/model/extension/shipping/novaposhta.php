@@ -712,4 +712,101 @@ class ModelExtensionShippingNovaposhta extends Model {
     //     $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "novaposhta_cities WHERE Ref = '" . $this->db->escape($ref) . "'");
     //     return $query->row;
     // }
+
+    /**
+     * Довідник статусів Нової Пошти (код => назва)
+     */
+    public function getNovaposhtaStatuses() {
+        return array(
+            1   => 'Відправник самостійно створив цю накладну, але ще не надав до відправки',
+            2   => 'Видалено',
+            3   => 'Номер не знайдено',
+            4   => 'Відправлення у місті ХХXХ (статус для міжобласних відправлень)',
+            41  => 'Відправлення у місті ХХXХ (статус для послуг «Локал стандарт» і «Локал експрес» - доставка в межах міста)',
+            5   => 'Відправлення прямує до міста YYYY',
+            6   => 'Відправлення у місті YYYY, орієнтовна доставка до ВІДДІЛЕННЯ-XXX dd-mm. Очікуйте додаткове повідомлення про прибуття',
+            7   => 'Прибув на відділення',
+            8   => 'Прибув на відділення (завантажено в Поштомат)',
+            9   => 'Відправлення отримано',
+            10  => 'Відправлення отримано %DateReceived%. Протягом доби ви одержите SMS-повідомлення про надходження грошового переказу та зможете отримати його в касі відділення «Нова пошта»',
+            11  => 'Відправлення отримано %DateReceived%. Грошовий переказ видано одержувачу',
+            12  => 'Нова пошта комплектує ваше відправлення',
+            15  => 'Відправлення вже в дорозі до України',
+            101 => 'На шляху до одержувача',
+            102 => 'Відмова від отримання (відправником створено замовлення на повернення)',
+            103 => 'Відмова від отримання',
+            104 => 'Змінено адресу',
+            105 => 'Припинено зберігання',
+            106 => 'Одержано і створено ЕН зворотної доставки',
+            107 => 'Відправлення переміщено з пункту видачі замовлень (PUDO) до основного відділення, яке його обслуговує',
+            111 => 'Невдала спроба доставки через відсутність одержувача на адресі або зв\'язку з ним',
+            112 => 'Дата доставки перенесена одержувачем',
+            124 => 'Знищено внаслідок ворожої атаки'
+        );
+    }
+
+    /**
+     * Замовлення, які потрібно відслідковувати (за налаштованими статусами)
+     */
+    public function getOrdersForTracking() {
+        $statuses = $this->config->get('shipping_novaposhta_tracking_statuses');
+
+        if (!is_array($statuses) || !$statuses) {
+            return array();
+        }
+
+        $statuses = array_filter(array_map('intval', $statuses));
+
+        if (!$statuses) {
+            return array();
+        }
+
+        $query = $this->db->query("
+            SELECT nttn.ttn AS ttn, o.order_status_id AS order_status_id, nttn.order_id AS order_id
+            FROM `" . DB_PREFIX . "novaposhta_ttn` nttn
+            LEFT JOIN `" . DB_PREFIX . "order` o ON (nttn.order_id = o.order_id)
+            WHERE o.order_status_id IN (" . implode(',', $statuses) . ")
+            AND nttn.ttn != ''
+        ");
+
+        return $query->rows;
+    }
+
+    /**
+     * Карта відповідності: код статусу Нової Пошти => order_status_id магазину
+     */
+    public function getOrderStatusMap() {
+        $status_map = $this->config->get('shipping_novaposhta_status_map');
+        $result = array();
+
+        if (!is_array($status_map)) {
+            return $result;
+        }
+
+        foreach ($status_map as $row) {
+            if (empty($row['order_status_id']) || empty($row['statuses']) || !is_array($row['statuses'])) {
+                continue;
+            }
+
+            foreach ($row['statuses'] as $status_code) {
+                $status_code = (int)$status_code;
+
+                // Перший рядок має пріоритет
+                if ($status_code && !isset($result[$status_code])) {
+                    $result[$status_code] = (int)$row['order_status_id'];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Зміна статусу замовлення без сповіщень та коментарів
+     */
+    public function setOrderStatus($order_id, $order_status_id) {
+        $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '" . (int)$order_status_id . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
+
+        $this->db->query("INSERT INTO `" . DB_PREFIX . "order_history` SET order_id = '" . (int)$order_id . "', order_status_id = '" . (int)$order_status_id . "', notify = '0', comment = '', date_added = NOW()");
+    }
 }

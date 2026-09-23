@@ -328,9 +328,9 @@ class Novaposhta {
             }
 
             // Успешный ответ - выходим из цикла
-            if ($this->log) {
-                $this->log->write("[API_REQUEST] Success for $method");
-            }
+            // if ($this->log) {
+            //     $this->log->write("[API_REQUEST] Success for $method");
+            // }
             return $result;
         }
 

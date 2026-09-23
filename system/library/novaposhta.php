@@ -228,6 +228,123 @@ class Novaposhta {
         return array();
     }
 
+    /**
+     * Синхронізація статусів замовлень зі статусами Нової Пошти
+     *
+     * @param array    $orders   [['order_id' => int, 'order_status_id' => int, 'ttn' => string], ...]
+     * @param array    $status_map  карта відповідності: [StatusCode Нової Пошти => order_status_id магазину]
+     * @param callable $status_change_callback  function($order_id, $order_status_id)
+     *
+     * @return array ['processed' => int, 'updated' => int, 'skipped' => int, 'errors' => array]
+     */
+    public function syncOrderStatuses($orders, $status_map, $status_change_callback) {
+        $result = array(
+            'processed' => 0,
+            'updated'   => 0,
+            'skipped'   => 0,
+            'errors'    => array()
+        );
+
+        if (!$orders) {
+            $result['errors'][] = 'Немає замовлень для відслідковування';
+
+            return $result;
+        }
+
+        if (!$status_map || !is_array($status_map)) {
+            $result['errors'][] = 'Не налаштовано відповідність статусів';
+
+            return $result;
+        }
+
+        if (empty($this->api_key)) {
+            $result['errors'][] = 'API ключ Нової Пошти не налаштований';
+
+            return $result;
+        }
+
+        $documents = array();
+
+        foreach ($orders as $order) {
+            if (!empty($order['ttn'])) {
+                $documents[] = array(
+                    'DocumentNumber' => $order['ttn']
+                );
+            }
+        }
+
+        if (!$documents) {
+            $result['errors'][] = 'Немає накладних для відслідковування';
+
+            return $result;
+        }
+
+        require_once dirname(DIR_SYSTEM) . '/vendor/autoload.php';
+
+        if (!class_exists('\AUnhurian\NovaPoshta\SDK\NovaPoshtaSDK')) {
+            $result['errors'][] = 'Не знайдено SDK Нової Пошти';
+
+            return $result;
+        }
+
+        $result['processed'] = count($documents);
+
+        try {
+            $sdk = new \AUnhurian\NovaPoshta\SDK\NovaPoshtaSDK($this->api_key);
+
+            $documents_statuses = $sdk->tracking()->getStatusDocumentsBatch($documents);
+        } catch (Exception $e) {
+            $result['errors'][] = $e->getMessage();
+
+            return $result;
+        }
+
+        $statuses = array();
+
+        if (is_array($documents_statuses)) {
+            foreach ($documents_statuses as $document_status) {
+                if (empty($document_status['Number'])) {
+                    continue;
+                }
+
+                $statuses[$document_status['Number']] = $document_status;
+            }
+        }
+
+        foreach ($orders as $order) {
+            if (empty($order['ttn']) || !isset($statuses[$order['ttn']])) {
+                $result['skipped']++;
+
+                continue;
+            }
+
+            $document_status = $statuses[$order['ttn']];
+
+            $status_code = isset($document_status['StatusCode']) ? (int)$document_status['StatusCode'] : 0;
+
+            if (!$status_code || !isset($status_map[$status_code])) {
+                $result['skipped']++;
+
+                continue;
+            }
+
+            $order_status_id = (int)$status_map[$status_code];
+
+            // Статус вже такий самий - нічого не змінюємо
+            if ((int)$order['order_status_id'] == $order_status_id) {
+                $result['skipped']++;
+
+                continue;
+            }
+
+            call_user_func($status_change_callback, $order['order_id'], $order_status_id);
+
+            $result['updated']++;
+        }
+
+        return $result;
+    }
+
     private function makeApiRequest($method, $properties = array()) {
         $max_retries = 3;
         $retry_count = 0;
@@ -328,9 +445,9 @@ class Novaposhta {
             }
 
             // Успешный ответ - выходим из цикла
-            if ($this->log) {
-                $this->log->write("[API_REQUEST] Success for $method");
-            }
+            // if ($this->log) {
+            //     $this->log->write("[API_REQUEST] Success for $method");
+            // }
             return $result;
         }
 

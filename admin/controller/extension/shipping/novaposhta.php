@@ -1,5 +1,7 @@
 <?php
 class ControllerExtensionShippingNovaposhta extends Controller {
+    const DEFAULT_CRON_KEY = '77777';
+
     private $error = array();
 
     public function index() {
@@ -12,6 +14,23 @@ class ControllerExtensionShippingNovaposhta extends Controller {
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
             //$this->model_setting_setting->editSetting('shipping_novaposhta', $this->request->post);
             $setting_data = $this->request->post;
+
+            // Відповідність статусів Нової Пошти статусам замовлень (вкладка Cron)
+            if (isset($this->request->post['shipping_novaposhta_status_map'])) {
+                $setting_data['shipping_novaposhta_status_map'] = $this->normalizeStatusMap($this->request->post['shipping_novaposhta_status_map']);
+            } elseif (isset($this->request->post['np_status_map_present'])) {
+                $setting_data['shipping_novaposhta_status_map'] = array();
+            }
+
+            // Статуси замовлень, які відслідковуються (вкладка Cron)
+            if (!isset($this->request->post['shipping_novaposhta_tracking_statuses']) && isset($this->request->post['np_tracking_statuses_present'])) {
+                $setting_data['shipping_novaposhta_tracking_statuses'] = array();
+            }
+
+            if (isset($setting_data['shipping_novaposhta_tracking_statuses']) && is_array($setting_data['shipping_novaposhta_tracking_statuses'])) {
+                $setting_data['shipping_novaposhta_tracking_statuses'] = array_values(array_filter(array_unique(array_map('intval', $setting_data['shipping_novaposhta_tracking_statuses']))));
+            }
+
             if (isset($this->request->post['shipping_novaposhta_api_key'])) {
                 $setting_data['shipping_novaposhta'] = [
                     'key_api' => $this->request->post['shipping_novaposhta_api_key']
@@ -196,6 +215,46 @@ class ControllerExtensionShippingNovaposhta extends Controller {
         array_multisort($sort_order, SORT_ASC, $method_data);
 
         $data['payment_methods'] = $method_data;
+
+        // Налаштування відслідковування статусів (вкладка Cron)
+        $data['novaposhta_statuses'] = $this->model_extension_shipping_novaposhta->getNovaposhtaStatuses();
+
+        if (isset($this->request->post['shipping_novaposhta_tracking_enabled'])) {
+            $data['shipping_novaposhta_tracking_enabled'] = $this->request->post['shipping_novaposhta_tracking_enabled'];
+        } else {
+            $data['shipping_novaposhta_tracking_enabled'] = $this->config->get('shipping_novaposhta_tracking_enabled');
+        }
+
+        if (isset($this->request->post['shipping_novaposhta_tracking_statuses'])) {
+            $data['shipping_novaposhta_tracking_statuses'] = array_values(array_map('intval', (array)$this->request->post['shipping_novaposhta_tracking_statuses']));
+        } else {
+            $tracking_statuses = $this->config->get('shipping_novaposhta_tracking_statuses');
+
+            // Значення за замовчуванням (як у попередній версії модуля)
+            if (!is_array($tracking_statuses)) {
+                $tracking_statuses = array(12, 9, 1, 6, 11, 2);
+            }
+
+            $data['shipping_novaposhta_tracking_statuses'] = array_values(array_map('intval', $tracking_statuses));
+        }
+
+        if (isset($this->request->post['shipping_novaposhta_cron_key'])) {
+            $data['shipping_novaposhta_cron_key'] = $this->request->post['shipping_novaposhta_cron_key'];
+        } else {
+            $data['shipping_novaposhta_cron_key'] = $this->config->get('shipping_novaposhta_cron_key');
+        }
+
+        if (!$data['shipping_novaposhta_cron_key']) {
+            $data['shipping_novaposhta_cron_key'] = self::DEFAULT_CRON_KEY;
+        }
+
+        if (isset($this->request->post['shipping_novaposhta_status_map'])) {
+            $data['shipping_novaposhta_status_map'] = $this->normalizeStatusMap($this->request->post['shipping_novaposhta_status_map']);
+        } else {
+            $data['shipping_novaposhta_status_map'] = $this->normalizeStatusMap($this->config->get('shipping_novaposhta_status_map'));
+        }
+
+        $data['cron_url'] = HTTP_CATALOG . 'index.php?route=api/novaposhta/tracking&api_key=' . urlencode($data['shipping_novaposhta_cron_key']);
 
         $data['user_token'] = $this->session->data['user_token'];
 
@@ -396,4 +455,88 @@ class ControllerExtensionShippingNovaposhta extends Controller {
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
     }
+    /**
+     * Нормалізація карти відповідності статусів
+     * (прибирає порожні рядки та дублікати кодів Нової Пошти)
+     */
+    protected function normalizeStatusMap($status_map) {
+        $result = array();
+
+        if (!is_array($status_map)) {
+            return $result;
+        }
+
+        $used_codes = array();
+
+        foreach ($status_map as $row) {
+            if (!is_array($row) || empty($row['order_status_id'])) {
+                continue;
+            }
+
+            $statuses = array();
+
+            if (isset($row['statuses']) && is_array($row['statuses'])) {
+                foreach ($row['statuses'] as $status_code) {
+                    $status_code = (int)$status_code;
+
+                    if ($status_code && !isset($used_codes[$status_code])) {
+                        $used_codes[$status_code] = true;
+                        $statuses[] = $status_code;
+                    }
+                }
+            }
+
+            if (!$statuses) {
+                continue;
+            }
+
+            $result[] = array(
+                'statuses'        => $statuses,
+                'order_status_id' => (int)$row['order_status_id']
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * Ручний запуск оновлення статусів замовлень (кнопка "Оновити статуси зараз")
+     */
+    public function runTracking() {
+        $this->load->language('extension/shipping/novaposhta');
+        $this->load->model('extension/shipping/novaposhta');
+        $this->load->library('novaposhta');
+
+        $json = array(
+            'processed' => 0,
+            'updated'   => 0,
+            'skipped'   => 0,
+            'errors'    => array()
+        );
+
+        try {
+            if (!$this->config->get('shipping_novaposhta_tracking_enabled')) {
+                throw new Exception($this->language->get('error_np_tracking_disabled'));
+            }
+
+            $orders = $this->model_extension_shipping_novaposhta->getOrdersForTracking();
+
+            if (!$orders) {
+                throw new Exception($this->language->get('error_np_no_orders'));
+            }
+
+            $status_map = $this->model_extension_shipping_novaposhta->getOrderStatusMap();
+
+            $json = $this->novaposhta->syncOrderStatuses($orders, $status_map, function ($order_id, $order_status_id) {
+                $this->model_extension_shipping_novaposhta->setOrderStatus($order_id, $order_status_id);
+            });
+        } catch (Exception $e) {
+            $json['errors'][] = $e->getMessage();
+        }
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json, JSON_UNESCAPED_UNICODE));
+    }
+
+
 }

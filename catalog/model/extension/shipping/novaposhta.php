@@ -303,27 +303,68 @@ class ModelExtensionShippingNovaposhta extends Model {
         return $inserted;
     }
 
-    // public function updateRegions($regions) {
-    //     $this->db->query("TRUNCATE TABLE " . DB_PREFIX . "novaposhta_regions");
+    /**
+     * Замовлення, які потрібно відслідковувати (за налаштованими статусами)
+     */
+    public function getOrdersForTracking() {
+        $statuses = $this->config->get('shipping_novaposhta_tracking_statuses');
 
-    //     foreach ($regions as $region) {
-    //         $this->db->query("INSERT INTO " . DB_PREFIX . "novaposhta_regions SET region_id = '" . $this->db->escape($region['region_id']) . "', name = '" . $this->db->escape($region['name']) . "'");
-    //     }
-    // }
+        if (!is_array($statuses) || !$statuses) {
+            return array();
+        }
 
-    // public function updateCities($cities) {
-    //     $this->db->query("TRUNCATE TABLE " . DB_PREFIX . "novaposhta_cities");
+        $statuses = array_filter(array_map('intval', $statuses));
 
-    //     foreach ($cities as $city) {
-    //         $this->db->query("INSERT INTO " . DB_PREFIX . "novaposhta_cities SET city_id = '" . $this->db->escape($city['city_id']) . "', region_id = '" . $this->db->escape($city['region_id']) . "', name = '" . $this->db->escape($city['name']) . "'");
-    //     }
-    // }
+        if (!$statuses) {
+            return array();
+        }
 
-    // public function updateDepartments($departments) {
-    //     $this->db->query("TRUNCATE TABLE " . DB_PREFIX . "novaposhta_departments");
+        $query = $this->db->query("
+            SELECT nttn.ttn AS ttn, o.order_status_id AS order_status_id, nttn.order_id AS order_id
+            FROM `" . DB_PREFIX . "novaposhta_ttn` nttn
+            LEFT JOIN `" . DB_PREFIX . "order` o ON (nttn.order_id = o.order_id)
+            WHERE o.order_status_id IN (" . implode(',', $statuses) . ")
+            AND nttn.ttn != ''
+        ");
 
-    //     foreach ($departments as $department) {
-    //         $this->db->query("INSERT INTO " . DB_PREFIX . "novaposhta_departments SET department_id = '" . $this->db->escape($department['department_id']) . "', city_id = '" . $this->db->escape($department['city_id']) . "', name = '" . $this->db->escape($department['name']) . "', address = '" . $this->db->escape($department['address']) . "'");
-    //     }
-    // }
+        return $query->rows;
+    }
+
+    /**
+     * Карта відповідності: код статусу Нової Пошти => order_status_id магазину
+     */
+    public function getOrderStatusMap() {
+        $status_map = $this->config->get('shipping_novaposhta_status_map');
+        $result = array();
+
+        if (!is_array($status_map)) {
+            return $result;
+        }
+
+        foreach ($status_map as $row) {
+            if (empty($row['order_status_id']) || empty($row['statuses']) || !is_array($row['statuses'])) {
+                continue;
+            }
+
+            foreach ($row['statuses'] as $status_code) {
+                $status_code = (int)$status_code;
+
+                // Перший рядок має пріоритет
+                if ($status_code && !isset($result[$status_code])) {
+                    $result[$status_code] = (int)$row['order_status_id'];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Зміна статусу замовлення без сповіщень та коментарів
+     */
+    public function setOrderStatus($order_id, $order_status_id) {
+        $this->db->query("UPDATE `" . DB_PREFIX . "order` SET order_status_id = '" . (int)$order_status_id . "', date_modified = NOW() WHERE order_id = '" . (int)$order_id . "'");
+
+        $this->db->query("INSERT INTO `" . DB_PREFIX . "order_history` SET order_id = '" . (int)$order_id . "', order_status_id = '" . (int)$order_status_id . "', notify = '0', comment = '', date_added = NOW()");
+    }
 }
