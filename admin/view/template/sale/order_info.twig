@@ -78,6 +78,13 @@
           <table class="table">
             <tbody>
               <tr>
+                <td>{{ text_track_number }}</td>
+                <td class="text-right"><input class="form-control input-sm" type="text" name="order_track_number" value="{{ ttn_number }}" placeholder="{{ text_track_number }}" /></td>
+                <td class="text-center">
+                  <button id="button-track-number-add" data-loading-text="{{ text_loading }}" data-toggle="tooltip" title="{{ text_save_track_number }}" class="btn btn-success btn-xs"><i class="fa fa-plus-circle"></i></button>
+                </td>
+              </tr>
+              <tr>
                 <td>{{ text_invoice }}</td>
                 <td id="invoice" class="text-right">{{ invoice_no }}</td>
                 <td style="width: 1%;" class="text-center">{% if not invoice_no %}
@@ -570,4 +577,35 @@ $('#button-history').on('click', function() {
 });
 //--></script> 
 </div>
+<script>
+					$('#button-track-number-add').on('click', function() {
+						$.ajax({
+							url: 'index.php?route=sale/order/UpdateTrackNumber&user_token={{ user_token }}&order_id={{ order_id }}',
+							type: 'post',
+							dataType: 'json',
+							data: 'track_number=' + encodeURIComponent($('input[name=\'order_track_number\']').val()),
+							beforeSend: function() {
+								$('.track_number_alert').remove();
+								$('#button-track-number-add').attr('disabled', 'disabled');
+								$('#button-track-number-add').button('loading');
+							},
+							complete: function() {
+								$('#button-track-number-add').button('reset');
+								$('#button-track-number-add').attr('disabled', 'disabled');
+							},
+							success: function(json) {
+								$('.alert').remove();
+
+								if (json.error) {
+									$('.container-fluid').eq(2).prepend('<div class="track_number_alert alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json.error + ' <button data-dismiss="alert" class="close" type="button">×</button></div>');
+								}
+
+								if (json.success) {
+									$('.container-fluid').eq(2).prepend('<div class="track_number_alert alert alert-success alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json.success + ' <button data-dismiss="alert" class="close" type="button">×</button></div>');
+									$('#history').load('index.php?route=sale/order/history&user_token={{ user_token }}&order_id={{ order_id }}');
+								}
+							},
+						});
+					});
+</script>
 {{ footer }} 

@@ -229,6 +229,7 @@ class ControllerSaleOrder extends Controller {
 				'order_id'      => $result['order_id'],
 				'customer'      => $result['customer'],
 				'order_status'  => $result['order_status'] ? $result['order_status'] : $this->language->get('text_missing'),
+				'track_number'      => $result['ttn'],
 				'total'         => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),
 				'date_added'    => date('j.m.Y G:i', strtotime($result['date_added'])),
 				'date_modified' => date('j.m.Y G:i', strtotime($result['date_modified'])),
@@ -1258,6 +1259,8 @@ class ControllerSaleOrder extends Controller {
 			} else {
 				$data['api_token'] = '';
 			}
+
+			$data['ttn_number'] = $order_info['ttn'];
 			
 			$data['novaposhta_order'] = $this->load->controller('extension/module/novaposhta_order');
 
@@ -1863,5 +1866,41 @@ class ControllerSaleOrder extends Controller {
 		}
 
 		$this->response->setOutput($this->load->view('sale/order_shipping', $data));
+	}
+
+	public function UpdateTrackNumber() {
+		$json = array();
+		if (isset($this->request->get['order_id'])) {
+			$order_id = $this->request->get['order_id'];
+			$track_number = isset($this->request->post['track_number']) ? $this->request->post['track_number'] : $this->request->get['track_number'];
+
+
+			//$save_track = $this->db->query("UPDATE `" . DB_PREFIX . "novaposhta_ttn` SET ttn='" . $this->db->escape($track_number) . "' WHERE order_id = '" . (int)$order_id . "'");
+
+			// 1. Проверяем, есть ли уже запись для этого заказа
+			$query =$this->db->query("SELECT `ttn_id` FROM `" . DB_PREFIX . "novaposhta_ttn` WHERE `order_id` = '" . (int)$order_id . "'");
+
+			if ($query->num_rows) {
+				// 2а. Если запись есть — обновляем ТТН и дату изменения
+				$this->db->query("UPDATE `" . DB_PREFIX . "novaposhta_ttn` 
+					SET `ttn` = '" . $this->db->escape($track_number) . "', 
+						`date_modified` = NOW() 
+					WHERE `order_id` = '" . (int)$order_id . "'");
+			} else {
+				// 2б. Если записи нет — вставляем новую
+				$this->db->query("INSERT INTO `" . DB_PREFIX . "novaposhta_ttn` 
+					SET `order_id` = '" . (int)$order_id . "', 
+						`ttn` = '" . $this->db->escape($track_number) . "', 
+						`date_added` = NOW()");
+			}
+
+
+			$json['success'] = 'Трек-номер сохранен!';
+			if (isset($save_track['success'])) {
+				$json['success'].= "\n".$save_track['success'];
+			}
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
 	}
 }

@@ -62,9 +62,11 @@ $_['text_commission_removed']    = 'Комиссия удалена!';
 $_['text_restock']               = 'Товар возвращен на склад!';
 $_['text_upload']                = 'Файл успешно загружен!';
 $_['text_picklist']              = 'Примечание';
+$_['text_track_number'] 		 = 'ТТН номер';
+$_['text_save_track_number']	 = 'Сохранить ТТН номер';
 
 // Column
-$_['column_order_id']            = '№ Заказа';
+$_['column_order_id']            = '№';
 $_['column_customer']            = 'Покупатель';
 $_['column_status']              = 'Статус';
 $_['column_date_added']          = 'Дата добавления';

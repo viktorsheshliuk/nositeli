@@ -84,6 +84,14 @@ class ModelSaleOrder extends Model {
 				$language_code = $this->config->get('config_language');
 			}
 
+			$ttn_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "novaposhta_ttn` WHERE order_id = '" . (int)$order_id . "'");
+
+			if ($ttn_query->num_rows) {
+				$ttn = $ttn_query->row['ttn'];
+			} else {
+				$ttn = '';
+			}
+
 			return array(
 				'order_id'                => $order_query->row['order_id'],
 				'invoice_no'              => $order_query->row['invoice_no'],
@@ -155,7 +163,8 @@ class ModelSaleOrder extends Model {
 				'accept_language'         => $order_query->row['accept_language'],
 				'date_added'              => $order_query->row['date_added'],
 				'date_modified'           => $order_query->row['date_modified'],
-				'novaposhta_cn_ref'       => $order_query->row['novaposhta_cn_ref']
+				'novaposhta_cn_ref'       => $order_query->row['novaposhta_cn_ref'],
+				'ttn'                     => $ttn,
 			);
 		} else {
 			return;
@@ -163,7 +172,7 @@ class ModelSaleOrder extends Model {
 	}
 
 	public function getOrders($data = array()) {
-		$sql = "SELECT o.order_id, CONCAT(o.firstname, ' ', o.lastname) AS customer, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS order_status, o.shipping_code, o.total, o.currency_code, o.currency_value, o.date_added, o.date_modified FROM `" . DB_PREFIX . "order` o";
+		$sql = "SELECT o.order_id, np.ttn, CONCAT(o.firstname, ' ', o.lastname) AS customer, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS order_status, o.shipping_code, o.total, o.currency_code, o.currency_value, o.date_added, o.date_modified FROM `" . DB_PREFIX . "order` o LEFT JOIN `" . DB_PREFIX . "novaposhta_ttn` np ON (np.order_id = o.order_id)   ";
 
 		if (!empty($data['filter_order_status'])) {
 			$implode = array();
