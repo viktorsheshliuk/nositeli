@@ -1874,7 +1874,6 @@ class ControllerSaleOrder extends Controller {
 			$order_id = $this->request->get['order_id'];
 			$track_number = isset($this->request->post['track_number']) ? $this->request->post['track_number'] : $this->request->get['track_number'];
 
-
 			//$save_track = $this->db->query("UPDATE `" . DB_PREFIX . "novaposhta_ttn` SET ttn='" . $this->db->escape($track_number) . "' WHERE order_id = '" . (int)$order_id . "'");
 
 			// 1. Проверяем, есть ли уже запись для этого заказа
@@ -1893,7 +1892,6 @@ class ControllerSaleOrder extends Controller {
 						`ttn` = '" . $this->db->escape($track_number) . "', 
 						`date_added` = NOW()");
 			}
-
 
 			$json['success'] = 'Трек-номер сохранен!';
 			if (isset($save_track['success'])) {
