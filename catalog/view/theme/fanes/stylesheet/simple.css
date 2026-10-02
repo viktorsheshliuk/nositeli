@@ -1020,7 +1020,7 @@ div#content .simple_heading_title{
     right: 19px;
     margin-left: 0;
     position: absolute;
-    top: calc(50% + 6px);
+    top: 40px;
     width: 10px;
     -webkit-transform: rotate(45deg);
     transform: rotate(45deg);
