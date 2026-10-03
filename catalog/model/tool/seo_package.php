@@ -101,8 +101,8 @@ class ModelToolSeoPackage extends Model {
     $output =  '';
     
     foreach ($hreflangs as $link) {
-      if ($link['hreflang'] == 'uk') $link['hreflang'] = 'uk-UA';
-      if ($link['hreflang'] == 'ru') $link['hreflang'] = 'ru-UA';
+      // if ($link['hreflang'] == 'uk') $link['hreflang'] = 'uk-UA';
+      // if ($link['hreflang'] == 'ru') $link['hreflang'] = 'ru-UA';
       $output .=  '<link rel="alternate" href="'.$link['href'].'" hreflang="'.$link['hreflang'].'"/>'."\n";
     }
     
