@@ -761,12 +761,14 @@ class ModelExtensionShippingNovaposhta extends Model {
             return array();
         }
 
+        // за указаными статусами и за последние 50 дней
         $query = $this->db->query("
             SELECT nttn.ttn AS ttn, o.order_status_id AS order_status_id, nttn.order_id AS order_id
             FROM `" . DB_PREFIX . "novaposhta_ttn` nttn
             LEFT JOIN `" . DB_PREFIX . "order` o ON (nttn.order_id = o.order_id)
             WHERE o.order_status_id IN (" . implode(',', $statuses) . ")
             AND nttn.ttn != ''
+            AND o.date_added >= NOW() - INTERVAL 50 DAY
         ");
 
         return $query->rows;
