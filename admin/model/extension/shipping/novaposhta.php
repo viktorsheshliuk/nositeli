@@ -768,6 +768,7 @@ class ModelExtensionShippingNovaposhta extends Model {
             LEFT JOIN `" . DB_PREFIX . "order` o ON (nttn.order_id = o.order_id)
             WHERE o.order_status_id IN (" . implode(',', $statuses) . ")
             AND nttn.ttn != ''
+            AND o.shipping_code IN ('novaposhta.department', 'novaposhta.parcelbox' , 'novaposhta.courier')
             AND o.date_added >= NOW() - INTERVAL 50 DAY
         ");
 
