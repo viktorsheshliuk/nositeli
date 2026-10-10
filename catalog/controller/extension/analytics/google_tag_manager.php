@@ -41,7 +41,7 @@ class ControllerExtensionAnalyticsGoogleTagManager extends Controller {
     }
 
     private function getGtmHeadCode($container_id) {
-        //return '';
+        return '';
         // переход на Google Tag Gateway, поэтому отключаем стандартный код GTM
         
         $code = "\n";
@@ -56,7 +56,7 @@ class ControllerExtensionAnalyticsGoogleTagManager extends Controller {
     }
 
     private function getGtmBodyCode($container_id) {
-       // return '';
+        return '';
         // переход на Google Tag Gateway, поэтому отключаем стандартный код GTM
         
         $code = "\n\n";
