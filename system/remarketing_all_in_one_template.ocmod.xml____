@@ -171,7 +171,7 @@
       </add>
     </operation>
   </file>
-  <file path="catalog/view/theme/*/template/checkout/simplecheckout_cart.twig">
+  <file path="catalog/view/theme/*/template/checkout/simplecheckout_cart.twig_______________">
 	<operation error="skip">
       <search><![CDATA[{% if display_header %}]]></search> 
       <add position="before">
