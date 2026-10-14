@@ -324,6 +324,7 @@ class ModelExtensionShippingNovaposhta extends Model {
             FROM `" . DB_PREFIX . "novaposhta_ttn` nttn
             LEFT JOIN `" . DB_PREFIX . "order` o ON (nttn.order_id = o.order_id)
             WHERE o.order_status_id IN (" . implode(',', $statuses) . ")
+            AND o.shipping_code IN ('novaposhta.department', 'novaposhta.parcelbox' , 'novaposhta.courier')
             AND nttn.ttn != ''
         ");
 
