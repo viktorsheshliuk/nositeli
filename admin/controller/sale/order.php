@@ -1876,7 +1876,9 @@ class ControllerSaleOrder extends Controller {
 		$json = array();
 		if (isset($this->request->get['order_id'])) {
 			$order_id = $this->request->get['order_id'];
-			$track_number = isset($this->request->post['track_number']) ? $this->request->post['track_number'] : $this->request->get['track_number'];
+			
+			// Получаем track_number и сразу убираем пробелы по краям с помощью trim()
+        	$track_number = isset($this->request->post['track_number']) ? trim($this->request->post['track_number']) : trim($this->request->get['track_number']);
 
 			//$save_track = $this->db->query("UPDATE `" . DB_PREFIX . "novaposhta_ttn` SET ttn='" . $this->db->escape($track_number) . "' WHERE order_id = '" . (int)$order_id . "'");
 
