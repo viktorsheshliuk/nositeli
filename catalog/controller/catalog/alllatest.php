@@ -43,6 +43,8 @@ class ControllerCatalogAlllatest extends Controller {
 			'limit'         => 60
 		);
 
+		$this->load->model('catalog/product');
+
 		$results = $this->model_catalog_product->getProducts($filter_data);
 
 

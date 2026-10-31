@@ -505,6 +505,35 @@ class ControllerProductProduct extends Controller {
 			} else {
 				$data['html_module_60'] = '';
 			}
+
+			//echo "<pre>";print_r($product_info);echo "</pre>";
+			$product_info['href'] = $this->url->link('product/product', 'product_id=' . $this->request->get['product_id']);
+			$seo_images = array();
+
+			if ($data['popup']) {
+				$seo_images[] = array('url' => $data['popup'], 'width' => 800, 'height' => 800);
+			} elseif (is_file(DIR_IMAGE . 'placeholder.png')) {
+				$seo_images[] = array('url' => $this->model_tool_image->resize('placeholder.png', 800, 800), 'width' => 800, 'height' => 800);
+			}
+
+			foreach ($data['images'] as $image) {
+				if ($image['popup']) {
+					$seo_images[] = array('url' => $image['popup'], 'width' => 800, 'height' => 800);
+				}
+			}
+
+			$product_info['images'] = $seo_images;
+			$product_info['seller_name'] = $this->config->get('config_name');
+			$product_info['seller_url'] = $this->url->link('common/home');
+			$product_info['rating_value'] = round((float)$product_info['rating'], 1);
+			$product_info['review_count'] = (int)$product_info['reviews'];
+			$product_info['price_valid_until'] = '';	
+
+			if ($data['special'] !== false) {
+				$product_info['price_valid_until'] = $this->model_catalog_product->getProductSpecialDateEnd($product_id);
+			}
+			
+			$this->seo->productData($product_info); // SEO разметка для товара
 			
 			$data['column_left'] = $this->load->controller('common/column_left');
 			$data['column_right'] = $this->load->controller('common/column_right');

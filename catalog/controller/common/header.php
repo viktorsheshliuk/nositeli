@@ -127,6 +127,8 @@ class ControllerCommonHeader extends Controller {
 		$route = isset($this->request->get['route']) ? $this->request->get['route'] : 'common/home';
 		$data['body_class'] = str_replace('/', '-', $route);
 
+		$data['product_json'] = $this->seo->getProduct(); // Микроразметка для товара (JSON-LD)
+
 		return $this->load->view('common/header', $data);
 	}
 }
