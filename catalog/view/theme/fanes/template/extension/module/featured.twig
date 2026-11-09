@@ -1,5 +1,7 @@
 <div class="module-block">
-<h3 class="heading-title">{{ heading_title }}</h3>
+  <div class="heading_flex">
+    <h2>{{ heading_title }}</h2>
+  </div>
   <div class="featured">
     {% for product in products %}
     {% include 'fanes/template/product/thumb/default.twig' %}

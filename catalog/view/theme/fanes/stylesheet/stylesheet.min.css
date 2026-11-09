@@ -2632,7 +2632,7 @@ header #right-menu-language-select{
 
 }
 
-#product-category .product-wrapp, #product-compare .product-wrapp, #product-search .product-wrapp, #product-manufacturer .product-wrapp, #alllatest .product-wrapp {
+#product-category .product-wrapp, #product-compare .product-wrapp, #product-search .product-wrapp, #product-manufacturer .product-wrapp, #alllatest .product-wrapp, #product-product .product-wrapper {
     display: flex;
     display: -webkit-box;
     display: -moz-box;
@@ -2645,23 +2645,14 @@ header #right-menu-language-select{
 }
 
 #product-category .cat-title, #product-compare .cat-title, #product-search .cat-title, #product-manufacturer .cat-title {
-
     text-align: center;
-
     color: #424242;
-
     font-family: "Oswald", sans-serif;
-
     text-transform: uppercase;
-
     padding: 10px;
-
     padding-top: 15px;
-
     padding-bottom: 15px;
-
     margin: 0;
-
 }
 
 #product-category .category-block, #product-compare .category-block, #product-search .category-block, #product-manufacturer .category-block {
@@ -8456,6 +8447,28 @@ header a, .top_item, .callback, .search_button, .button, .slick-next::before, .s
 
     font-style: normal;
 
+}
+
+#showmore{
+  padding-bottom: 24px;
+  padding-top: 24px;
+  border-bottom: 1px solid #e9e9e9;
+  margin-bottom: 20px;
+}
+#showmore a{
+  color: #ff7a00;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+#showmore a:hover{
+ color: #232221;
 }
 
  /* ниже для категории товаров при наведении на товар показывать доп описание*/

@@ -532,10 +532,34 @@
             </div>
             {% endif %}
 
-
             </div>
           </div>
         </div>
+
+        {# Блок автоматические товары с категории #}
+        <div class="module-block">
+          <div class="heading_flex">
+            <h2 class="main_discount_products">{{ text_also_liked }}</h2>
+            {% if also_liked_category %}
+            <a class="block__more d-flex align-items-center" href="{{ also_liked_category.href }}">
+              <span>{{ text_all_products }}</span>
+            </a>
+            {% endif %}
+          </div>
+          <div class="product-wrapper">
+            {% if also_liked_products %}
+              {% for product in also_liked_products %}
+                  {% include 'fanes/template/product/thumb/default.twig' %}
+              {% endfor %}
+            {% endif %}
+          </div>
+          {% if also_liked_category %}
+              <div id="showmore" class="also-liked-footer">
+                <a class="btn btn-general" href="{{ also_liked_category.href }}">{{ text_show_more }}</a>
+              </div>
+          {% endif %}
+        </div>  
+
         {# <div class="tabs-product">
           <ul class="nav nav-tabs">
               <li class="active"><a href="#tab-description" data-toggle="tab">{{ tab_description }}</a></li>

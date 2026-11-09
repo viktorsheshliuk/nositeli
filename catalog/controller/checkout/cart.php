@@ -61,11 +61,6 @@ class ControllerCheckoutCart extends Controller {
 
 			$products = $this->cart->getProducts();
 
-			$array_id_products = array();
-
-			$products_id_array = '[';//динамический ремаркетинг
-			$products_total_array = '[';//динамический ремаркетинг
-
 			foreach ($products as $product) {
 				$product_total = 0;
 
@@ -157,22 +152,8 @@ class ControllerCheckoutCart extends Controller {
 					'total'     => $total,
 					'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
 				);
-
-				$products_id_array .="'". $product['product_id']."'";////динамический ремаркетинг
-				$products_total_array .=  $product['quantity']*$product['price'] . ',';////динамический ремаркетинг
-			
 			}
-			//динамический ремаркетинг
-			$products_id_array .= ']';
-			if(substr($products_total_array, -1) ==','){
-				$products_total_array = substr($products_total_array,0,-1); //удаление последней запятой
-			}
-			$products_total_array .= ']';
-			$this->document->setProductId($products_id_array);
-			$this->document->setProductTotalValue($products_total_array);
 			
-			//end динамический ремаркетинг
-			// Gift Voucher
 			$data['vouchers'] = array();
 
 			if (!empty($this->session->data['vouchers'])) {

@@ -19,8 +19,6 @@ class Document {
 	private $styles = array();
 	private $scripts = array();
 	private $og_image;
-	private $product_id; // для динамического ремаркетинга
-	private $totalvalue; // для динамического ремаркетинга
 
 	/**
      * 
@@ -164,17 +162,4 @@ class Document {
 	public function getOgImage() {
 		return $this->og_image;
 	}
-	//динамический ремаркетинг
-	public function setProductId($product_id) {
-		$this->product_id = $product_id;
-	}
-	public function getProductId() {
-		return $this->product_id;
-	} 
-	public function setProductTotalValue($total) {
-		$this->totalvalue = $total;
-	}
-	public function getProductTotalValue() {
-		return $this->totalvalue;
-	} 
 }

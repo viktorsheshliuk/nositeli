@@ -66,4 +66,16 @@ class ModelCatalogCategory extends Model {
 
 		return $query->row['total'];
 	}
+
+	public function getCategoryPath($category_id) {
+		$path = array();
+
+		$query = $this->db->query("SELECT path_id FROM " . DB_PREFIX . "category_path WHERE category_id = '" . (int)$category_id . "' ORDER BY level ASC");
+
+		foreach ($query->rows as $result) {
+			$path[] = $result['path_id'];
+		}
+
+		return $path;
+	}
 }

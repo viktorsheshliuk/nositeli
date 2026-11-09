@@ -11,25 +11,6 @@ class ControllerCheckoutSuccess extends Controller {
 			$this->session->data['last_order_id'] = $this->session->data['order_id'];
 		}
 
-		//динамический ремаркетинг
-		// $products = $this->cart->getProducts();
-		// $products_id_array = '[';
-		// $products_total_array = '[';
-
-		// foreach ($products as $product) {
-		// 	$products_id_array .="'". $product['product_id']."'";
-		// 	$products_total_array .=  $product['quantity']*$product['price'] . ',';
-		// }
-		// $products_id_array .= ']';
-		// if(substr($products_total_array, -1) ==','){
-		// 	$products_total_array = substr($products_total_array,0,-1); //удаление последней запятой
-		// }	
-		// $products_total_array .= ']';
-		// $this->document->setProductId($products_id_array);
-		// $this->document->setProductTotalValue($products_total_array);
-		//end динамический ремаркетинг
-
-
 		if (isset($this->session->data['order_id'])) {
 			$this->cart->clear();
 
