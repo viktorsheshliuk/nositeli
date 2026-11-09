@@ -169,6 +169,10 @@ class ModelCatalogProduct extends Model {
 			$sql .= " AND p.manufacturer_id = '" . (int)$data['filter_manufacturer_id'] . "'";
 		}
 
+		if (!empty($data['filter_exclude_id'])) {
+			$sql .= " AND p.product_id != '" . (int)$data['filter_exclude_id'] . "'";
+		}
+
 		// Фильтр новинок за последний 2 месяця
 		if (!empty($data['filter_latest'])) {
 			$sql .= " AND p.date_added >= DATE_SUB(NOW(), INTERVAL 2 MONTH)";

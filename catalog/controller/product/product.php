@@ -488,6 +488,7 @@ class ControllerProductProduct extends Controller {
 
 					$results = $this->model_catalog_product->getProducts(array(
 						'filter_category_id' => $also_liked_category_id,
+						'filter_exclude_id'  => $product_id,
 						'sort'               => 'sales',
 						'sales_months'       => 12,
 						'order'              => 'DESC',
