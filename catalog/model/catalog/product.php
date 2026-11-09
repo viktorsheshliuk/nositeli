@@ -66,7 +66,13 @@ class ModelCatalogProduct extends Model {
 		$sql = "SELECT p.product_id, p.stock_status_id, p.quantity, (SELECT AVG(rating) AS total FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = p.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating, (SELECT price FROM " . DB_PREFIX . "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special";
 
 		if (isset($data['sort']) && $data['sort'] == 'sales') {
-			$sql .= ", (SELECT COALESCE(SUM(op.quantity), 0) FROM " . DB_PREFIX . "order_product op LEFT JOIN `" . DB_PREFIX . "order` o ON (op.order_id = o.order_id) WHERE op.product_id = p.product_id AND o.order_status_id > '0') AS sales";
+			$sql .= ", (SELECT COALESCE(SUM(op.quantity), 0) FROM " . DB_PREFIX . "order_product op LEFT JOIN `" . DB_PREFIX . "order` o ON (op.order_id = o.order_id) WHERE op.product_id = p.product_id AND o.order_status_id > '0'";
+
+			if (!empty($data['sales_months'])) {
+				$sql .= " AND o.date_added >= DATE_SUB(NOW(), INTERVAL " . (int)$data['sales_months'] . " MONTH)";
+			}
+
+			$sql .= ") AS sales";
 		}
 
 		if (!empty($data['filter_category_id'])) {

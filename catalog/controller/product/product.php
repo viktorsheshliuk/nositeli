@@ -489,6 +489,7 @@ class ControllerProductProduct extends Controller {
 					$results = $this->model_catalog_product->getProducts(array(
 						'filter_category_id' => $also_liked_category_id,
 						'sort'               => 'sales',
+						'sales_months'       => 12,
 						'order'              => 'DESC',
 						'start'              => 0,
 						'limit'              => 11
@@ -506,10 +507,6 @@ class ControllerProductProduct extends Controller {
 			}
 
 			
-
-
-
-
 
 			$data['tags'] = array();
 
